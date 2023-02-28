@@ -59,7 +59,7 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	});
 	background.SetTopLeft(0, 0);
 
-	character.LoadBitmapByString({ "resources/giraffe.bmp" });
+	character.LoadBitmapByString({ "resources/giraffe.bmp" }); 
 	character.SetTopLeft(150, 265);
 
 	chest_and_key.LoadBitmapByString({ "resources/chest.bmp", "resources/chest_ignore.bmp" }, RGB(255, 255, 255));
@@ -68,10 +68,12 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 	bee.LoadBitmapByString({ "resources/bee_1.bmp", "resources/bee_2.bmp" });
 	bee.SetTopLeft(462, 265);
 	bee.SetAnimation(2, false);
+
 	ball.LoadBitmapByString({ "resources/ball-3.bmp", "resources/ball-2.bmp", "resources/ball-1.bmp", "resources/ball-ok.bmp" });
 	ball.SetTopLeft(150, 430);
 	ball.SetAnimation(1000, true);
 	ball.ToggleAnimation();
+
 	for (int i = 0; i < 3; i++) {
 		door[i].LoadBitmapByString({ "resources/door_close.bmp", "resources/door_open.bmp" }, RGB(255, 255, 255));
 		door[i].SetTopLeft(462 - 100 * i, 265);
@@ -132,25 +134,24 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 		}
 	}
-	if (nChar == VK_UP) {
-			character.SetTopLeft(character.Left(), character.Top() - 20);
+	if (nChar == VK_LEFT) { //要怎麼讓他不放開可以一直向前
+		character.SetTopLeft(character.Left() - 30, character.Top());
 	}
-	if (nChar == VK_DOWN) {
-		character.SetTopLeft(character.Left(), character.Top() + 20);
+	if (nChar == VK_RIGHT) { 
+		character.SetTopLeft(character.Left() + 30, character.Top());
 	}
-	if (nChar == VK_LEFT) {
-		character.SetTopLeft(character.Left() - 20, character.Top());
+	if (nChar == VK_UP) { 
+		character.SetTopLeft(character.Left(), character.Top() - 30);
 	}
-	if (nChar == VK_RIGHT) {
-		character.SetTopLeft(character.Left() + 20, character.Top());
+	if (nChar == VK_DOWN) { 
+		character.SetTopLeft(character.Left(), character.Top() + 30);
 	}
+	
 }
 
 void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (nChar == VK_UP) {
-		movestate = false;
-	}
+	
 }
 
 void CGameStateRun::OnLButtonDown(UINT nFlags, CPoint point)  // 處理滑鼠的動作

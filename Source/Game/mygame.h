@@ -92,15 +92,16 @@ namespace game_framework {
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		int phase = 1;
-		bool movestate = false;
+		int phase = 1; //關卡1
 		int sub_phase = 1;
+		//遊戲中需要的元素圖做宣告
 		CMovingBitmap background;
 		CMovingBitmap character;
 		CMovingBitmap chest_and_key;
 		CMovingBitmap bee;
 		CMovingBitmap ball;
 		CMovingBitmap door[3];
+		// end
 		void show_image_by_phase();
 		void show_text_by_phase();
 		bool validate_phase_1();
