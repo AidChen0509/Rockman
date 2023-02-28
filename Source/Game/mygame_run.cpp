@@ -27,13 +27,16 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// ²¾°Ê¹CÀ¸¤¸¯À
 {
-	if (character.Top() + character.Height() >= chest_and_key.Top() && character.Left() + character.Width() >= chest_and_key.Left() && character.Top() <= chest_and_key.Top()+ chest_and_key.Height() && character.Left()  <= chest_and_key.Left() + chest_and_key.Width()){
-		chest_and_key.SelectShowBitmap(1);
-		chest_and_key.SetTopLeft(150, 430);
+	if (phase == 3) {
+		if (character.Top() + character.Height() >= chest_and_key.Top() && character.Left() + character.Width() >= chest_and_key.Left() && character.Top() <= chest_and_key.Top() + chest_and_key.Height() && character.Left() <= chest_and_key.Left() + chest_and_key.Width()) {
+			chest_and_key.SelectShowBitmap(1);
+		}
 	}
-	for (int i = 0; i < 3; i++) {
-		if (character.Top() + character.Height() >= door[i].Top() && character.Left() + character.Width() >= door[i].Left()) {
-			door[i].SelectShowBitmap(1);
+	if (phase == 5) {
+		for (int i = 0; i < 3; i++) {
+			if (character.Top() + character.Height() >= door[i].Top() && character.Left() + character.Width() >= door[i].Left() && character.Top() <= door[i].Top() + door[i].Height() && character.Left() <= door[i].Left() + door[i].Width()) {
+				door[i].SelectShowBitmap(1);
+			}
 		}
 	}
 }
@@ -130,9 +133,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 	}
 	if (nChar == VK_UP) {
-		while (true) {
 			character.SetTopLeft(character.Left(), character.Top() - 20);
-		}
 	}
 	if (nChar == VK_DOWN) {
 		character.SetTopLeft(character.Left(), character.Top() + 20);
