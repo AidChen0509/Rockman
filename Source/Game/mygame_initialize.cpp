@@ -25,6 +25,29 @@ void CGameStateInit::OnInit()
 	ShowInitProgress(0, "Start Initialize...");	// 一開始的loading進度為0%
 	//
 	// 開始載入資料
+	startBackground.LoadBitmapByString({
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		"resources/start&over/initBackground1.bmp",
+		"resources/start&over/initBackground2.bmp",
+		});
+	startBackground.SetTopLeft(0, 0);
+	startBackground.SetAnimation(150, true);
+
+	/* TODO
+	selectBackground.LoadBitmapByString({ "resources/start&over/selectStage1.bmp" });
+	selectBackground.SetTopLeft(0, 0);
+	*/
 	//
 	Sleep(1000);				// 放慢，以便看清楚進度，實際遊戲請刪除此Sleep
 	//
@@ -35,7 +58,19 @@ void CGameStateInit::OnInit()
 void CGameStateInit::OnBeginState()
 {
 }
-
+void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	/*if (nChar == VK_RETURN) {
+		background.ToggleAnimation();
+		intoSelect = true;
+		Sleep(1000);
+		//background.LoadEmptyBitmap(256, 239);
+	}*/
+	if (nChar == VK_RETURN) {
+		startBackground.ToggleAnimation();
+		intoSelect = true; 
+	}
+}
 void CGameStateInit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 
@@ -43,9 +78,20 @@ void CGameStateInit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	GotoGameState(GAME_STATE_RUN);		// 切換至GAME_STATE_RUN
+	//GotoGameState(GAME_STATE_RUN);		// 切換至GAME_STATE_RUN
 }
 
 void CGameStateInit::OnShow()
 {
+	
+	if (!(startBackground.IsAnimationDone() && intoSelect)) {
+		startBackground.ShowBitmap(2);
+	}else{
+		if (!intoGame) {
+			//selectBackground.ShowBitmap(2);
+		}else {
+
+		}
+	}
+	//background.ShowBitmap();
 }
