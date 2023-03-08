@@ -65,12 +65,17 @@ namespace game_framework {
 		void OnLButtonDown(UINT nFlags, CPoint point);  // 處理滑鼠的動作
 		bool intoSelect = false;
 		bool intoGame = false;
-		int stage = -1;
+		int stage = 0;
 	protected:
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		CMovingBitmap startBackground;								// csie的logo
-		//CMovingBitmap selectBackground; TODO
+		CMovingBitmap startBackground;								
+		CMovingBitmap cutSelected;
+		CMovingBitmap gutsSelected;
+		CMovingBitmap iceSelected;
+		CMovingBitmap bombSelected;
+		CMovingBitmap fireSelected;
+		CMovingBitmap elecSelected;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
