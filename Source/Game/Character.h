@@ -118,8 +118,28 @@ namespace game_framework {
 					}
 				}
 			}
-			// if (isOnTheGround) dy = 8;
-			// if (isJumping) dy;
+			// 著地後速度回歸為10
+			if (isOnTheGround) {
+				dy = 10;
+				accePeriod = 5;
+			}
+			if (isJumping && dy - 1 >= 6) {
+				if (jumpCount == 0) {
+					dy--;
+				}
+				jumpCount++;
+				jumpCount = jumpCount % 3;
+			}
+			
+			if (isFalling && dy + 1 <= 14) {
+				if (fallCount == 0) {
+					dy++;
+					if (accePeriod - 1 >= 1)
+						accePeriod--;
+				}
+				fallCount++;
+				fallCount = fallCount % accePeriod;
+			}
 
 
 			if (isOnTheGround) {
@@ -225,7 +245,7 @@ namespace game_framework {
 			}
 
 			if (upPressed) {
-				y -= 12;
+				y -= 15;
 			}
 
 
@@ -332,7 +352,7 @@ namespace game_framework {
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
 		bool shootPressed = false; // 0x58 key x was pressed or not
-		bool isJumpPressedKeyUp = true;
+		// bool isJumpPressedKeyUp = true;
 
 		bool leftPressed = false;
 		bool rightPressed = false;
@@ -348,7 +368,10 @@ namespace game_framework {
 		int x = 232;
 		int y = 4368;
 		int dx = 4; // 已乘兩倍，左右橫移速度
-		int dy = 8; //已成兩倍，向上
+		int dy = 10; //已成兩倍，向上
+		int jumpCount = 0;
+		int fallCount = 0;
+		int accePeriod = 5;
 		int jumpingHeight = 0;
 	};
 }
