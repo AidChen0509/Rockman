@@ -4,6 +4,8 @@
 #include <ddraw.h>
 #include "../Library/audio.h"
 #include "../Library/gameutil.h"
+#include "../Game/Character.h"
+#include "../Game/CutmanStage.h"
 #include "../Library/gamecore.h"
 #include "mygame.h"
 
@@ -27,7 +29,7 @@ void CGameStateRun::OnBeginState()
 
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
-	
+	stage.OnMove();
 }
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
