@@ -160,21 +160,25 @@ namespace game_framework {
 						isJumping = false;
 
 					}
+					canJump = true;
 				}
 				else { //OnTheGround的時候，按跳
-					if (block_element_3darray[level][(top_y - dy) / 32][(left_x) / 32] != 1
-						&& block_element_3darray[level][(top_y - dy) / 32][(right_x) / 32] != 1) {
-						isJumping = true;
-						isFalling = false;
-						isOnTheGround = false;
-						jumpingHeight += dy;
-						y -= dy;
-					}
-					else { // 小縫隙或是剛好頂到頭，接著準備落地
-						isJumping = false;
-						isFalling = true;
-						isOnTheGround = false;
-						y = (y / 32) * 32;
+					if (canJump) {
+						if (block_element_3darray[level][(top_y - dy) / 32][(left_x) / 32] != 1
+							&& block_element_3darray[level][(top_y - dy) / 32][(right_x) / 32] != 1) {
+							isJumping = true;
+							isFalling = false;
+							isOnTheGround = false;
+							jumpingHeight += dy;
+							y -= dy;
+						}
+						else { // 小縫隙或是剛好頂到頭，接著準備落地
+							isJumping = false;
+							isFalling = true;
+							isOnTheGround = false;
+							y = (y / 32) * 32;
+						}
+						canJump = false;
 					}
 				}
 			}
@@ -229,6 +233,9 @@ namespace game_framework {
 					}
 				}
 				else if (isFalling) { //在掉落的時候不考慮有沒有按跳 直接處理需要落dy還是縫隙
+					if (!jumpPressed) {
+						canJump = true;
+					}
 					if (block_element_3darray[level][(down_y + dy) / 32][(left_x) / 32] != 1
 						&& block_element_3darray[level][(down_y + dy) / 32][(right_x) / 32] != 1) {
 						y += dy;
@@ -362,6 +369,7 @@ namespace game_framework {
 		bool isFalling = true;
 		bool isShooting = false;
 		bool isFacingRight = false;
+		bool canJump = true;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
 		//vector<int> initY_by_stage = { 4368};
