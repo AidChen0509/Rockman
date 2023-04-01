@@ -35,6 +35,7 @@
 #include <direct.h>
 #include <string.h>
 #include "../Library/gameutil.h"
+#include "../Game/cutman_stage_data.h"
 #include "../Game/Character.h"
 #include "../Game/CutmanStage.h"
 #include "../Library/gamecore.h"

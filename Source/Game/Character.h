@@ -45,10 +45,12 @@ namespace game_framework {
 			resting[1].SetAnimation(200, false);
 
 			// 最好是在Onshow設定位置，避免多餘的code
-			// running[0].SetTopLeft(x - stage_x, y - stage_y);
-			// running[1].SetTopLeft(x - stage_x, y - stage_y);
-			// resting[0].SetTopLeft(x - stage_x, y - stage_y);
-			// resting[1].SetTopLeft(x - stage_x, y - stage_y);
+			resting[0].SetTopLeft(x - stage_x, y - stage_y);
+			resting[1].SetTopLeft(x - stage_x, y - stage_y);
+			running[0].SetTopLeft(x - stage_x, y - stage_y);
+			running[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
 
 		};
 		void Onshow(int stage_x, int stage_y) {
@@ -81,181 +83,200 @@ namespace game_framework {
 				}
 			}
 		}
-		void OnMove(int stage_x, int stage_y, int left_boundary, int right_boundary, int top_boundary, int level) {
-			int bitmapLeft_x = this->x - left_boundary; //以left_boundary為基準的rockman_x(左上角)
-			int bitmapTop_y = this->y - top_boundary; //以top_boundary為基準的rockman_y(左上角)
+		void OnMove(int stage_x, int stage_y, int transitionState) {
+			//int bitmapLeft_x = this->x - left_boundary; //以left_boundary為基準的rockman_x(左上角)
+			//int bitmapTop_y = this->y - top_boundary; //以top_boundary為基準的rockman_y(左上角)
 			// 主角判斷碰撞為中間32pixels 所以要由bitmap的x,y做運算
-			int	left_x = bitmapLeft_x + 2 * 4; //非左非上的角落要扣1，以表達角落的座標
-			int right_x = bitmapLeft_x + 2 * (24 - 1 - 4);
-			int top_y = bitmapTop_y;
-			int mid_y = bitmapTop_y + 2 * (12 - 1);
-			int down_y = bitmapTop_y + 2 * (24 - 1);
+			//int left_x = bitmapLeft_x + 2 * 4; //非左非上的角落要扣1，以表達角落的座標
+			//int right_x = bitmapLeft_x + 2 * (24 - 1 - 4);
+			//int top_y = bitmapTop_y;
+			//int mid_y = bitmapTop_y + 2 * (12 - 1);
+			//int down_y = bitmapTop_y + 2 * (24 - 1);
 			// 除(/)32就是index數;
+			// int index_x = x / 32; //最左邊的index : index_x
+			// int index_y = y / 32; //最上面的index : index_y 
+			int left_x = x + 2 * 4; //非左非上的角落要扣1，以表達角落的座標
+			int right_x = x + 2 * (24 - 1 - 4);
+			int top_y = y;
+			int mid_y = y + 2 * (12 - 1);
+			int down_y = y + 2 * (24 - 1);
 
-
-			if ((leftPressed && rightPressed) || !(leftPressed || rightPressed)) { //按雙鍵，維持原本的方向但不位移
-				isResting = true;
-			}
-			else if (leftPressed) { // movingLeft
-				isFacingRight = false;
-				isResting = false;
-				if (left_boundary < left_x && right_x <= right_boundary) {
-					if (block_element_3darray[level][top_y / 32][(left_x - dx) / 32] != 1
-						&& block_element_3darray[level][mid_y / 32][(left_x - dx) / 32] != 1
-						&& block_element_3darray[level][down_y / 32][(left_x - dx) / 32] != 1) {
-						x -= dx;
+			if (transitionState == 0) {
+				if ((leftPressed && rightPressed) || !(leftPressed || rightPressed)) { //按雙鍵，維持原本的方向但不位移
+					isResting = true;
+				}
+				else if (leftPressed) { // movingLeft
+					isFacingRight = false;
+					isResting = false;
+					// 先檢查會不會超出邊界
+					if (left_x - dx >= 0
+						&& block_element_3darray[top_y / 32][(left_x - dx) / 32] != -1
+						&& block_element_3darray[mid_y / 32][(left_x - dx) / 32] != -1
+						&& block_element_3darray[down_y / 32][(left_x - dx) / 32] != -1
+						) {
+						// 檢查是否會撞牆
+						if (block_element_3darray[top_y / 32][(left_x - dx) / 32] != 1
+							&& block_element_3darray[mid_y / 32][(left_x - dx) / 32] != 1
+							&& block_element_3darray[down_y / 32][(left_x - dx) / 32] != 1) {
+							x -= dx;
+						}
 					}
 				}
-			}
-			else if (rightPressed) { //movingRight
-				isFacingRight = true;
-				isResting = false;
-				if (left_boundary <= left_x && right_x < right_boundary) {
-					if (block_element_3darray[level][top_y / 32][(right_x + dx) / 32] != 1
-						&& block_element_3darray[level][mid_y / 32][(right_x + dx) / 32] != 1
-						&& block_element_3darray[level][down_y / 32][(right_x + dx) / 32] != 1) {
-						x += dx;
+				else if (rightPressed) { //movingRight
+					isFacingRight = true;
+					isResting = false;
+					if (right_x + dx <= 6656
+						&& block_element_3darray[top_y / 32][(right_x + dx) / 32] != -1
+						&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != -1
+						&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != -1
+						) {
+						if (block_element_3darray[top_y / 32][(right_x + dx) / 32] != 1
+							&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != 1
+							&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != 1) {
+							x += dx;
+						}
 					}
 				}
-			}
-			// 著地後速度回歸為10
-			if (isOnTheGround) {
-				dy = 10;
-				accePeriod = 5;
-			}
-			if (isJumping && dy - 1 >= 6) {
-				if (jumpCount == 0) {
-					dy--;
+				// 著地後速度回歸為10
+				if (isOnTheGround) {
+					dy = 10;
+					accePeriod = 5;
 				}
-				jumpCount++;
-				jumpCount = jumpCount % 3;
-			}
-			
-			if (isFalling && dy + 1 <= 14) {
-				if (fallCount == 0) {
-					dy++;
-					if (accePeriod - 1 >= 1)
-						accePeriod--;
-				}
-				fallCount++;
-				fallCount = fallCount % accePeriod;
-			}
-
-
-			if (isOnTheGround) {
-				if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
-					if (block_element_3darray[level][(down_y + dy) / 32][(left_x) / 32] != 1
-						&& block_element_3darray[level][(down_y + dy) / 32][(right_x) / 32] != 1) {
-						isJumping = false;
-						isFalling = true;
-						isOnTheGround = false;
-						y += dy;
-						jumpingHeight = 0;
+				if (isJumping && dy - 1 >= 6) {
+					if (jumpCount == 0) {
+						dy--;
 					}
-					else { // 表示跟地板還有一些縫隙，或是剛剛好OntTheGround
-						y = (y / 32) * 32 + 16; // 小於dy的位移
-						jumpingHeight = 0; // 非跳躍要歸零
-						isOnTheGround = true; // 經過位移後就會OnTheGround
-						isFalling = false;
-						isJumping = false;
-
-					}
-					canJump = true;
+					jumpCount++;
+					jumpCount = jumpCount % 3;
 				}
-				else { //OnTheGround的時候，按跳
-					if (canJump) {
-						if (block_element_3darray[level][(top_y - dy) / 32][(left_x) / 32] != 1
-							&& block_element_3darray[level][(top_y - dy) / 32][(right_x) / 32] != 1) {
-							isJumping = true;
+
+				if (isFalling && dy + 1 <= 14) {
+					if (fallCount == 0) {
+						dy++;
+						if (accePeriod - 1 >= 1)
+							accePeriod--;
+					}
+					fallCount++;
+					fallCount = fallCount % accePeriod;
+				}
+
+				if (isOnTheGround) {
+					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
+						if (block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != 1
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1) {
+							isJumping = false;
+							isFalling = true;
+							isOnTheGround = false;
+							y += dy;
+							jumpingHeight = 0;
+						}
+						else { // 表示跟地板還有一些縫隙，或是剛剛好OntTheGround
+							y = (y / 32) * 32 + 16; // 小於dy的位移
+							jumpingHeight = 0; // 非跳躍要歸零
+							isOnTheGround = true; // 經過位移後就會OnTheGround
 							isFalling = false;
-							isOnTheGround = false;
-							jumpingHeight += dy;
-							y -= dy;
-						}
-						else { // 小縫隙或是剛好頂到頭，接著準備落地
 							isJumping = false;
-							isFalling = true;
-							isOnTheGround = false;
-							y = (y / 32) * 32;
-						}
-						canJump = false;
-					}
-				}
-			}
-			else { //不在地板
-				if (isJumping && !isFalling) { // 剛從地板跳起來，往上跳階段
-					if (!jumpPressed) { //剛跳起來但不繼續跳了
-						isJumping = false;
-						isFalling = true;
-						// TODO : 從跳轉掉落感覺不需要考慮有縫隙的情況，如果bug為跳放開會陷入地板，要改變此處的程式
-						y += dy; //直接落下
-						jumpingHeight = 0; // 跳轉落: 跳躍高度歸零
-					}
-					else { //往上跳當中，持續按跳
-						// case 1(跳完這下會到100):
-						// 跳這下並且狀態改為falling
-						// 1. 跳dy
-						// 2. 跳縫隙
 
-						// case 2(跳完這下不會到100):
-						// 可跳
-						// 1. 可跳dy(上面為空氣)
-						// 2. 只有一點縫隙可跳
-						if ((jumpingHeight + dy) >= 96) {  //case 1
-							isFalling = true;
-							isJumping = false;
-							jumpingHeight = 0; //轉掉落要歸零
-							if (block_element_3darray[level][(top_y - dy) / 32][(left_x) / 32] != 1
-								&& block_element_3darray[level][(top_y - dy) / 32][(right_x) / 32] != 1) {
-								// 可跳dy
-								y -= dy;
-								jumpingHeight += dy;
-							}
-							else { // 跳縫隙
-								y = (y / 32) * 32;
-							}
 						}
-						else { // case 2
-							if (block_element_3darray[level][(top_y - dy) / 32][(left_x) / 32] != 1
-								&& block_element_3darray[level][(top_y - dy) / 32][(right_x) / 32] != 1) {
-								// 可跳dy
-								y -= dy;
-								jumpingHeight += dy;
-								isJumping = true;
-								isFalling = false;
-							}
-							else { // 跳縫隙
-								y = (y / 32) * 32;
-								isJumping = false;
-								isFalling = true;
-							}
-						}
-					}
-				}
-				else if (isFalling) { //在掉落的時候不考慮有沒有按跳 直接處理需要落dy還是縫隙
-					if (!jumpPressed) {
 						canJump = true;
 					}
-					if (block_element_3darray[level][(down_y + dy) / 32][(left_x) / 32] != 1
-						&& block_element_3darray[level][(down_y + dy) / 32][(right_x) / 32] != 1) {
-						y += dy;
-						jumpingHeight = 0; //保持掉落就歸0的好習慣
-					}
-					else { // 表示跟地板還有一些縫隙，或是剛剛好OntTheGround
-						y = (y / 32) * 32 + 16; // 小於dy的位移
-						jumpingHeight = 0; // 非跳躍要歸零
-						isOnTheGround = true; // 經過位移後就會OnTheGround
-						isFalling = false;
-						isJumping = false;
+					else { //OnTheGround的時候，按跳
+						if (canJump) {
+							if (block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != 1
+								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1) {
+								isJumping = true;
+								isFalling = false;
+								isOnTheGround = false;
+								jumpingHeight += dy;
+								y -= dy;
+							}
+							else { // 小縫隙或是剛好頂到頭，接著準備落地
+								isJumping = false;
+								isFalling = true;
+								isOnTheGround = false;
+								y = (y / 32) * 32;
+							}
+							canJump = false;
+						}
 					}
 				}
+				else { //不在地板
+					if (isJumping && !isFalling) { // 剛從地板跳起來，往上跳階段
+						if (!jumpPressed) { //剛跳起來但不繼續跳了
+							isJumping = false;
+							isFalling = true;
+							// TODO : 從跳轉掉落感覺不需要考慮有縫隙的情況，如果bug為跳放開會陷入地板，要改變此處的程式
+							y += dy; //直接落下
+							jumpingHeight = 0; // 跳轉落: 跳躍高度歸零
+						}
+						else { //往上跳當中，持續按跳
+							// case 1(跳完這下會到100):
+							// 跳這下並且狀態改為falling
+							// 1. 跳dy
+							// 2. 跳縫隙
+
+							// case 2(跳完這下不會到100):
+							// 可跳
+							// 1. 可跳dy(上面為空氣)
+							// 2. 只有一點縫隙可跳
+							if ((jumpingHeight + dy) >= 96) {  //case 1
+								isFalling = true;
+								isJumping = false;
+								jumpingHeight = 0; //轉掉落要歸零
+								if (block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != 1
+									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1) {
+									// 可跳dy
+									y -= dy;
+									jumpingHeight += dy;
+								}
+								else { // 跳縫隙
+									y = (y / 32) * 32;
+								}
+							}
+							else { // case 2
+								if (block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != 1
+									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1) {
+									// 可跳dy
+									y -= dy;
+									jumpingHeight += dy;
+									isJumping = true;
+									isFalling = false;
+								}
+								else { // 跳縫隙
+									y = (y / 32) * 32;
+									isJumping = false;
+									isFalling = true;
+								}
+							}
+						}
+					}
+					else if (isFalling) { //在掉落的時候不考慮有沒有按跳 直接處理需要落dy還是縫隙
+						if (!jumpPressed) {
+							canJump = true;
+						}
+						if (block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != 1
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1) {
+							y += dy;
+							jumpingHeight = 0; //保持掉落就歸0的好習慣
+						}
+						else { // 表示跟地板還有一些縫隙，或是剛剛好OntTheGround
+							y = (y / 32) * 32 + 16; // 小於dy的位移
+							jumpingHeight = 0; // 非跳躍要歸零
+							isOnTheGround = true; // 經過位移後就會OnTheGround
+							isFalling = false;
+							isJumping = false;
+						}
+					}
+				}
+
+				if (upPressed) {
+					y -= 15;
+				}
+			}else{
+				if (transitionState == 1 && transitionState == 2) {
+
+				}
 			}
-
-			if (upPressed) {
-				y -= 15;
-			}
-
-
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -312,44 +333,13 @@ namespace game_framework {
 		int getY() {
 			return y;
 		}
-
+		void setmap(vector<vector<int>> map) {
+			block_element_3darray = map;
+		}
 	private:
 		vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關 要再改
 		vector<int> level_top = { 2048 * 2 ,1792 * 2, 1536 * 2, 1280 * 2, 1024 * 2, 768 * 2, 512 * 2, 256 * 2, 0, 256 * 2, 512 * 2, 768 * 2 };//768王關 要再改 跟地圖數據level數不符
-		vector<vector<int>> block_element_3darray[14]{
-			// row 0
-			{{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 1},
-			// row 1
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 1},
-			// row 2
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1},
-			// row 3
-			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1},
-			// row 4
-			{0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1},
-			// row 5
-			{0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1},
-			// row 6
-			{1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
-			// row 7
-			{0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
-			// row 8
-			{0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
-			// row 9
-			{0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1},
-			// row 10
-			{0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-			// row 11
-			{0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-			// row 12
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			// row 13
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			// row 14
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			// row 15
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-		};
+		vector<vector<int>> block_element_3darray;
 		CMovingBitmap resting[2];
 		CMovingBitmap running[2];
 		CMovingBitmap climbing[2];
@@ -375,6 +365,11 @@ namespace game_framework {
 		//vector<int> initY_by_stage = { 4368};
 		int x = 232;
 		int y = 4368;
+
+		// 剪刀窗戶的位置
+		//int x = 1792;
+		//int y = 2304;
+
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上
 		int jumpCount = 0;
