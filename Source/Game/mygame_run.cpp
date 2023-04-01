@@ -4,6 +4,7 @@
 #include <ddraw.h>
 #include "../Library/audio.h"
 #include "../Library/gameutil.h"
+#include "../Game/cutman_stage_data.h"
 #include "../Game/Character.h"
 #include "../Game/CutmanStage.h"
 #include "../Library/gamecore.h"

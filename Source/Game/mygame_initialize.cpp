@@ -4,6 +4,7 @@
 #include <ddraw.h>
 #include "../Library/audio.h"
 #include "../Library/gameutil.h"
+#include "../Game/cutman_stage_data.h"
 #include "../Game/Character.h"
 #include "../Game/CutmanStage.h"
 #include "../Library/gamecore.h"
@@ -73,10 +74,12 @@ void CGameStateInit::OnInit()
 	
 	// 此OnInit動作會接到CGameStaterRun::OnInit()，所以進度還沒到100%
 	//
+	
 }
 
 void CGameStateInit::OnBeginState()
 {
+	
 }
 void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
@@ -112,7 +115,7 @@ void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CGameStateInit::OnShow()
 {
-	
+	GotoGameState(GAME_STATE_RUN); //加速開發 先跳過開場
 	if (!(startBackground.IsAnimationDone() && intoSelect)) { //開場enter且動畫跑完前，開場畫面都要show
 		startBackground.ShowBitmap(2);
 	}
