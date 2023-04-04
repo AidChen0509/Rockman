@@ -101,7 +101,7 @@ namespace game_framework {
 			int mid_y = y + 2 * (12 - 1);
 			int down_y = y + 2 * (24 - 1);
 
-			if (transitionState == 0) {
+			if (transitionState == 0 || transitionState == 30 || transitionState == 40) {
 				if ((leftPressed && rightPressed) || !(leftPressed || rightPressed)) { //按雙鍵，維持原本的方向但不位移
 					isResting = true;
 				}
@@ -112,8 +112,7 @@ namespace game_framework {
 					if (left_x - dx >= 0
 						&& block_element_3darray[top_y / 32][(left_x - dx) / 32] != -1
 						&& block_element_3darray[mid_y / 32][(left_x - dx) / 32] != -1
-						&& block_element_3darray[down_y / 32][(left_x - dx) / 32] != -1
-						) {
+						&& block_element_3darray[down_y / 32][(left_x - dx) / 32] != -1) {
 						// 檢查是否會撞牆
 						if (block_element_3darray[top_y / 32][(left_x - dx) / 32] != 1
 							&& block_element_3darray[mid_y / 32][(left_x - dx) / 32] != 1
@@ -128,8 +127,8 @@ namespace game_framework {
 					if (right_x + dx <= 6656
 						&& block_element_3darray[top_y / 32][(right_x + dx) / 32] != -1
 						&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != -1
-						&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != -1
-						) {
+						&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != -1) {
+
 						if (block_element_3darray[top_y / 32][(right_x + dx) / 32] != 1
 							&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != 1
 							&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != 1) {
@@ -163,7 +162,9 @@ namespace game_framework {
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
 						if (block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != 1
-							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1) {
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1
+							&& block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != -1
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != -1) {
 							isJumping = false;
 							isFalling = true;
 							isOnTheGround = false;
@@ -183,7 +184,9 @@ namespace game_framework {
 					else { //OnTheGround的時候，按跳
 						if (canJump) {
 							if (block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != 1
-								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1) {
+								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1
+								&& block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != -1
+								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1) {
 								isJumping = true;
 								isFalling = false;
 								isOnTheGround = false;
@@ -224,7 +227,9 @@ namespace game_framework {
 								isJumping = false;
 								jumpingHeight = 0; //轉掉落要歸零
 								if (block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != 1
-									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1) {
+									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1
+									&& block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != -1
+									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1) {
 									// 可跳dy
 									y -= dy;
 									jumpingHeight += dy;
@@ -235,7 +240,9 @@ namespace game_framework {
 							}
 							else { // case 2
 								if (block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != 1
-									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1) {
+									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1
+									&& block_element_3darray[(top_y - dy) / 32][(left_x) / 32] != -1
+									&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1) {
 									// 可跳dy
 									y -= dy;
 									jumpingHeight += dy;
@@ -269,12 +276,18 @@ namespace game_framework {
 					}
 				}
 
-				if (upPressed) {
+				if (upPressed) { //代替爬梯子
 					y -= 15;
 				}
 			}else{
+				// 轉場階段無法動作
 				if (transitionState == 1 && transitionState == 2) {
-
+					// TODO
+					// 如果正在爬樓梯(isClimbing)，要把原本的洛克人unshow，並且toggle左右爬梯動畫
+				}
+				else if (transitionState == 3  || transitionState == 4) { 
+					// 滑步進廊道跟王關
+					x += 1;
 				}
 			}
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -333,6 +346,9 @@ namespace game_framework {
 		int getY() {
 			return y;
 		}
+		int getBlood() {
+			return blood;
+		}
 		void setmap(vector<vector<int>> map) {
 			block_element_3darray = map;
 		}
@@ -366,12 +382,18 @@ namespace game_framework {
 		int x = 232;
 		int y = 4368;
 
-		// 剪刀窗戶的位置
+		// 剪刀窗戶的腳色位置
 		//int x = 1792;
 		//int y = 2304;
 
+		// 測試
+		//int x = 2050*2;
+		//int y = 800*2;
+
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上
+		int blood = 28;
+		int lives = 3;
 		int jumpCount = 0;
 		int fallCount = 0;
 		int accePeriod = 5;
