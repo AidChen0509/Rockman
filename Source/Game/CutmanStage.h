@@ -5,8 +5,31 @@ namespace game_framework {
 	public:
 		CutmanStage() {
 			rockman.setmap(dataSource._data);
+			// 初始化怪物
+			enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
+			enemyContainer.push_back(new Heli(428 * 2, 2178 * 2));
+			enemyContainer.push_back(new Heli(448 * 2, 2133 * 2));
+			enemyContainer.push_back(new Heli(1888 * 2, 70 * 2)); // y = 72會炸，怪物最好不要跟人同一個平台
+			enemyContainer.push_back(new Heli(1928 * 2, 132 * 2));
+			enemyContainer.push_back(new Heli(1947 * 2, 79 * 2));
+			enemyContainer.push_back(new Beak(816 * 2, 2112 * 2, 0)); //param 3: 0代表面左，1代表面右
+			enemyContainer.push_back(new Beak(944 * 2, 2159 * 2, 0));
+			enemyContainer.push_back(new Beak(976 * 2, 1936 * 2, 0));
+			enemyContainer.push_back(new Beak(880 * 2, 1872 * 2, 0)); 
+			enemyContainer.push_back(new Beak(912 * 2, 1840 * 2, 0)); 
+			enemyContainer.push_back(new Beak(832 * 2, 1712 * 2, 1)); 
+			enemyContainer.push_back(new Beak(880 * 2, 1648 * 2, 0));
+			enemyContainer.push_back(new Beak(944 * 2, 1584 * 2, 0));
+			enemyContainer.push_back(new Beak(880 * 2, 1488 * 2, 1));
+			enemyContainer.push_back(new Beak(944 * 2, 1360 * 2, 0));
+			enemyContainer.push_back(new Beak(912 * 2, 1312 * 2, 0));
 		};
-		~CutmanStage() {};
+		~CutmanStage() {
+			for (size_t i = 0; i < enemyContainer.size(); i++)
+			{
+				delete enemyContainer[i];
+			}
+		};
 		void OnInit() {
 			cutman_stage.LoadBitmapByString({ "resources/CutManStage.bmp" });
 			rockman_blood.LoadBitmapByString({ "resources/rockman/blood/blood0.bmp",
@@ -41,6 +64,10 @@ namespace game_framework {
 			rockman_blood.SetTopLeft(48, 50);
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 			rockman.OnInit(stage_x, stage_y);
+			for (size_t i = 0; i < enemyContainer.size(); i++)
+			{
+				enemyContainer[i]->OnInit();
+			}
 		};
 		void OnMove() {
 			// 在rockman之前先做轉場判定
@@ -63,6 +90,12 @@ namespace game_framework {
 					transitionState = 3; //進王關廊道transition
 				}
 			}
+
+			for (size_t i = 0; i < enemyContainer.size(); i++)
+			{
+				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
+			}
+			
 
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// 計算array index的一個小概念，供參
@@ -128,6 +161,12 @@ namespace game_framework {
 		};
 		void Onshow() {
 			cutman_stage.ShowBitmap(2);
+
+			for (size_t i = 0; i < enemyContainer.size(); i++)
+			{
+				enemyContainer[i]->OnShow();
+			}
+
 			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
@@ -187,6 +226,8 @@ namespace game_framework {
 		};
 		bool leftPressed;
 		bool rightPressed;
+
+		vector<Enemy*> enemyContainer;
 
 		CutmanStageData dataSource;
 		CMovingBitmap cutman_stage;

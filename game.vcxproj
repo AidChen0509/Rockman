@@ -238,7 +238,9 @@
   <ItemGroup>
     <ClCompile Include="Source\Core\game.cpp" />
     <ClCompile Include="Source\Core\gameDoc.cpp" />
-    <ClCompile Include="Source\Core\gameView.cpp" />
+    <ClCompile Include="Source\Core\gameView.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="Source\Core\MainFrm.cpp" />
     <ClCompile Include="Source\Core\StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -263,6 +265,7 @@
     <ClInclude Include="Source\Game\config.h" />
     <ClInclude Include="Source\Game\CutmanStage.h" />
     <ClInclude Include="Source\Game\cutman_stage_data.h" />
+    <ClInclude Include="Source\Game\enemy.h" />
     <ClInclude Include="Source\Game\mygame.h" />
     <ClInclude Include="Source\Library\audio.h" />
     <ClInclude Include="Source\Library\gamecore.h" />
