@@ -38,12 +38,18 @@ namespace game_framework {
 			jumping[1].LoadBitmapByString({
 				"resources/rockman/jumpingRight.bmp" ,
 				}, RGB(128, 0, 128));
-
+			climbing[0].LoadBitmapByString({
+				"resources/rockman/climb1.bmp",
+				"resources/rockman/climb2.bmp"
+				}, RGB(128,0,128));
+			climbing[1].LoadBitmapByString({
+				"resources/rockman/climb3.bmp"
+				}, RGB(128, 0, 128));
 			running[0].SetAnimation(100, false);
 			running[1].SetAnimation(100, false);
 			resting[0].SetAnimation(200, false);
 			resting[1].SetAnimation(200, false);
-
+			climbing[0].SetAnimation(150, true);
 			// 最好是在Onshow設定位置，避免多餘的code
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
@@ -51,7 +57,8 @@ namespace game_framework {
 			running[1].SetTopLeft(x - stage_x, y - stage_y);
 			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
-
+			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
+			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
 		void Onshow(int stage_x, int stage_y) {
 
@@ -64,6 +71,9 @@ namespace game_framework {
 					else {  // 原本面右，繼續面右
 						resting[1].ShowBitmap(2);
 					}
+				}
+				else if (isClimbing) {
+					climbing[0].ShowBitmap(2);
 				}
 				else if (!isResting) {
 					if (isFacingRight == false) { // running_left_side
@@ -96,13 +106,14 @@ namespace game_framework {
 			// int index_x = x / 32; //最左邊的index : index_x
 			// int index_y = y / 32; //最上面的index : index_y 
 			int left_x = x + 2 * 4; //非左非上的角落要扣1，以表達角落的座標
+			int mid_x = x + 2 * 11;
 			int right_x = x + 2 * (24 - 1 - 4);
 			int top_y = y;
 			int mid_y = y + 2 * (12 - 1);
 			int down_y = y + 2 * (24 - 1);
 
 			if (transitionState == 0 || transitionState == 30 || transitionState == 40) {
-				if ((leftPressed && rightPressed) || !(leftPressed || rightPressed)) { //按雙鍵，維持原本的方向但不位移
+				if ((leftPressed && rightPressed) || !(leftPressed || rightPressed||isClimbing)) { //按雙鍵，維持原本的方向但不位移
 					isResting = true;
 				}
 				else if (leftPressed) { // movingLeft
@@ -116,7 +127,8 @@ namespace game_framework {
 						// 檢查是否會撞牆
 						if (block_element_3darray[top_y / 32][(left_x - dx) / 32] != 1
 							&& block_element_3darray[mid_y / 32][(left_x - dx) / 32] != 1
-							&& block_element_3darray[down_y / 32][(left_x - dx) / 32] != 1) {
+							&& block_element_3darray[down_y / 32][(left_x - dx) / 32] != 1
+							&& !isClimbing) {
 							x -= dx;
 						}
 					}
@@ -131,7 +143,8 @@ namespace game_framework {
 
 						if (block_element_3darray[top_y / 32][(right_x + dx) / 32] != 1
 							&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != 1
-							&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != 1) {
+							&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != 1
+							&& !isClimbing) {
 							x += dx;
 						}
 					}
@@ -161,10 +174,11 @@ namespace game_framework {
 
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
-						if (block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != 1
-							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1
-							&& block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != -1
-							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != -1) {
+						if (block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 1
+							&& block_element_3darray[(down_y + 2) / 32][(right_x) / 32] != 1
+							&& !isClimbing
+							&& block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != -1
+							&& block_element_3darray[(down_y + 2) / 32][(right_x) / 32] != -1) {
 							isJumping = false;
 							isFalling = true;
 							isOnTheGround = false;
@@ -172,7 +186,14 @@ namespace game_framework {
 							jumpingHeight = 0;
 						}
 						else { // 表示跟地板還有一些縫隙，或是剛剛好OntTheGround
-							y = (y / 32) * 32 + 16; // 小於dy的位移
+							if (isClimbing) {
+								y = y;
+							}
+							else
+							{
+								y = (y / 32) * 32 + 16; // 小於dy的位移
+							}
+							
 							jumpingHeight = 0; // 非跳躍要歸零
 							isOnTheGround = true; // 經過位移後就會OnTheGround
 							isFalling = false;
@@ -189,6 +210,7 @@ namespace game_framework {
 								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1) {
 								isJumping = true;
 								isFalling = false;
+								isClimbing=false;
 								isOnTheGround = false;
 								jumpingHeight += dy;
 								y -= dy;
@@ -277,7 +299,48 @@ namespace game_framework {
 				}
 
 				if (upPressed) { //代替爬梯子
-					y -= 15;
+					if(block_element_3darray[(top_y - 8) / 32][(mid_x) / 32] == 2|| block_element_3darray[down_y  / 32][(mid_x) / 32] == 2){
+						isClimbing = true;
+						isResting = false;
+						isFalling = false;
+						jumpPressed = false;
+						isJumping = false;
+						isOnTheGround = true;
+						if (climbing[0].IsAnimationDone()) {
+							climbing[0].ToggleAnimation();
+						}
+						if (isfirstclimb&&jumpPressed) {
+							y = top_y-(down_y-top_y);
+							isfirstclimb = false;
+						}
+						y -= 3;
+						x = (mid_x/32)*32-9;
+					}
+					else if (block_element_3darray[down_y  / 32][(mid_x) / 32] == 0)
+					{
+						isClimbing = false;
+						isfirstclimb = true;
+					}
+				}
+				if (downPressed) { //代替爬梯子
+					if (block_element_3darray[(down_y+2) / 32][(mid_x) / 32] == 2||(block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 2&& block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 0)) {
+						isClimbing = true;
+						isResting = false;
+						jumpPressed = false;
+						isOnTheGround = true;
+						if (climbing[0].IsAnimationDone()) {
+							climbing[0].ToggleAnimation();
+						}
+						y += 3;
+						x = (mid_x / 32) * 32 - 9;
+					}
+					else if (block_element_3darray[(down_y+2) / 32][(mid_x) / 32] == 1 && isClimbing) {
+						isClimbing = false; 
+					}
+					else if (block_element_3darray[(top_y-2) / 32][(mid_x) / 32] == 0&&isClimbing) {
+						isClimbing = false;
+						x += 5;
+					}
 				}
 			}else{
 				// 轉場階段無法動作
@@ -296,6 +359,8 @@ namespace game_framework {
 			running[1].SetTopLeft(x - stage_x, y - stage_y);
 			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
+			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
+			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
 
 		};
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
@@ -366,7 +431,7 @@ namespace game_framework {
 		bool jumpPressed = false; // 0x5A key z was pressed or not
 		bool shootPressed = false; // 0x58 key x was pressed or not
 		// bool isJumpPressedKeyUp = true;
-
+		bool isfirstclimb = true;
 		bool leftPressed = false;
 		bool rightPressed = false;
 		bool isResting = false;
@@ -375,6 +440,7 @@ namespace game_framework {
 		bool isFalling = true;
 		bool isShooting = false;
 		bool isFacingRight = false;
+		bool isClimbing = false;
 		bool canJump = true;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
