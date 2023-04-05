@@ -37,6 +37,7 @@
 #include "../Library/gameutil.h"
 #include "../Game/cutman_stage_data.h"
 #include "../Game/Character.h"
+#include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
 #include "../Library/gamecore.h"
 #include "../Game/config.h"

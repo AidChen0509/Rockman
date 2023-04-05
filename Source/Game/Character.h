@@ -158,6 +158,7 @@ namespace game_framework {
 					fallCount++;
 					fallCount = fallCount % accePeriod;
 				}
+				
 
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
