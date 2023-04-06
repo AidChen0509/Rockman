@@ -155,7 +155,10 @@ namespace game_framework {
 					}
 				}
 				else if (upPressed) { //向上爬梯子
-					if (block_element_3darray[(top_y - 10) / 32][(mid_x) / 32] == 2 || block_element_3darray[down_y / 32][(mid_x) / 32] == 2) {
+					if (block_element_3darray[(top_y - 10) / 32][(mid_x) / 32] == 2 
+						|| block_element_3darray[down_y / 32][(mid_x) / 32] == 2 
+						|| block_element_3darray[down_y / 32][(mid_x) / 32] == 6
+						|| block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 6) {
 						if (isfirstclimb&&isJumping) {
 							y = top_y - (down_y - top_y);
 							isfirstclimb = false;
@@ -173,12 +176,16 @@ namespace game_framework {
 					{
 						isClimbing = false;
 						isfirstclimb = true;
-						x += 5;
 						upPressed = false;
 					}
 				}
 				else if (downPressed) { //向下爬梯子
-					if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 2 || (block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 2 && block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 0)) {
+					if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 2 
+						|| (block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 2 
+							&& block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 0)
+						|| block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 6
+						|| (block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 6
+							&& block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 0)) {
 						isResting = false;
 						isClimbing = true;
 						isOnTheGround = true;
@@ -224,9 +231,10 @@ namespace game_framework {
 
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
-						if (block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 1
+						if ((block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 1&& block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 6)
 							&& block_element_3darray[(down_y + 2) / 32][(right_x) / 32] != 1
 							&& !isClimbing
+							&& block_element_3darray[(down_y + 2) / 32][(right_x) / 32] != 6
 							&& block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != -1
 							&& block_element_3darray[(down_y + 2) / 32][(right_x) / 32] != -1) {
 							isJumping = false;
