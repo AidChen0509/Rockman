@@ -275,6 +275,11 @@ namespace game_framework {
 								isJumping = true;
 								isFalling = false;
 								isClimbing=false;
+								if (climbjumpstate==1)
+								{
+									x += 5;
+									climbjumpstate = 0;
+								}
 								isOnTheGround = false;
 								jumpingHeight += dy;
 								y -= dy;
@@ -500,8 +505,8 @@ namespace game_framework {
 		//int x = 1792;
 		//int y = 2304;
 
-		// 測試
-		//int x = 2050*2;
+		// 廊道前
+		//int x = 2164*2;
 		//int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度
