@@ -170,7 +170,7 @@ namespace game_framework {
 							climbing[0].ToggleAnimation();
 						}
 						y -= 3;
-						x = (mid_x / 32) * 32 - 9;
+						x = (mid_x / 32) * 32 - 8;
 					}
 					else if (block_element_3darray[down_y / 32][(mid_x) / 32] == 0)
 					{
@@ -193,17 +193,17 @@ namespace game_framework {
 							climbing[0].ToggleAnimation();
 						}
 						y += 3;
-						x = (mid_x / 32) * 32 - 9;
+						x = (mid_x / 32) * 32 - 8;
 					}
 					else if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 1 && isClimbing) {
 						isClimbing = false;
 						isfirstclimb = true;
-						x += 5;
+						//x += 5;
 					}
 					else if (block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 0 && isClimbing) {
 						isClimbing = false;
 						isfirstclimb = true;
-						x += 5;
+						//x += 5;
 					}
 				}
 				// 著地後速度回歸為10
@@ -228,7 +228,6 @@ namespace game_framework {
 					fallCount++;
 					fallCount = fallCount % accePeriod;
 				}
-				
 
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
@@ -270,19 +269,12 @@ namespace game_framework {
 					}
 					else { //OnTheGround的時候，按跳
 						if (canJump) {
-							if ( block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1
-								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1) {
+							if ( (block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1
+								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1
+								&&!isClimbing)||(isClimbing&&(leftPressed||rightPressed))) {
 								isJumping = true;
 								isFalling = false;
-								if (isClimbing) {
-									climbjumpstate = 1;
-								}
 								isClimbing=false;
-								if (climbjumpstate==1)
-								{
-									x += 5;
-									climbjumpstate = 0;
-								}
 								isOnTheGround = false;
 								jumpingHeight += dy;
 								y -= dy;
@@ -290,6 +282,7 @@ namespace game_framework {
 							else { // 小縫隙或是剛好頂到頭，接著準備落地
 								isJumping = false;
 								isFalling = true;
+								isClimbing = false;
 								isOnTheGround = false;
 								y = (y / 32) * 32;
 							}
@@ -366,7 +359,8 @@ namespace game_framework {
 							canJump = true;
 						}
 						if (block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != 1
-							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1) {
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 6) {
 							y += dy;
 							jumpingHeight = 0; //保持掉落就歸0的好習慣
 						}
