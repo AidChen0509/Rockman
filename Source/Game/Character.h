@@ -275,11 +275,6 @@ namespace game_framework {
 								isJumping = true;
 								isFalling = false;
 								isClimbing=false;
-								if (climbjumpstate==1)
-								{
-									x += 5;
-									climbjumpstate = 0;
-								}
 								isOnTheGround = false;
 								jumpingHeight += dy;
 								y -= dy;
