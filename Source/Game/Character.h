@@ -170,7 +170,7 @@ namespace game_framework {
 							climbing[0].ToggleAnimation();
 						}
 						y -= 3;
-						x = (mid_x / 32) * 32 - 9;
+						x = (mid_x / 32) * 32 - 8;
 					}
 					else if (block_element_3darray[down_y / 32][(mid_x) / 32] == 0)
 					{
@@ -193,17 +193,17 @@ namespace game_framework {
 							climbing[0].ToggleAnimation();
 						}
 						y += 3;
-						x = (mid_x / 32) * 32 - 9;
+						x = (mid_x / 32) * 32 - 8;
 					}
 					else if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 1 && isClimbing) {
 						isClimbing = false;
 						isfirstclimb = true;
-						x += 5;
+						//x += 5;
 					}
 					else if (block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 0 && isClimbing) {
 						isClimbing = false;
 						isfirstclimb = true;
-						x += 5;
+						//x += 5;
 					}
 				}
 				// 著地後速度回歸為10
@@ -280,7 +280,7 @@ namespace game_framework {
 								isClimbing=false;
 								if (climbjumpstate==1)
 								{
-									x += 5;
+									//x += 5;
 									climbjumpstate = 0;
 								}
 								isOnTheGround = false;
@@ -366,7 +366,8 @@ namespace game_framework {
 							canJump = true;
 						}
 						if (block_element_3darray[(down_y + dy) / 32][(left_x) / 32] != 1
-							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1) {
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 1
+							&& block_element_3darray[(down_y + dy) / 32][(right_x) / 32] != 6) {
 							y += dy;
 							jumpingHeight = 0; //保持掉落就歸0的好習慣
 						}
@@ -506,8 +507,8 @@ namespace game_framework {
 		//int x = 1792;
 		//int y = 2304;
 
-		// 測試
-		//int x = 2050*2;
+		// 廊道前
+		//int x = 2164*2;
 		//int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度

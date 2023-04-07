@@ -104,31 +104,37 @@ namespace game_framework {
 									  //最右邊的index : index_x + 16 //若 >= 208，不做array的access
 									  //最下面的index : index_y + 16 //若 >= 144，不做array的access
 			if (transitionState == 0) {
-				if (rightPressed) {
-					// 王關之前
-					if (stage_x < 4096 && dataSource._data[stage_y / 32][(stage_x + 512) / 32] != -1
-						&& rockman.getX() - 232 > 0 && dataSource._data[stage_y / 32][(rockman.getX() - 232) / 32] != -1) {
-						stage_x = rockman.getX() - 2 * 116;
-					}
+				// 王關之前的camera
+				// 每個and的註解，以符合所有情況，應該沒問題了
+				// 1)第一個廊道前最後一張512*512的座標 = 4096
+				// 2)檢查camera向右移動會不會超出地圖邊界
+				// 3)因為最一開始的圖示貼在邊邊，x座標已經是0了，不能再去access -1 的index
+				// 4)檢查除了開場以外的camera向左會不會超出地圖邊界
+				if (stage_x < 4096 && dataSource._data[stage_y / 32][(stage_x + 512 + 1) / 32] != -1
+					&& rockman.getX() - 232 > 0 && dataSource._data[stage_y / 32][(rockman.getX() - 232) / 32] != -1) {
+					stage_x = rockman.getX() - 2 * 116;
 				}
-				if (leftPressed) {
-					if (stage_x > 0 && dataSource._data[stage_y / 32][(stage_x-1)/32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
-						&& rockman.getX() + 280 < 4608 && dataSource._data[stage_y / 32][(rockman.getX() + 280) / 32] != -1){ //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
-						stage_x = rockman.getX() - 2 * 116;
-					}
+				// 我更改初始畫面到到廊道前，發現需要加上這個else if 不然會跑掉
+				else if (stage_x > 0 && dataSource._data[stage_y / 32][(stage_x - 1) / 32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
+					&& rockman.getX() + 280 < 4608 && dataSource._data[stage_y / 32][(rockman.getX() + 280) / 32] != -1) { //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
+					stage_x = rockman.getX() - 2 * 116;
 				}
+
+				/* 不再需要按左右才追蹤，不符合camera的設計概念，棄用
+			 if (leftPressed) {
+				else if (stage_x > 0 && dataSource._data[stage_y / 32][(stage_x-1)/32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
+					&& rockman.getX() + 280 < 4608 && dataSource._data[stage_y / 32][(rockman.getX() + 280) / 32] != -1){ //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
+					stage_x = rockman.getX() - 2 * 116;
+				}
+			 }
+				*/
 			}
 			else if (transitionState == 30) { //廊道的camera
-				if (rightPressed) {
-					if (stage_x < 5632 && rockman.getX() - 232 > 4608) {
-						stage_x = rockman.getX() - 2 * 116;
-					}
+				// 因為很單純，所以直接寫死
+				if ((stage_x < 5632 && rockman.getX() - 232 > 4608) || (stage_x > 4608 && rockman.getX() + 280 < 6144)) {
+					stage_x = rockman.getX() - 2 * 116;
 				}
-				if (leftPressed) {
-					if (stage_x > 4608 && rockman.getX() + 280 < 6144) { //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
-						stage_x = rockman.getX() - 2 * 116;
-					}
-				}
+
 			}
 			else { //轉場觸發
 				if (transitionState == 1) { //向上轉場
@@ -161,11 +167,12 @@ namespace game_framework {
 		};
 		void Onshow() {
 			cutman_stage.ShowBitmap(2);
-
+			
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnShow();
 			}
+			
 
 			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
