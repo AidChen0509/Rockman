@@ -197,6 +197,7 @@ namespace game_framework {
 					}
 					else if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 1 && isClimbing) {
 						isClimbing = false;
+						isResting = true;
 						isfirstclimb = true;
 						//x += 5;
 					}
