@@ -321,7 +321,7 @@ namespace game_framework {
 				location[i][1] = _initBulletY;
 			}
 		};
-		~Beak() {};
+		~Beak() override {};
 		void OnInit() override {
 			if (direction == 0) { //面左
 				open.LoadBitmapByString({
@@ -569,5 +569,80 @@ namespace game_framework {
 
 	};
 
+	
+	class Octopus : public Enemy
+	{
+	public:
+		Octopus(int initX, int initY) {
+			_initX = initX;
+			_initY = initY;
+		};
+		~Octopus() override {};
+		void OnInit() override {
+			open.LoadBitmapByString({ "resources/enemy/octopus/octopus0.bmp", "resources/enemy/octopus/octopus1.bmp", "resources/enemy/octopus/octopus2.bmp", }, RGB(128, 0, 128));
+			close.LoadBitmapByString({ "resources/enemy/octopus/octopus2.bmp", "resources/enemy/octopus/octopus1.bmp", "resources/enemy/octopus/octopus0.bmp", }, RGB(128, 0, 128));
+			// TODO: timer setup
+
+			open.SetAnimation(200, false); // TODO: adjustment of the delay
+			close.SetAnimation(200, false);
+			open.SetTopLeft(_initX, _initY);
+			close.SetTopLeft(_initX, _initY);
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+
+		}
+		void OnShow() {
+
+		}
+
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap bullet) {
+
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+
+		}
+
+
+		// getter
+		int getX() {
+
+		}
+		int getY() {
+
+		}
+		int getDamage() {
+
+		}
+		int getBlood() {
+
+		}
+		CMovingBitmap getBitmap() {
+
+		}
+
+		// return true代表攻擊從洛克人的右手邊來
+		// return false代表攻擊從左手邊來
+		bool isAttackFromRight() {
+
+		}
+	private:
+		int _initX;
+		int _initY;
+		int x;
+		int y;
+		int blood = 6;
+
+		bool isActivate = false;
+		bool isOpen = false;
+
+		CMovingBitmap open;
+		CMovingBitmap close;
+		CMovingBitmap timer;
+
+	};
 
 };
