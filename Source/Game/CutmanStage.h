@@ -23,6 +23,17 @@ namespace game_framework {
 			enemyContainer.push_back(new Beak(880 * 2, 1488 * 2, 1));
 			enemyContainer.push_back(new Beak(944 * 2, 1360 * 2, 0));
 			enemyContainer.push_back(new Beak(912 * 2, 1312 * 2, 0));
+			// 慢慢調delay
+			enemyContainer.push_back(new Octopus(1344 * 2, 1184 * 2, 1344 * 2, 1200 * 2, 800)); //800
+			// enemyContainer.push_back(new Octopus(1344 * 2, 1200 * 2, 1344 * 2, 1184 * 2, 800)); //800
+			enemyContainer.push_back(new Octopus(1376 * 2, 1120 * 2, 1376 * 2, 1152 * 2, 1200)); // 1200
+			enemyContainer.push_back(new Octopus(1456 * 2, 1152 * 2, 1360 * 2, 1152 * 2, 0)); 
+
+			enemyContainer.push_back(new Octopus(1488 * 2, 896 * 2, 1312 * 2, 896 * 2, 0)); 
+			enemyContainer.push_back(new Octopus(1392 * 2, 864 * 2, 1312 * 2, 864 * 2, 0));
+			enemyContainer.push_back(new Octopus(1360 * 2, 896 * 2, 1360 * 2, 944 * 2, 2000));
+			enemyContainer.push_back(new Octopus(1344 * 2, 832 * 2, 1456 * 2, 832 * 2, 2000));
+
 		};
 		~CutmanStage() {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
@@ -208,13 +219,13 @@ namespace game_framework {
 		int dy = 8;
 		int transitionState = 0;
 		// 初始點
-		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
-		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
+		// int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
+		// int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
 
 
 		//剪刀窗戶的地方
-		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
-		//int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
+		int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
+		int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
 
 		//int stage_x = 2048 * 2;
 		//int stage_y = 768 * 2;

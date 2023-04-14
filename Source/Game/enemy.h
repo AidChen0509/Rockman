@@ -580,32 +580,47 @@ namespace game_framework {
 			startY = initY;
 			this->endX = endX;
 			this->endY = endY;
-
 			_initDelay = delay;
+			// x = startX;
+			// y = startY;
 		};
 		Octopus() = delete;
 		~Octopus() override {};
 		void OnInit() override {
 			open.LoadBitmapByString({ "resources/enemy/octopus/octopus0.bmp", "resources/enemy/octopus/octopus1.bmp", "resources/enemy/octopus/octopus2.bmp", }, RGB(128, 0, 128));
-			close.LoadBitmapByString({ "resources/enemy/octopus/octopus2.bmp", "resources/enemy/octopus/octopus1.bmp", "resources/enemy/octopus/octopus0.bmp", }, RGB(128, 0, 128));
+			close.LoadBitmapByString({ 
+				"resources/enemy/octopus/octopus2.bmp",
+				"resources/enemy/octopus/octopus1.bmp",
+				"resources/enemy/octopus/octopus0.bmp", 
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				}, RGB(128, 0, 128));
 			// TODO: timer setup
-			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(256, 256, 256));
-			timer.SetAnimation(_initDelay, false);
+			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(_initDelay, true);
 
-			open.SetAnimation(200, false); // TODO: adjustment of the delay
-			close.SetAnimation(200, false);
-			open.SetTopLeft(startX, startY);
-			close.SetTopLeft(startX, startY);
+			open.SetAnimation(100, true); // TODO: adjustment of the delay
+			close.SetAnimation(100, true);
 		}
 		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
 			// activate 判定
 			if ((startY / 512 == rockmanY / 512) &&
-				((startY / 512)*512 == stage_x) &&
-				(stage_x < startY && startY < stage_x + 512) &&
-				(stage_y < startY && startY < stage_y + 512)) {
+				((startY / 512)*512 == stage_y) && //同一張512*512
+				(stage_x < startX && startX < stage_x + 512)/* &&
+				(stage_y < startY && startY < stage_y + 512)*/) {
 				isActivate = true;
 			}
 			else {
+				// 不是reset害他在Y軸的回程時會順移的
 				reset();
 			}
 			if (isActivate) {
@@ -616,74 +631,91 @@ namespace game_framework {
 				}
 				else if(state == 0){
 					if (timer.IsAnimationDone()) {
+						isOpen = true;
+						open.ToggleAnimation();
 						state = 1;
 					}
 				}
 				// 起初的設定為close在初始位置，經過delay過後，轉openAnimation並移動，
 				// 到點的瞬間改成closeAnimation，把close load多張一點，
 				// 等close animation done的時候轉為openAnimation開始移動回原點
-				else if (state == 1) { //起點，open並移動到目的
-					if(close.IsAnimationDone()) {
-						isOpen = true;
-						if ((x == endX) && (y = endY)) {
-							//到達目的，同時toggle close的animation
-							isOpen = false;
-							close.ToggleAnimation();
-							state == 2;
+				else if (state == 1) { //起點，預設進來的時候是open剛被toggle，邊開就可以邊移動了，所以不需要判斷isDone
+					if ((x == endX) && (y == endY)) {
+						//到達目的，同時toggle close的animation
+						isOpen = false;
+						open.SetFrameIndexOfBitmap(0);
+						close.ToggleAnimation();
+						state = 2;
+					}
+					else
+					{
+						if (endX > startX) { // 起點在左邊，目的為右邊，dx用加的
+							x += dx;
 						}
-						else
-						{
-							if (endX > startX) { // 起點在左邊，目的為右邊，dx用加的
-								x += dx;
-							}
-							else {
-								x -= dx;
-							}
-							if (endY > startY) { //起點在上面，目的為下方，dy用加的
-								y += dy;
-							}
-							else {
-								y -= dy;
-							}
+						else if(endX < startX) {
+							x -= dx;
+						}
+						if (endY > startY) { //起點在上面，目的為下方，dy用加的
+							y += dy;
+						}
+						else if (endY < startY) {
+							y -= dy;
 						}
 					}
 				}
-				else if (state == 2) {
+				else if (state == 2) { // isOpen = false，且close剛被toggle
+									   // 是一個剛抵達終點的state
 					if (!close.IsAnimationDone()) {
 						//關閉動畫還沒結束繼續原地發呆
 					}
 					else { //從目的地open準備回原點
+						close.SetFrameIndexOfBitmap(0);
 						isOpen = true;
 						open.ToggleAnimation();
 						state = 3;
 					}
 				}
-				else if (state == 3) { // 開始移動
-					if ((x == startX) && (y = startY)) {
+				else if (state == 3) {  // isOpen = true，open剛被toggle
+										// 開始移動回起點
+					if ((x == startX) && (y == startY)) {
 						// 到達原點
+						open.SetFrameIndexOfBitmap(0);
+						isOpen = false;
 						close.ToggleAnimation();
-						state = 1;
+						state = 4;
 					}
 					else {
 						if (endX > startX) { // 起點在左邊，目的為右邊，回程dx用減的
 							x -= dx;
 						}
-						else {
+						else if(endX < startX){
 							x += dx;
 						}
 						if (endY > startY) { //起點在上面，目的為下方，dy用減的
 							y -= dy;
 						}
-						else {
+						else if (endY < startY) {
 							y += dy;
 						}
 					}
 				}
+				else if (state == 4) {
+					if (close.IsAnimationDone()) {
+						close.SetFrameIndexOfBitmap(0);
+						isOpen = true;
+						open.ToggleAnimation();
+						state = 1;
+					}
+				}
 			}
+			open.SetTopLeft(x - stage_x, y - stage_y);
+			close.SetTopLeft(x - stage_x, y - stage_y);
 
 		}
 		void OnShow() {
 			if (isActivate) {
+				// timer 有沒有showg是關鍵
+				timer.ShowBitmap(2);
 				if (isOpen) {
 					open.ShowBitmap(2);
 				}
@@ -695,13 +727,15 @@ namespace game_framework {
 
 		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
 		bool beenAttacked(CMovingBitmap bullet) {
-
+			// TODO
+			return false;
 		}
 
 		// 將每個敵人跟rockman做交流
 		// 回傳是否有打中洛克人
 		bool successfullyAttack(CMovingBitmap rockman) {
-
+			// TODO
+			return false;
 		}
 
 		void reset() {
@@ -721,7 +755,8 @@ namespace game_framework {
 			return y;
 		}
 		int getDamage() {
-
+			// 應該是4沒錯
+			return 4;
 		}
 		int getBlood() override{
 			return blood;
@@ -733,7 +768,8 @@ namespace game_framework {
 		// return true代表攻擊從洛克人的右手邊來
 		// return false代表攻擊從左手邊來
 		bool isAttackFromRight() {
-
+			// TODO
+			return true;
 		}
 
 	private:
