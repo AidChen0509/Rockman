@@ -4,6 +4,8 @@ namespace game_framework {
 	{
 	public:
 		CutmanStage() {
+
+			dataSource.readFile();
 			rockman.setmap(dataSource._data);
 			// 初始化怪物
 			enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
@@ -24,8 +26,7 @@ namespace game_framework {
 			enemyContainer.push_back(new Beak(944 * 2, 1360 * 2, 0));
 			enemyContainer.push_back(new Beak(912 * 2, 1312 * 2, 0));
 			// 慢慢調delay
-			enemyContainer.push_back(new Octopus(1344 * 2, 1184 * 2, 1344 * 2, 1200 * 2, 800)); //800
-			// enemyContainer.push_back(new Octopus(1344 * 2, 1200 * 2, 1344 * 2, 1184 * 2, 800)); //800
+			enemyContainer.push_back(new Octopus(1344 * 2, 1184 * 2, 1344 * 2, 1200 * 2, 800)); // 800
 			enemyContainer.push_back(new Octopus(1376 * 2, 1120 * 2, 1376 * 2, 1152 * 2, 1200)); // 1200
 			enemyContainer.push_back(new Octopus(1456 * 2, 1152 * 2, 1360 * 2, 1152 * 2, 0)); 
 
@@ -33,6 +34,17 @@ namespace game_framework {
 			enemyContainer.push_back(new Octopus(1392 * 2, 864 * 2, 1312 * 2, 864 * 2, 0));
 			enemyContainer.push_back(new Octopus(1360 * 2, 896 * 2, 1360 * 2, 944 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1344 * 2, 832 * 2, 1456 * 2, 832 * 2, 2000));
+
+			enemyContainer.push_back(new Octopus(1408 * 2, 688 * 2, 1408 * 2, 704 * 2, 2000));
+			enemyContainer.push_back(new Octopus(1392 * 2, 672 * 2, 1376 * 2, 672 * 2, 0));
+			enemyContainer.push_back(new Octopus(1456 * 2, 608 * 2, 1312 * 2, 608 * 2, 0));
+			enemyContainer.push_back(new Octopus(1488 * 2, 576 * 2, 1312 * 2, 576 * 2, 0));
+
+			enemyContainer.push_back(new Octopus(1328 * 2, 416 * 2, 1312 * 2, 416 * 2, 0));
+			enemyContainer.push_back(new Octopus(1328 * 2, 368 * 2, 1328 * 2, 448 * 2, 2000));
+			enemyContainer.push_back(new Octopus(1408 * 2, 384 * 2, 1456 * 2, 384 * 2, 2000));
+			enemyContainer.push_back(new Octopus(1472 * 2, 288 * 2, 1472 * 2, 336 * 2, 2000));
+			enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
 
 		};
 		~CutmanStage() {
@@ -219,13 +231,13 @@ namespace game_framework {
 		int dy = 8;
 		int transitionState = 0;
 		// 初始點
-		// int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
-		// int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
+		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
+		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
 
 
 		//剪刀窗戶的地方
-		int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
-		int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
+		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
+		//int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
 
 		//int stage_x = 2048 * 2;
 		//int stage_y = 768 * 2;
@@ -246,7 +258,7 @@ namespace game_framework {
 		bool rightPressed;
 
 		vector<Enemy*> enemyContainer;
-
+		vector<vector<int>> map;
 		CutmanStageData dataSource;
 		CMovingBitmap cutman_stage;
 		CMovingBitmap rockman_blood;

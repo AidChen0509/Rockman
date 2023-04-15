@@ -494,12 +494,12 @@ namespace game_framework {
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
 		//vector<int> initY_by_stage = { 4368};
-		// int x = 232;
-		// int y = 4368;
+		int x = 232;
+		int y = 4368;
 
 		// 剪刀窗戶的腳色位置
-		int x = 1792;
-		int y = 2304;
+		// int x = 1792;
+		// int y = 2304;
 
 		// 廊道前
 		//int x = 2164*2;
