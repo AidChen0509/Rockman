@@ -115,6 +115,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -264,7 +265,6 @@
     <ClInclude Include="Source\Game\Character.h" />
     <ClInclude Include="Source\Game\config.h" />
     <ClInclude Include="Source\Game\CutmanStage.h" />
-    <ClInclude Include="Source\Game\cutman_stage_data.h" />
     <ClInclude Include="Source\Game\enemy.h" />
     <ClInclude Include="Source\Game\mygame.h" />
     <ClInclude Include="Source\Library\audio.h" />

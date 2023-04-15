@@ -22,6 +22,8 @@ namespace game_framework {
 		virtual int getY() = 0;
 		virtual int getDamage() = 0;
 		virtual int getBlood() = 0;
+		virtual bool getIsActivate() = 0;
+		virtual bool isDead() = 0;
 		virtual CMovingBitmap getBitmap() = 0;
 
 		// return true代表攻擊從洛克人的右手邊來
@@ -37,14 +39,13 @@ namespace game_framework {
 	class Heli : public Enemy
 	{
 	public:
-		// map 好像不需要
 		Heli(int x, int y) { //生成位置
 			// 不能將OnInit寫在這會直接出錯?
 			_initX = x;
 			_initY = y;
 		};
 		~Heli() override{};
-
+		Heli() = delete;
 		void OnInit() override{
 			left.LoadBitmapByString({"resources/enemy/heli/heliLookLeft1.bmp", "resources/enemy/heli/heliLookLeft2.bmp"}, RGB(128, 0, 128));
 			right.LoadBitmapByString({ "resources/enemy/heli/heliLookRight1.bmp", "resources/enemy/heli/heliLookRight2.bmp" }, RGB(128, 0, 128));
@@ -189,16 +190,19 @@ namespace game_framework {
 				}
 			}
 			else { //被打死blood = 0
-				if (rockmanX <= _initX + 280 && rockmanX >= _initX - 232) //介於生成地點的那張圖512之間
-					canActivate = false;
-				else
-					canActivate = true;
 				isActivate = false;
-				isUpAttack = false;
-				isDownAttack = false;
-				blood = 1; //被打死了，血量重製
-				dx = 3;
-				dy = 0; //我後來加的
+				if (rockmanX <= _initX + 280 && rockmanX >= _initX - 232) { //介於生成地點的那張圖512之間
+					canActivate = false;
+					//不重製，尤其是blood，會導致進入blood的if
+				}
+				else {//離開這個範圍後，就可以activate了
+					canActivate = true;
+					isUpAttack = false;
+					isDownAttack = false;
+					blood = 1; //被打死了，血量重製
+					dx = 3;
+					dy = 0; //我後來加的
+				}
 			}
 		};
 		void OnShow() override {
@@ -214,19 +218,22 @@ namespace game_framework {
 			}
 		};
 		
-		// 怪物被打中與否
+		// 怪物被打中與否，有被打到洛克人子彈要消失
 		bool beenAttacked(CMovingBitmap bullet) override {
-			if (CMovingBitmap::IsOverlap(bullet, currentBitmap)) {
+			// 應該要isActivate才能被子彈打到
+			if ((CMovingBitmap::IsOverlap(bullet, currentBitmap)) && isActivate) {
 				blood -= 1;
 				return true;
 			}
 			return false;
 		};
 		// 怪物成功打到洛克人與否
+		// @param rockman可根據洛克人的移動狀態，丟bitmap近來判斷，這樣判斷的更精確
 		bool successfullyAttack(CMovingBitmap rockman) override {
 			// 視不同怪物來實作邏輯
 			// Heli只有碰撞攻擊，所以判斷是否重疊就好
-			if (CMovingBitmap::IsOverlap(rockman, currentBitmap)) { //有打中
+			if (CMovingBitmap::IsOverlap(rockman, currentBitmap) && isActivate) { //有打中
+				// Concern: 這裡判斷攻擊方向的方式，有可能不夠精確，但每秒32次的頻率之下，感覺不會有問題
 				if (rockman.GetLeft() < currentBitmap.GetLeft()) {
 					attackFromRight = true;
 				}
@@ -237,13 +244,8 @@ namespace game_framework {
 			}
 			return false;
 		}
-		// 對於有子彈的怪物，可以實作的方式
-		//for i = 0 to allBitmap:
-		//	if CMovingBitmap::IsOverlap(allBitmap[i], rockman)
-		//		return 
-		//return CMovingBitmap::IsOverlap(left, rockman); // or false
 
-		bool isDead() {
+		bool isDead() override{
 			if (blood <= 0) {
 				return true;
 			}
@@ -251,8 +253,12 @@ namespace game_framework {
 				return false;
 			}
 		}
-
+		bool getIsActivate() override {
+			// 怪物有無啟動(有無在畫面上)
+			return isActivate;
+		}
 		bool isAttackFromRight() {
+			// return true if the enemy is attack from the rockman's right side
 			return attackFromRight;
 		}
 
@@ -264,6 +270,7 @@ namespace game_framework {
 			return y;
 		}
 		CMovingBitmap getBitmap() override {
+			// not sure is needed or not
 			return currentBitmap;
 		};
 		int getDamage() override{
@@ -305,23 +312,25 @@ namespace game_framework {
 			direction = direct;
 			_initX = x;
 			_initY = y;
-			if (direct == 0) {
+			if (direct == 0) { //砲台面左，子彈從左中噴出
 				_initBulletX = x;
 				_initBulletY = y + 16;
 			}
-			else {
+			else {  //砲台面右，子彈從右中噴出
 				_initBulletX = x + 32;
 				_initBulletY = y + 16;
 			}
 			for (int i = 0; i < 4; i++)
 			{
+				//把4顆子彈的初始位置設定好
 				// X
 				location[i][0] = _initBulletX;
 				// Y
 				location[i][1] = _initBulletY;
 			}
 		};
-		~Beak() {};
+		Beak() = delete;
+		~Beak() override {};
 		void OnInit() override {
 			if (direction == 0) { //面左
 				open.LoadBitmapByString({
@@ -351,7 +360,7 @@ namespace game_framework {
 					"resources/enemy/beak/beakLeft0.bmp",
 					}, RGB(128, 0, 128));
 			}
-			else {
+			else {  //面右
 				open.LoadBitmapByString({
 					"resources/enemy/beak/beakRight0.bmp",
 					"resources/enemy/beak/beakRight1.bmp",
@@ -383,7 +392,7 @@ namespace game_framework {
 			{
 				bullet[i].LoadBitmapByString({ "resources/enemy/beak/bullet.bmp" }, RGB(128, 0, 128));
 			}
-			// 找到bug了，要剪掉stage才可以
+			// 找到bug了，setTopLeft要減掉stage才會是相對位置啦靠杯
 			//open.SetTopLeft(_initX, _initY);
 			//close.SetTopLeft(_initX, _initY);
 
@@ -391,54 +400,78 @@ namespace game_framework {
 			close.SetAnimation(200, true);
 		}
 		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
-			if ((_initY / 512 == rockmanY / 512) && 
-				(stage_x < _initX && _initX < stage_x + 512) &&
-				(stage_y < _initY && _initY < stage_y + 512)) {
-				isActivate = true;
-			}
-			else {
-				reset();
-				isActivate = false;
-			}
-			// 開砲台動畫->發出子彈->關砲台動作->隔一下之後->start
-			if (isActivate) {
-				if (state == 0) { //toggle開砲台
-					state = 1;
-					open.ToggleAnimation();
+			if(blood > 0){
+				if ((_initY / 512 == rockmanY / 512) && 
+					(stage_x < _initX && _initX < stage_x + 512) &&
+					(stage_y < _initY && _initY < stage_y + 512)) {
+					// 依照camera帶到的時間activate
+					isActivate = true;
 				}
-				if (state == 1) { //已經toggle開炮了
-					if (open.IsAnimationDone()) { //動畫結束，開始噴射子彈
-						for (int i = 0; i < 4; i++)
-						{
-							if (i == 0) {
-								if (!isShot[i]) {
-									isShot[i] = true;
+				else {
+					resetBullet();
+					isActivate = false;
+				}
+				// 開砲台動畫->發出子彈->關砲台動作->隔一下之後->start
+				if (isActivate) {
+					if (state == 0) { //toggle開砲台
+						state = 1;
+						open.ToggleAnimation();
+					}
+					if (state == 1) { //已經toggle開炮了
+						if (open.IsAnimationDone()) { //動畫結束，開始噴射子彈
+							for (int i = 0; i < 4; i++)
+							{
+								if (i == 0) {
+									if (!isShot[i]) {
+										isShot[i] = true;
+									}
 								}
+								else {
+									if (!isShot[i] && distance[i - 1] > 4 * 32) { //看起來是差四格，下一顆才能噴射
+										isShot[i] = true;
+									}
+								}
+							}
+							if (distance[3] > 64) {
+								// 更改一，這裡需要把圖歸0，才不會glitch
+								open.SetFrameIndexOfBitmap(0);
+								state = 2;
+								// 可以開始關砲台了
+							}
+						}
+					}
+					if (state == 2) { // toggle 關炮
+						close.ToggleAnimation();
+						state = 3;
+					}
+					if (state == 3) {
+						if (close.IsAnimationDone()) {
+							// closeAnimation會很久，所以可以確定跑完，子彈也飛遠了消失了
+							state = 0;
+							resetBullet();
+						}
+					}
+					for (int i = 0; i < 4; i++)
+					{
+						if (isShot[i]) {
+							if (direction == 0) { //面左
+								location[i][0] -= speedX;
+								location[i][1] += speedY[i];
+								distance[i] += speedX;
 							}
 							else {
-								if (!isShot[i] && distance[i - 1] > 4 * 32) { //看起來是差四格，下一顆才能噴射
-									isShot[i] = true;
-								}
+								location[i][0] += speedX;
+								location[i][1] += speedY[i];
+								distance[i] += speedX;
 							}
 						}
-						if (distance[3] > 64) {
-							// 更改一，這裡需要把圖歸0，才不會glitch
-							open.SetFrameIndexOfBitmap(0);
-							state = 2;
-							// 可以開始關砲台了
-						}
+						bullet[i].SetTopLeft(location[i][0] - stage_x, location[i][1] - stage_y);
 					}
 				}
-				if (state == 2) { // toggle 關炮
-					close.ToggleAnimation();
-					state = 3;
-				}
-				if (state == 3) {
-					if (close.IsAnimationDone()) {
-						state = 0;
-						reset();
-					}
-				}
+			}
+			else { // blood <= 0
+				// 把原本射出去的子彈繼續射完
+				isActivate = false;
 				for (int i = 0; i < 4; i++)
 				{
 					if (isShot[i]) {
@@ -453,7 +486,24 @@ namespace game_framework {
 							distance[i] += speedX;
 						}
 					}
+					/* 這段感覺不用，本來是希望超出畫面就變false這樣就不會show了，但超出畫面本來就show也show不出來，所以先註解掉
+					if (!(location[i][0] < stage_x + 512 && location[i][0] > stage_x && location[i][1] > stage_y && location[i][1] < stage_y+512)) {
+						isShot[i] = false;
+					}
+					*/
 					bullet[i].SetTopLeft(location[i][0] - stage_x, location[i][1] - stage_y);
+				}
+				if ((_initY / 512 == rockmanY / 512) &&
+					(stage_x < _initX && _initX < stage_x + 512) &&
+					(stage_y < _initY && _initY < stage_y + 512)) {
+					// 在範圍內不做事
+				}
+				else {
+					// 出去範圍後，初始化
+					resetBullet();
+					blood = 1;
+					state = 0;
+					isActivate = false;
 				}
 			}
 			open.SetTopLeft(_initX - stage_x, _initY - stage_y);
@@ -465,10 +515,10 @@ namespace game_framework {
 					open.ShowBitmap(2);
 				if (state == 2 || state == 3)
 					close.ShowBitmap(2);
-				for (int i = 0; i < 4; i++){
-					if(isShot[i])
-						bullet[i].ShowBitmap(2);
-				}
+			}
+			for (int i = 0; i < 4; i++) {
+				if (isShot[i])
+					bullet[i].ShowBitmap(2);
 			}
 		}
 		
@@ -500,11 +550,23 @@ namespace game_framework {
 			{
 				if (isShot[i] && CMovingBitmap::IsOverlap(bullet[i], rockman)) {
 					damage = 2;
+					if (rockman.GetLeft() <= bullet[i].GetLeft()) {
+						attackFromRight = true;
+					}
+					else {
+						attackFromRight = false;
+					}
 					return true;
 				}
 			}
 			if (CMovingBitmap::IsOverlap(open, rockman)) {
 				damage = 1;
+				if (rockman.GetLeft() <= open.GetLeft()) {
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
 				return true;
 			}
 			return false;
@@ -516,22 +578,29 @@ namespace game_framework {
 			return _initY;
 		}
 		int getDamage() override {
-
 			return damage;
 		}
 		int getBlood() override {
 			return blood;
 		}
-
+		bool getIsActivate() override {
+			return isActivate;
+		}
+		bool isDead() override {
+			if (blood <= 0)
+				return true;
+			else
+				return false;
+		}
 		// 不確定用不用的到
 		CMovingBitmap getBitmap() override {
 			return open;
 		}
 
 		bool isAttackFromRight() override {
-			return true;
+			return attackFromRight;
 		}
-		void reset() {
+		void resetBullet() {
 			for (int i = 0; i < 4; i++)
 			{
 				distance[i] = 0;
@@ -540,6 +609,7 @@ namespace game_framework {
 				isShot[i] = false;
 			}
 		}
+
 	private:
 		int state = 0;
 		bool isActivate;
@@ -550,6 +620,7 @@ namespace game_framework {
 		int _initY;
 		int _initBulletX;
 		int _initBulletY;
+		bool attackFromRight;
 
 		int blood = 1;
 
@@ -569,5 +640,249 @@ namespace game_framework {
 
 	};
 
+	
+	class Octopus : public Enemy
+	{
+	public:
+		Octopus(int initX, int initY, int endX, int endY, int delay) {
+			startX = initX;
+			startY = initY;
+			this->endX = endX;
+			this->endY = endY;
+			_initDelay = delay;
+		};
+		Octopus() = delete;
+		~Octopus() override {};
+		void OnInit() override {
+			open.LoadBitmapByString({ "resources/enemy/octopus/octopus0.bmp", "resources/enemy/octopus/octopus1.bmp", "resources/enemy/octopus/octopus2.bmp", }, RGB(128, 0, 128));
+			close.LoadBitmapByString({ 
+				"resources/enemy/octopus/octopus2.bmp",
+				"resources/enemy/octopus/octopus1.bmp",
+				"resources/enemy/octopus/octopus0.bmp", 
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				"resources/enemy/octopus/octopus0.bmp",
+				}, RGB(128, 0, 128));
+			//timer setup
+			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(_initDelay, true);
+
+			open.SetAnimation(100, true); // TODO: adjustment of the delay
+			close.SetAnimation(100, true);
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+			// activate 判定
+			if ((startY / 512 == rockmanY / 512) &&
+				((startY / 512)*512 == stage_y) && //同一張512*512
+				(stage_x < startX && startX < stage_x + 512)/* &&
+				(stage_y < startY && startY < stage_y + 512)*/) {
+				if (blood > 0)
+					isActivate = true;
+				else
+					isActivate = false;
+			}
+			else { // 在範圍外，不管有沒有死，都要reset
+				reset();
+			}
+		
+			if (isActivate) {
+				// TODO
+				if (state == -1) { //跑delay
+					timer.ToggleAnimation();
+					state = 0;
+				}
+				else if(state == 0){
+					if (timer.IsAnimationDone()) {
+						isOpen = true;
+						open.ToggleAnimation();
+						state = 1;
+					}
+				}
+				// 起初的設定為close在初始位置，經過delay過後，轉openAnimation並移動，
+				// 到點的瞬間改成closeAnimation，把close load多張一點，
+				// 等close animation done的時候轉為openAnimation開始移動回原點
+				else if (state == 1) { //起點，預設進來的時候是open剛被toggle，邊開就可以邊移動了，所以不需要判斷isDone
+					if ((x == endX) && (y == endY)) {
+						//到達目的，同時toggle close的animation
+						isOpen = false;
+						open.SetFrameIndexOfBitmap(0);
+						close.ToggleAnimation();
+						state = 2;
+					}
+					else
+					{
+						if (endX > startX) { // 起點在左邊，目的為右邊，dx用加的
+							x += dx;
+						}
+						else if(endX < startX) {
+							x -= dx;
+						}
+						if (endY > startY) { //起點在上面，目的為下方，dy用加的
+							y += dy;
+						}
+						else if (endY < startY) {
+							y -= dy;
+						}
+					}
+				}
+				else if (state == 2) { // isOpen = false，且close剛被toggle
+									   // 是一個剛抵達終點的state
+					if (!close.IsAnimationDone()) {
+						//關閉動畫還沒結束繼續原地發呆
+					}
+					else { //從目的地open準備回原點
+						close.SetFrameIndexOfBitmap(0);
+						isOpen = true;
+						open.ToggleAnimation();
+						state = 3;
+					}
+				}
+				else if (state == 3) {  // isOpen = true，open剛被toggle
+										// 開始移動回起點
+					if ((x == startX) && (y == startY)) {
+						// 到達原點
+						open.SetFrameIndexOfBitmap(0);
+						isOpen = false;
+						close.ToggleAnimation();
+						state = 4;
+					}
+					else {
+						if (endX > startX) { // 起點在左邊，目的為右邊，回程dx用減的
+							x -= dx;
+						}
+						else if(endX < startX){
+							x += dx;
+						}
+						if (endY > startY) { //起點在上面，目的為下方，dy用減的
+							y -= dy;
+						}
+						else if (endY < startY) {
+							y += dy;
+						}
+					}
+				}
+				else if (state == 4) {
+					if (close.IsAnimationDone()) {
+						close.SetFrameIndexOfBitmap(0);
+						isOpen = true;
+						open.ToggleAnimation();
+						state = 1;
+					}
+				}
+			}
+			open.SetTopLeft(x - stage_x, y - stage_y);
+			close.SetTopLeft(x - stage_x, y - stage_y);
+		}
+		void OnShow() override {
+			if (isActivate) {
+				// timer 有沒有show是關鍵
+				timer.ShowBitmap(2);
+				if (isOpen) {
+					open.ShowBitmap(2);
+				}
+				else {
+					close.ShowBitmap(2);
+				}
+			}
+		}
+
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap rockmanbullet) override {
+			// TODO
+			if (isActivate) {
+				if (CMovingBitmap::IsOverlap(open, rockmanbullet)) {
+					blood -= 1;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+			if (CMovingBitmap::IsOverlap(rockman, open) && isActivate) { //有打中
+				// Concern: 這裡判斷攻擊方向的方式，有可能不夠精確，但每秒32次的頻率之下，感覺不會有問題
+				if (rockman.GetLeft() < open.GetLeft()) {
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		void reset() {
+			state = -1;
+			blood = 6;
+			x = startX;
+			y = startY;
+			isActivate = false;
+			isOpen = false;
+		}
+
+		// getter
+		int getX() {
+			return x;
+		}
+		int getY() {
+			return y;
+		}
+		int getDamage() {
+			// 應該是4沒錯
+			return 4;
+		}
+		int getBlood() override{
+			return blood;
+		}
+		bool getIsActivate() override {
+			return isActivate;
+		}
+		CMovingBitmap getBitmap() override{
+			return open;
+		}
+
+		// return true代表攻擊從洛克人的右手邊來
+		// return false代表攻擊從左手邊來
+		bool isAttackFromRight() {
+			return attackFromRight;
+		}
+		bool isDead() override {
+			if (blood > 0) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
+	private:
+		int startX, startY;
+		int endX, endY;
+		int x, y;
+		int dx = 4, dy = 4;
+		int blood = 5;
+		int _initDelay = 0;
+		int state = -1;
+
+		bool attackFromRight;
+		bool isActivate = false;
+		bool isOpen = false;
+
+		CMovingBitmap open;
+		CMovingBitmap close;
+		CMovingBitmap timer;
+
+	};
 
 };

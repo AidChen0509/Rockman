@@ -4,7 +4,6 @@
 #include <ddraw.h>
 #include "../Library/audio.h"
 #include "../Library/gameutil.h"
-#include "../Game/cutman_stage_data.h"
 #include "../Game/Character.h"
 #include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
@@ -116,7 +115,7 @@ void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CGameStateInit::OnShow()
 {
-	//GotoGameState(GAME_STATE_RUN); //加速開發 先跳過開場
+	GotoGameState(GAME_STATE_RUN); //加速開發 先跳過開場
 	if (!(startBackground.IsAnimationDone() && intoSelect)) { //開場enter且動畫跑完前，開場畫面都要show
 		startBackground.ShowBitmap(2);
 	}

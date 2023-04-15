@@ -498,8 +498,8 @@ namespace game_framework {
 		int y = 4368;
 
 		// 剪刀窗戶的腳色位置
-		//int x = 1792;
-		//int y = 2304;
+		// int x = 1792;
+		// int y = 2304;
 
 		// 廊道前
 		//int x = 2164*2;
