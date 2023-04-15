@@ -95,9 +95,6 @@
     <ClInclude Include="Source\Game\Character.h">
       <Filter>MyGame</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\cutman_stage_data.h">
-      <Filter>MyGame</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\enemy.h">
       <Filter>MyGame</Filter>
     </ClInclude>

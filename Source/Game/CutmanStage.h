@@ -1,12 +1,13 @@
 ﻿#pragma once
+#include <fstream>
 namespace game_framework {
 	class CutmanStage
 	{
 	public:
 		CutmanStage() {
-
-			dataSource.readFile();
-			rockman.setmap(dataSource._data);
+			// map initialize
+			this->readFile();
+			rockman.setmap(map);
 			// 初始化怪物
 			enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
 			enemyContainer.push_back(new Heli(428 * 2, 2178 * 2));
@@ -105,7 +106,7 @@ namespace game_framework {
 				else {
 					transitionState = 2; // 2 代表向上轉場
 				}
-			}else if(dataSource._data[rockmanY / 32][(rockmanX + 2 * (24 - 1 - 4)) / 32] == 4){
+			}else if(map[rockmanY / 32][(rockmanX + 2 * (24 - 1 - 4)) / 32] == 4){
 				if (transitionState == 30) {
 					transitionState = 4; //進王關transition
 				}
@@ -133,20 +134,20 @@ namespace game_framework {
 				// 2)檢查camera向右移動會不會超出地圖邊界
 				// 3)因為最一開始的圖示貼在邊邊，x座標已經是0了，不能再去access -1 的index
 				// 4)檢查除了開場以外的camera向左會不會超出地圖邊界
-				if (stage_x < 4096 && dataSource._data[stage_y / 32][(stage_x + 512 + 1) / 32] != -1
-					&& rockman.getX() - 232 > 0 && dataSource._data[stage_y / 32][(rockman.getX() - 232) / 32] != -1) {
+				if (stage_x < 4096 && map[stage_y / 32][(stage_x + 512 + 1) / 32] != -1
+					&& rockman.getX() - 232 > 0 && map[stage_y / 32][(rockman.getX() - 232) / 32] != -1) {
 					stage_x = rockman.getX() - 2 * 116;
 				}
 				// 我更改初始畫面到到廊道前，發現需要加上這個else if 不然會跑掉
-				else if (stage_x > 0 && dataSource._data[stage_y / 32][(stage_x - 1) / 32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
-					&& rockman.getX() + 280 < 4608 && dataSource._data[stage_y / 32][(rockman.getX() + 280) / 32] != -1) { //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
+				else if (stage_x > 0 && map[stage_y / 32][(stage_x - 1) / 32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
+					&& rockman.getX() + 280 < 4608 && map[stage_y / 32][(rockman.getX() + 280) / 32] != -1) { //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
 					stage_x = rockman.getX() - 2 * 116;
 				}
 
 				/* 不再需要按左右才追蹤，不符合camera的設計概念，棄用
 			 if (leftPressed) {
-				else if (stage_x > 0 && dataSource._data[stage_y / 32][(stage_x-1)/32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
-					&& rockman.getX() + 280 < 4608 && dataSource._data[stage_y / 32][(rockman.getX() + 280) / 32] != -1){ //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
+				else if (stage_x > 0 && map[stage_y / 32][(stage_x-1)/32] != -1  //首先stage_x要先>0，避免out of range，再來要stage_x還沒到最左邊(左邊那格不為-1)，否則不動
+					&& rockman.getX() + 280 < 4608 && map[stage_y / 32][(rockman.getX() + 280) / 32] != -1){ //首先洛克人+280要小於整張地圖最右邊，避免out of range，再來rockman要不在地圖那一層的最右邊的半張區塊
 					stage_x = rockman.getX() - 2 * 116;
 				}
 			 }
@@ -200,6 +201,29 @@ namespace game_framework {
 			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
+		}
+		void readFile() {
+			// [144][208]
+			// -1 for green bg
+			// 0 for air 
+			// 1 for wall
+			// 2 for ladder
+			// 3 for trap
+			// 4 for gate-> trnasition
+			// 5 for out of map->dead
+			// 6 for laddertop
+			ifstream ifs("Source/Maps/cutmanMap.txt");
+			int num;
+			for (int i = 0; i < 144; i++) {
+				vector<int> temp;
+				for (int j = 0; j < 208; j++) {
+					ifs >> num;
+					temp.push_back(num);
+				}
+				map.push_back(temp);
+			}
+
+			ifs.close();
 		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			rockman.OnKeyDown(nChar, nRepCnt, nFlags);
@@ -259,7 +283,7 @@ namespace game_framework {
 
 		vector<Enemy*> enemyContainer;
 		vector<vector<int>> map;
-		CutmanStageData dataSource;
+
 		CMovingBitmap cutman_stage;
 		CMovingBitmap rockman_blood;
 		Character rockman;
