@@ -8,6 +8,7 @@ namespace game_framework {
 			// map initialize
 			this->readFile();
 			rockman.setmap(map);
+			cutman.setmap(map);
 			// 初始化怪物
 			enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
 			enemyContainer.push_back(new Heli(428 * 2, 2178 * 2));
@@ -46,6 +47,7 @@ namespace game_framework {
 			enemyContainer.push_back(new Octopus(1408 * 2, 384 * 2, 1456 * 2, 384 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1472 * 2, 288 * 2, 1472 * 2, 336 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
+			
 
 		};
 		~CutmanStage() {
@@ -88,6 +90,8 @@ namespace game_framework {
 			rockman_blood.SetTopLeft(48, 50);
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 			rockman.OnInit(stage_x, stage_y);
+			// cutman
+			cutman.OnInit();
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnInit();
@@ -115,13 +119,15 @@ namespace game_framework {
 				}
 			}
 
+			rockman.OnMove(stage_x, stage_y, transitionState);
+			// cutman
+			cutman.OnMove(stage_x, stage_y, transitionState);
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
 			
 
-			rockman.OnMove(stage_x, stage_y, transitionState);
 			// 計算array index的一個小概念，供參
 			//int index_x = stage_x/32; //最左邊的index : index_x
 			//int index_y = stage_y/32; //最上面的index : index_y 
@@ -190,15 +196,15 @@ namespace game_framework {
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 		};
 		void Onshow() {
-			cutman_stage.ShowBitmap(2);
 			
+			cutman_stage.ShowBitmap(2);
+			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
+			cutman.OnShow();
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnShow();
 			}
-			
 
-			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
 		}
@@ -255,16 +261,16 @@ namespace game_framework {
 		int dy = 8;
 		int transitionState = 0;
 		// 初始點
-		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
-		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
+		//int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
+		//int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
 
 
 		//剪刀窗戶的地方
 		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
 
-		//int stage_x = 2048 * 2;
-		//int stage_y = 768 * 2;
+		int stage_x = 2048 * 2;
+		int stage_y = 768 * 2;
 
 		
 		// 三個儲存點，之後再處理，X-Y要再對照一下
@@ -287,5 +293,6 @@ namespace game_framework {
 		CMovingBitmap cutman_stage;
 		CMovingBitmap rockman_blood;
 		Character rockman;
+		Cutman cutman;
 	};
 }
