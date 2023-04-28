@@ -115,13 +115,13 @@ namespace game_framework {
 				}
 			}
 
+			rockman.OnMove(stage_x, stage_y, transitionState);
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
 			
 
-			rockman.OnMove(stage_x, stage_y, transitionState);
 			// 計算array index的一個小概念，供參
 			//int index_x = stage_x/32; //最左邊的index : index_x
 			//int index_y = stage_y/32; //最上面的index : index_y 
@@ -191,14 +191,14 @@ namespace game_framework {
 		};
 		void Onshow() {
 			cutman_stage.ShowBitmap(2);
-			
+
+			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnShow();
 			}
 			
 
-			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
 		}

@@ -206,20 +206,42 @@ namespace game_framework {
 						isfirstclimb = true;
 						//x += 5;
 					}
+					else if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 1 && !isClimbing) {
+						isClimbing = false;
+						isResting = true;
+						isfirstclimb = true;
+					}
 				}
 				// 著地後速度回歸為10
 				if (isOnTheGround) {
 					dy = 10;
-					accePeriod = 5;
+					accePeriod = 6;
+					startfalling = true;
 				}
-				if (isJumping && dy - 1 >= 6) {
+				if (isFalling) {
+					if (startfalling)
+					{
+						dy = 1;
+					}
+					startfalling = false;
+				}
+				if (isJumping && dy - 1 >= 1) {
 					if (jumpCount == 0) {
 						dy--;
 					}
 					jumpCount++;
-					jumpCount = jumpCount % 3;
+					jumpCount = jumpCount % 2;
 				}
 
+				if (isFalling && dy + 1 <= 14) {
+					if (fallCount == 0) {
+						dy++;
+						if (accePeriod - 1 >= 1)
+							accePeriod--;
+					}
+					fallCount++;
+					fallCount = fallCount % accePeriod;
+				}
 				if (isFalling && dy + 1 <= 14) {
 					if (fallCount == 0) {
 						dy++;
@@ -272,7 +294,7 @@ namespace game_framework {
 						if (canJump) {
 							if ( (block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != 1
 								&& block_element_3darray[(top_y - dy) / 32][(right_x) / 32] != -1
-								&&!isClimbing)||(isClimbing&&(leftPressed||rightPressed))) {
+								&&!isClimbing)) {
 								isJumping = true;
 								isFalling = false;
 								isClimbing=false;
@@ -488,8 +510,10 @@ namespace game_framework {
 		bool isShooting = false;
 		bool isFacingRight = false;
 		bool isClimbing = false;
+		bool isShotting = false;
 		int climbjumpstate = 0;
 		int fallingstate = 0;
+		bool startfalling = true;
 		bool canJump = true;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
