@@ -66,8 +66,8 @@ namespace game_framework {
 			restingN[0].SetAnimation(150, false);
 
 			restingN[1].LoadBitmapByString({
-				"resources/enemy/cutman/idleRightOpenY.bmp",
-				"resources/enemy/cutman/idleRightCloseY.bmp",
+				"resources/enemy/cutman/idleRightOpenN.bmp",
+				"resources/enemy/cutman/idleRightCloseN.bmp",
 				}, RGB(128, 0, 128));
 			restingN[1].SetAnimation(150, false);
 
@@ -145,7 +145,32 @@ namespace game_framework {
 				// mid = 128 (3*32
 				// long = 
 				// middle of the bitmap = 3204 * 2
-				if (state == 0) { // walk to the middle
+				if (isHit) {
+					shine.ToggleAnimation();
+					isHit = false;
+				}
+				else if (!shine.IsAnimationDone()) {
+					if (beenAttackedByLeft) {
+						if (map[y / 32][(x + 2 + 48) / 32] != 1) {
+							x += 2;
+						}
+					}
+					else {
+						if (map[y / 32][(x - 2) / 32] != 1) {
+							x -= 2;
+						}
+					}
+					if (map[(y + 64) / 32][x / 32] != 1) { //可以掉落
+						if (map[(y + 62 + 16) / 32][x / 32] != 1) {
+							y += 16;
+						}
+						else {
+							y = ((y / 32) + 1) * 32;
+							dy = 12;
+						}
+					}
+				}
+				else if (state == 0) { // walk to the middle
 					if (distance > 128) { // bigger than mid
 						// keep walking and jump to rockman
 						// state = 2;
@@ -237,12 +262,12 @@ namespace game_framework {
 							// throwing left
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = -4;
+							weapon_dx = -6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance/4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 							weaponX = x;
 							weaponY = y;
@@ -254,7 +279,7 @@ namespace game_framework {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = 4;
+							weapon_dx = 6;
 							if (rockmanY >= y) {
 								weapon_dy = ((rockmanY - y) / (distance / 4));
 							}
@@ -371,12 +396,12 @@ namespace game_framework {
 							// throwing left
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = -4;
+							weapon_dx = -6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance / 4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 							weaponX = x;
 							weaponY = y;
@@ -388,12 +413,12 @@ namespace game_framework {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = 4;
+							weapon_dx = 6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance / 4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 
 							weaponX = x + 8;
@@ -431,13 +456,13 @@ namespace game_framework {
 							// throwing left
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = -4;
+							weapon_dx = -6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance / 4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
 								// to fix might cause division zero
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 							weaponX = x;
 							weaponY = y;
@@ -449,12 +474,12 @@ namespace game_framework {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = 4;
+							weapon_dx = 6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance / 4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 
 							weaponX = x + 8;
@@ -632,12 +657,12 @@ namespace game_framework {
 					if (throwingLeft) {
 						if (throwing[0].GetFrameIndexOfBitmap() == 1) {
 							weaponThrew = true;
-							weapon_dx = -4;
+							weapon_dx = -6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance / 4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 							weaponX = x;
 							weaponY = y;
@@ -649,12 +674,12 @@ namespace game_framework {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
 							weaponThrew = true;
 							// count dx dy
-							weapon_dx = 4;
+							weapon_dx = 6;
 							if (rockmanY >= y) {
-								weapon_dy = ((rockmanY - y) / (distance / 4));
+								weapon_dy = ((rockmanY - y) / ((distance / 4) + 1));
 							}
 							else {
-								weapon_dy = -((y - rockmanY) / (distance / 4));
+								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 
 							weaponX = x + 8;
@@ -799,16 +824,16 @@ namespace game_framework {
 					}
 					else{
 						if (x >= weaponX) {
-							weaponX += 4;
+							weaponX += 6;
 						}
 						else {
-							weaponX -= 4;
+							weaponX -= 6;
 						}
 						if (y >= weaponY) {
-							weaponY += ((distanceY) / (distanceX / 4));
+							weaponY += ((distanceY) / (distanceX / 4 + 1));
 						}
 						else {
-							weaponY -= ((distanceY) / (distanceX / 4));
+							weaponY -= ((distanceY) / (distanceX / 4 + 1));
 						}
 					}
 				}
@@ -884,13 +909,10 @@ namespace game_framework {
 		void OnShow(int transitionState) {
 			timer.ShowBitmap();
 			if (blood > 0 && transitionState >= 33) {
-				if (isHit) { //剛被打到，開始後退
-					shine.ToggleAnimation();
-					isHit = false;
-				}
 				if (!shine.IsAnimationDone()) { //還在後退被打當中
+					shine.ShowBitmap(2);
 					if (shine.GetFrameIndexOfBitmap() % 2 == 1) { //閃爍空檔show後退的bitmap
-						if (facingLeft) {
+						if (beenAttackedByLeft) {
 							if (weaponThrew) { //面左沒剪刀
 								beingAttackN[0].ShowBitmap(2);
 							}
@@ -991,19 +1013,84 @@ namespace game_framework {
 				}
 			}
 		};
-		int getBlood() {
-			return blood;
-		}
+
 		void setmap(vector<vector<int>> map) {
 			this->map = map;
 		}
-		// 被打到退兩隔
+		int getDamage() { //怪物攻擊洛克人的傷害，要先successfullyAttack == true
+			return damage;
+		}
+		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
+			if (shine.IsAnimationDone()) { //被擊退動畫結束
+				if (bullet.GetTop() + bullet.GetHeight() >= beingAttackN[0].GetTop() + 24
+					&& bullet.GetLeft() + bullet.GetWidth() >= beingAttackN[0].GetLeft()
+					&& bullet.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
+					&& bullet.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
+					isHit = true;
+					blood -= 3;
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+		bool successfullyAttack(CMovingBitmap rockman) { //以怪物的角度，打中洛克人?
+			if (weaponThrew && CMovingBitmap::IsOverlap(rockman, rollingCutter[0])) {
+				damage = 5;
+				if (rockman.GetLeft() <= rollingCutter[0].GetLeft()) { //
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			else if (rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop()+24
+				&& rockman.GetLeft() + rockman.GetWidth() >= beingAttackN[0].GetLeft()
+				&& rockman.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
+				&& rockman.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
+				// 重疊->判斷碰撞
+				damage = 7;
+				if (rockman.GetLeft() <= beingAttackN[0].GetLeft()) { //
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			return false;
+		}
+		bool isDead() {//怪物死了沒，依血量判斷
+			if (blood <= 0) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		bool isAttackFromRight() {  //怪物是從右邊打洛克人的嗎?必須先successfullyAttack == true
+			return attackFromRight;
+		}
+		int getX() { //左上x(absolute
+			return x;
+		}
+		int getY() { //左上y(absolute
+			return y;
+		}
+		int getBlood() { //怪物目前的血量
+			return blood;
+		}
+
+
 	private:
 		int x = 3252*2;
 		int y = 928*2;
 		int dx = 4;
 		int dy = 12;
 		int blood = 28;
+		int damage = 0;
 
 		int weaponX;
 		int weaponY;
@@ -1027,6 +1114,8 @@ namespace game_framework {
 		bool isJumping = false;
 		bool isWalking = false;
 		bool isHit = false;
+		bool beenAttackedByLeft = false;
+		bool attackFromRight = false;
 
 		CMovingBitmap shine;
 		CMovingBitmap restingY[2];
@@ -1040,6 +1129,7 @@ namespace game_framework {
 		CMovingBitmap rollingCutter[2];
 		CMovingBitmap throwing[2];
 		CMovingBitmap timer;
+
 
 		vector<vector<int>> map;
 
