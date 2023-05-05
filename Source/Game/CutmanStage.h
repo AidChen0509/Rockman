@@ -182,6 +182,7 @@ namespace game_framework {
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// cutman
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
+
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
@@ -277,7 +278,7 @@ namespace game_framework {
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 		};
 		void Onshow() {
-			
+
 			cutman_stage.ShowBitmap(2);
 			if (transitionState == 31) {
 				stageShine.ShowBitmap(2);
@@ -302,6 +303,16 @@ namespace game_framework {
 			if (transitionState >= 32) {
 				bossGate.ShowBitmap(2);
 			}
+
+			cutman_stage.ShowBitmap(2);
+
+			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
+			for (size_t i = 0; i < enemyContainer.size(); i++)
+			{
+				enemyContainer[i]->OnShow();
+			}
+			
+
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
 		}
