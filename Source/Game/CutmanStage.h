@@ -304,7 +304,6 @@ namespace game_framework {
 				bossGate.ShowBitmap(2);
 			}
 
-			cutman_stage.ShowBitmap(2);
 
 			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
 			for (size_t i = 0; i < enemyContainer.size(); i++)
