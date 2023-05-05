@@ -8,6 +8,7 @@ namespace game_framework {
 			// map initialize
 			this->readFile();
 			rockman.setmap(map);
+			cutman.setmap(map);
 			// 初始化怪物
 			enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
 			enemyContainer.push_back(new Heli(428 * 2, 2178 * 2));
@@ -46,6 +47,7 @@ namespace game_framework {
 			enemyContainer.push_back(new Octopus(1408 * 2, 384 * 2, 1456 * 2, 384 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1472 * 2, 288 * 2, 1472 * 2, 336 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
+			
 
 		};
 		~CutmanStage() {
@@ -55,7 +57,7 @@ namespace game_framework {
 			}
 		};
 		void OnInit() {
-			cutman_stage.LoadBitmapByString({ "resources/CutManStage.bmp" });
+			cutman_stage.LoadBitmapByString({ "resources/stage/CutManStage.bmp" });
 			rockman_blood.LoadBitmapByString({ "resources/rockman/blood/blood0.bmp",
 											   "resources/rockman/blood/blood1.bmp", 
 												"resources/rockman/blood/blood2.bmp", 
@@ -86,8 +88,70 @@ namespace game_framework {
 												"resources/rockman/blood/blood27.bmp",
 												"resources/rockman/blood/blood28.bmp",});
 			rockman_blood.SetTopLeft(48, 50);
+			stageShine.LoadBitmapByString({
+				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				}, RGB(128, 0, 128));
+			stageShine.SetTopLeft(0, 0);
+			stageShine.SetAnimation(100, true);
+
+			bossGate.LoadBitmapByString({
+				"resources/stage/bossStageGate1.bmp",
+				"resources/stage/bossStageGate2.bmp",
+				"resources/stage/bossStageGate3.bmp",
+				"resources/stage/bossStageGate4.bmp",
+				});
+			bossGate.SetTopLeft(0, 192);
+			bossGate.SetAnimation(100, true);
+
+			cutman_blood.LoadBitmapByString({
+				{ "resources/enemy/cutman/blood/blood0.bmp" },
+				{ "resources/enemy/cutman/blood/blood1.bmp" },
+				{ "resources/enemy/cutman/blood/blood2.bmp" },
+				{ "resources/enemy/cutman/blood/blood3.bmp" },
+				{ "resources/enemy/cutman/blood/blood4.bmp" },
+				{ "resources/enemy/cutman/blood/blood5.bmp" },
+				{ "resources/enemy/cutman/blood/blood6.bmp" },
+				{ "resources/enemy/cutman/blood/blood7.bmp" },
+				{ "resources/enemy/cutman/blood/blood8.bmp" },
+				{ "resources/enemy/cutman/blood/blood9.bmp" },
+				{ "resources/enemy/cutman/blood/blood10.bmp" },
+				{ "resources/enemy/cutman/blood/blood11.bmp" },
+				{ "resources/enemy/cutman/blood/blood12.bmp" },
+				{ "resources/enemy/cutman/blood/blood13.bmp" },
+				{ "resources/enemy/cutman/blood/blood14.bmp" },
+				{ "resources/enemy/cutman/blood/blood15.bmp" },
+				{ "resources/enemy/cutman/blood/blood16.bmp" },
+				{ "resources/enemy/cutman/blood/blood17.bmp" },
+				{ "resources/enemy/cutman/blood/blood18.bmp" },
+				{ "resources/enemy/cutman/blood/blood19.bmp" },
+				{ "resources/enemy/cutman/blood/blood20.bmp" },
+				{ "resources/enemy/cutman/blood/blood21.bmp" },
+				{ "resources/enemy/cutman/blood/blood22.bmp" },
+				{ "resources/enemy/cutman/blood/blood23.bmp" },
+				{ "resources/enemy/cutman/blood/blood24.bmp" },
+				{ "resources/enemy/cutman/blood/blood25.bmp" },
+				{ "resources/enemy/cutman/blood/blood26.bmp" },
+				{ "resources/enemy/cutman/blood/blood27.bmp" },
+				{ "resources/enemy/cutman/blood/blood28.bmp" },
+				});
+			cutman_blood.SetTopLeft(80, 50);
+			cutman_blood.SetAnimation(75, true);
+			
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 			rockman.OnInit(stage_x, stage_y);
+			// cutman
+			cutman.OnInit();
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnInit();
@@ -116,6 +180,9 @@ namespace game_framework {
 			}
 
 			rockman.OnMove(stage_x, stage_y, transitionState);
+			// cutman
+			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
+
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
@@ -182,14 +249,61 @@ namespace game_framework {
 				else if (transitionState == 4) {
 					stage_x += dx; //512;
 					if (stage_x % 512 == 0) {
+						
+						stageShine.ToggleAnimation();
+						transitionState = 31;
+					}
+				}
+				else if (transitionState == 31) {
+					if (stageShine.IsAnimationDone()) {
+						bossGate.ToggleAnimation();
+						transitionState = 32;
+					}
+				}
+				else if (transitionState == 32) {
+					if (bossGate.IsAnimationDone()) {
+						//bossGate.SetFrameIndexOfBitmap(3);
+						cutman_blood.ToggleAnimation();
+						transitionState = 33;
+					}
+				}
+				else if (transitionState == 33) {
+					if (cutman_blood.IsAnimationDone()) {
 						transitionState = 40;
 					}
 				}
+			// 40  is the state rockman can move
 			}
 
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 		};
 		void Onshow() {
+
+			cutman_stage.ShowBitmap(2);
+			if (transitionState == 31) {
+				stageShine.ShowBitmap(2);
+			}
+			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
+			cutman.OnShow(transitionState);
+
+			// new edit
+			if (transitionState == 0) {
+				for (size_t i = 0; i < enemyContainer.size(); i++)
+				{
+					enemyContainer[i]->OnShow();
+				}
+			}
+			if (31 <= transitionState && transitionState < 40) {
+				cutman_blood.ShowBitmap(2);
+			}
+			else if(transitionState == 40){
+				cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
+				cutman_blood.ShowBitmap(2);
+			}
+			if (transitionState >= 32) {
+				bossGate.ShowBitmap(2);
+			}
+
 			cutman_stage.ShowBitmap(2);
 
 			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
@@ -255,16 +369,16 @@ namespace game_framework {
 		int dy = 8;
 		int transitionState = 0;
 		// 初始點
-		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
-		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
+		// int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
+		// int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
 
 
 		//剪刀窗戶的地方
 		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
 
-		//int stage_x = 2048 * 2;
-		//int stage_y = 768 * 2;
+		int stage_x = 2048 * 2;
+		int stage_y = 768 * 2;
 
 		
 		// 三個儲存點，之後再處理，X-Y要再對照一下
@@ -284,8 +398,13 @@ namespace game_framework {
 		vector<Enemy*> enemyContainer;
 		vector<vector<int>> map;
 
+		CMovingBitmap cutman_blood;
 		CMovingBitmap cutman_stage;
 		CMovingBitmap rockman_blood;
+		CMovingBitmap stageShine;
+		CMovingBitmap bossGate;
+
 		Character rockman;
+		Cutman cutman;
 	};
 }
