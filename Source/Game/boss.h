@@ -294,7 +294,9 @@ namespace game_framework {
 							state = 4;
 						}
 					}
-					
+
+					// to be delete: 為了測試boss死掉會不會跳轉
+					// blood -= 28;
 					/*
 					if (timer.IsAnimationDone()) {
 						if (throwingLeft) {
@@ -1044,7 +1046,27 @@ namespace game_framework {
 			// CDC *pDC = CDDraw::GetBackCDC();
 			// CTextDraw::Print(pDC, 32, 32, "Some text here.");
 		};
-
+		void OnBeginState() {
+			x = 3252 * 2;
+			y = 928 * 2;
+			dx = 4;
+			dy = 12;
+			blood = 28;
+			damage = 0;
+			state = 0;
+			isWeaponGo = true;
+			jumpCount = 0;
+			restingCount = 0;
+			facingLeft = false;
+			weaponThrew = false;
+			isThrowing = false;
+			throwingLeft = true;
+			isJumping = false;
+			isWalking = false;
+			isHit = false;
+			beenAttackedByLeft = false;
+			attackFromRight = false;
+		}
 		void setmap(vector<vector<int>> map) {
 			this->map = map;
 		}

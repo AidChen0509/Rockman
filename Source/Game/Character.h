@@ -432,6 +432,45 @@ namespace game_framework {
 			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
 
 		};
+		void OnBeginState(int stage_x, int stage_y) {
+			x = 2164 * 2;
+			y = 800 * 2;
+			dx = 4; // 已乘兩倍，左右橫移速度
+			dy = 10; //已成兩倍，向上
+			blood = 28;
+			lives = 3;
+			jumpCount = 0;
+			fallCount = 0;
+			accePeriod = 5;
+			jumpingHeight = 0;
+			upPressed = false;
+			downPressed = false;
+			jumpPressed = false;
+			shootPressed = false;
+			isfirstclimb = true;
+			leftPressed = false;
+			rightPressed = false;
+			isResting = false;
+			isJumping = false;
+			isOnTheGround = true;
+			isFalling = true;
+			isShooting = false;
+			isFacingRight = false;
+			isClimbing = false;
+			isShotting = false;
+			climbjumpstate = 0;
+			fallingstate = 0;
+			startfalling = true;
+			canJump = true;
+			resting[0].SetTopLeft(x - stage_x, y - stage_y);
+			resting[1].SetTopLeft(x - stage_x, y - stage_y);
+			running[0].SetTopLeft(x - stage_x, y - stage_y);
+			running[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
+			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
+			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
+		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 			if (nChar == VK_LEFT) {
@@ -482,6 +521,9 @@ namespace game_framework {
 		}
 		int getBlood() {
 			return blood;
+		}
+		int getLives() {
+			return lives;
 		}
 		void setmap(vector<vector<int>> map) {
 			block_element_3darray = map;

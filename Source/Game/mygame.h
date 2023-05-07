@@ -68,14 +68,21 @@ namespace game_framework {
 		static int stage;
 	protected:
 		void OnShow();									// 顯示這個狀態的遊戲畫面
+		void OnMove();									// 移動這個狀態的遊戲元素
+
 	private:
-		CMovingBitmap startBackground;								
-		CMovingBitmap cutSelected;
-		CMovingBitmap gutsSelected;
-		CMovingBitmap iceSelected;
-		CMovingBitmap bombSelected;
-		CMovingBitmap fireSelected;
-		CMovingBitmap elecSelected;
+		int showState = 0;
+		bool enterPressed = false;
+		int gameStateOfStages[6] = {0, 0, 0, 0, 0, 0};
+		CMovingBitmap startBackground;					
+		CMovingBitmap selectBackground;
+
+		CMovingBitmap cutSelected[3];
+		CMovingBitmap gutsSelected[3];
+		CMovingBitmap iceSelected[3];
+		CMovingBitmap bombSelected[3];
+		CMovingBitmap fireSelected[3];
+		CMovingBitmap elecSelected[3];
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -96,12 +103,12 @@ namespace game_framework {
 		void OnMouseMove(UINT nFlags, CPoint point);	// 處理滑鼠的動作 
 		void OnRButtonDown(UINT nFlags, CPoint point);  // 處理滑鼠的動作
 		void OnRButtonUp(UINT nFlags, CPoint point);	// 處理滑鼠的動作
+		static int gameState; 
 	protected:
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		// CMovingBitmap cutmanStage;
-		CutmanStage stage;
+		CutmanStage cutman_stage;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////

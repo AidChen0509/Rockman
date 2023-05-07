@@ -278,7 +278,6 @@ namespace game_framework {
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
 		};
 		void Onshow() {
-
 			cutman_stage.ShowBitmap(2);
 			if (transitionState == 31) {
 				stageShine.ShowBitmap(2);
@@ -298,7 +297,10 @@ namespace game_framework {
 			}
 			else if(transitionState == 40){
 				// TODO: 要注意如果blood < 0
-				cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
+				if(cutman.getBlood() >= 0)
+					cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
+				else
+					cutman_blood.SetFrameIndexOfBitmap(0);
 				cutman_blood.ShowBitmap(2);
 			}
 			if (transitionState >= 32) {
@@ -311,10 +313,10 @@ namespace game_framework {
 			{
 				enemyContainer[i]->OnShow();
 			}
-			
 
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
+			
 		}
 		void readFile() {
 			// [144][208]
@@ -357,7 +359,32 @@ namespace game_framework {
 				rightPressed = false;
 			}
 		}
-
+		int getGamestate() {
+			if (cutman.getBlood() <= 0) {
+				return 1;
+			}
+			else if (rockman.getLives() <= 0) {
+				return 2;
+			}
+			else {
+				return 0;
+			}
+		}
+		void OnBeginState() {
+			dx = 4;
+			dy = 8;
+			transitionState = 0;
+			stage_x = 2048 * 2;
+			stage_y = 768 * 2;
+			rockman.OnBeginState(stage_x, stage_y);
+			cutman.OnBeginState();
+		}
+		void enemyReset() {
+			for (size_t i = 0; i < enemyContainer.size(); i++)
+			{
+				// enemyContainer[i]->OnBeginState();
+			}
+		}
 
 	private:
 		// 先留著，雖然不知道有啥用ㄏ
