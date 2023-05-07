@@ -244,6 +244,7 @@ namespace game_framework {
 						}
 						else { //落地
 							dy = 12;
+							dx = 4;
 							jumpCount = 0;
 							isJumping = false;
 							state = 5; 
@@ -293,7 +294,7 @@ namespace game_framework {
 							state = 4;
 						}
 					}
-
+					
 					/*
 					if (timer.IsAnimationDone()) {
 						if (throwingLeft) {
@@ -499,6 +500,7 @@ namespace game_framework {
 					// 不確定要不要assign dy = 12;
 					if (distance > 128) {
 						// TO be fix: 不確定需不需要處理掉落
+						isWalking = true;
 						if (map[(y + 64) / 32][x / 32] != 1) { //可以掉落
 							if (map[(y + 62 + 16) / 32][x / 32] != 1) {
 								y += 16;
@@ -511,11 +513,12 @@ namespace game_framework {
 						if (rockmanX < x) {
 							if (map[y / 32][(x - dx) / 32] != 1) {
 								x -= dx;
-								isWalking = true;
+								// isWalking = true;
 							}
 							else {
 								dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
 								dy = 12;
+								isWalking = false;
 								jumpLeft = true;
 								state = 13;
 							}
@@ -523,16 +526,19 @@ namespace game_framework {
 						else {
 							if (map[y / 32][(x + dx + 24) / 32] != 1) {
 								x += dx;
-								isWalking = true;
+								// isWalking = true;
 							}
 							else {
 								dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
 								dy = 12;
+								isWalking = false;
 								jumpLeft = false;
 								state = 13;
 							}
 						}
-						
+						// 剪刀回來後就卡在這了
+						// if(blood >= 1) blood -= 1;
+						// else if(blood <= 27) blood += 1;
 
 					}
 					else {
@@ -578,6 +584,7 @@ namespace game_framework {
 						else { //落地
 							// y = (y / 32) * 32;
 							dy = 12;
+							dx = 4;
 							jumpCount = 0;
 							isJumping = false;
 							if (facingLeft) {
@@ -599,16 +606,18 @@ namespace game_framework {
 				}
 				else if (state == 14) {
 					if (weaponThrew) { // 不可丟
-						if (rockmanX < x) {
-							jumpLeft = true;
-						}
-						else {
-							jumpLeft = false;
-						}
-						dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
-						dy = 12;
-						isJumping = true;
-						state = 17;
+						//if (!isJumping) {
+							if (rockmanX < x) {
+								jumpLeft = true;
+							}
+							else {
+								jumpLeft = false;
+							}
+							dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
+							dy = 12;
+							isJumping = true;
+							state = 17;
+						//}
 					}
 					else {
 						if (distance <= 32) { // 起跳，並在空中丟出剪刀
@@ -628,6 +637,7 @@ namespace game_framework {
 							}
 							dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
 							dy = 12;
+							jumpCount = 0;
 							isJumping = true;
 							isThrowing = true;
 							state = 15;
@@ -682,7 +692,7 @@ namespace game_framework {
 								weapon_dy = -((y - rockmanY) / ((distance / 4) + 1));
 							}
 
-							weaponX = x + 8;
+							weaponX = x + 16;
 							weaponY = y;
 							isWeaponGo = true;
 							state = 16;
@@ -690,6 +700,9 @@ namespace game_framework {
 					}
 
 					//跳躍
+					if ((jumpCount % 2 == 0) && (jumpCount != 0)) {
+						dy -= 1;
+					}
 					jumpCount++;
 					y -= dy;
 					if (jumpLeft) {
@@ -705,7 +718,7 @@ namespace game_framework {
 					}
 				}
 				else if (state == 16) {
-					if (throwing[0].IsAnimationDone() && throwing[1].IsAnimationDone()) {
+					if (isThrowing && throwing[0].IsAnimationDone() && throwing[1].IsAnimationDone()) {
 						isThrowing = false;
 					}
 					if (jumpLeft) {
@@ -735,10 +748,25 @@ namespace game_framework {
 							}
 						}
 						else { //落地
-							dy = 12;
-							jumpCount = 0;
-							isJumping = false;
-							state = 14;
+							if (!weaponThrew) {
+								dy = 12;
+								dx = 4;
+								jumpCount = 0;
+								isJumping = false;
+								state = 14;
+							}
+							else { //再跳一次
+								if (rockmanX < x) {
+									jumpLeft = true;
+								}
+								else {
+									jumpLeft = false;
+								}
+								dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
+								dy = 12;
+								jumpCount = 0;
+								isJumping = true;
+							}
 						}
 					}
 					else {
@@ -775,6 +803,7 @@ namespace game_framework {
 						}
 						else { //落地
 							dy = 12;
+							dx = 4;
 							jumpCount = 0;
 							isJumping = false;
 							if (weaponThrew) {
@@ -1012,6 +1041,8 @@ namespace game_framework {
 						rollingCutter[0].ShowBitmap(2);
 				}
 			}
+			// CDC *pDC = CDDraw::GetBackCDC();
+			// CTextDraw::Print(pDC, 32, 32, "Some text here.");
 		};
 
 		void setmap(vector<vector<int>> map) {

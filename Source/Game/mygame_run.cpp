@@ -79,4 +79,7 @@ void CGameStateRun::OnShow()
 	}
 	*/
 	stage.Onshow();
+	//CDC *pDC = CDDraw::GetBackCDC();
+	//ChangeFontLog(pDC, 15, "微軟正黑體", RGB(0, 0, 0), 500);
+	//CTextDraw::Print(pDC, 32, 32, "Some text here.");
 }
