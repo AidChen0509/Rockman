@@ -297,6 +297,7 @@ namespace game_framework {
 				cutman_blood.ShowBitmap(2);
 			}
 			else if(transitionState == 40){
+				// TODO: 要注意如果blood < 0
 				cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
 				cutman_blood.ShowBitmap(2);
 			}
