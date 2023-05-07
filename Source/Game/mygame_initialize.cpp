@@ -32,6 +32,11 @@ void CGameStateInit::OnInit()
 	ShowInitProgress(0, "Start Initialize...");	// 一開始的loading進度為0%
 	//
 	// 開始載入資料
+	CAudio::Instance()->Load(AUDIO_GameStart, "resources/sound/GameStart.wav");
+	CAudio::Instance()->Load(AUDIO_MenuSelect, "resources/sound/MenuSelect.wav");
+	
+
+
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
 		"resources/start&over/initBackground2.bmp",
@@ -112,6 +117,7 @@ void CGameStateInit::OnInit()
 	elecSelected[2].LoadBitmapByString({ "resources/start&over/elec10.bmp" });
 	elecSelected[2].SetTopLeft(80, 178);
 	
+	
 }
 
 void CGameStateInit::OnBeginState()
@@ -127,6 +133,7 @@ void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (nChar == VK_RETURN) {
 		if (showState == 0) { // TODO 要再加條件 避免後須按下enter會回朔
 			startBackground.ToggleAnimation();
+			CAudio::Instance()->Play(AUDIO_GameStart);
 			showState = 1;
 		}
 		else if (showState == 2) { //在select的時候按下enter，進入關卡
@@ -136,11 +143,13 @@ void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (nChar == VK_LEFT) {
 		if (showState == 2) {
+			CAudio::Instance()->Play(AUDIO_MenuSelect);
 			stage = ((stage - 1) + 6) % 6;
 		}
 	}
 	if (nChar == VK_RIGHT) {
 		if (showState == 2) {
+			CAudio::Instance()->Play(AUDIO_MenuSelect);
 			stage = ((stage + 1) + 6) % 6;
 		}
 	}
@@ -163,8 +172,7 @@ void CGameStateInit::OnMove() {
 void CGameStateInit::OnShow()
 {
 	// GotoGameState(GAME_STATE_RUN); //加速開發 先跳過開場
-	// if (!(startBackground.IsAnimationDone() && intoSelect)) { //開場enter且動畫跑完前，開場畫面都要show
-	// 
+
 	if(showState == 1 || showState == 0){
 		startBackground.ShowBitmap(2);
 	}
@@ -236,56 +244,7 @@ void CGameStateInit::OnShow()
 				}
 			}
 		}
-		/*
-		if (stage == 0) {
-			if (gameStateOfStages[stage] == 0) {
-				cutSelected[0].ShowBitmap(2);
-			}
-			else if(gameStateOfStages[stage] == 1){
-				cutSelected[1].ShowBitmap(2);
-			}
-		}
-		else if(stage == 1){
-			if (gameStateOfStages[stage] == 0) {
-				gutsSelected[0].ShowBitmap(2);
-			}
-			else if (gameStateOfStages[stage] == 1) {
-				gutsSelected[1].ShowBitmap(2);
-			}
-		}
-		else if (stage == 2) {
-			if (gameStateOfStages[stage] == 0) {
-				iceSelected[0].ShowBitmap(2);
-			}
-			else if (gameStateOfStages[stage] == 1) {
-				iceSelected[1].ShowBitmap(2);
-			}
-		}
-		else if (stage == 3) {
-			if (gameStateOfStages[stage] == 0) {
-				bombSelected[0].ShowBitmap(2);
-			}
-			else if (gameStateOfStages[stage] == 1) {
-				bombSelected[1].ShowBitmap(2);
-			}
-		}
-		else if (stage == 4) {
-			if (gameStateOfStages[stage] == 0) {
-				fireSelected[0].ShowBitmap(2);
-			}
-			else if (gameStateOfStages[stage] == 1) {
-				fireSelected[1].ShowBitmap(2);
-			}
-		}
-		else if (stage == 5) {
-			if (gameStateOfStages[stage] == 0) {
-				elecSelected[0].ShowBitmap(2);
-			}
-			else if (gameStateOfStages[stage] == 1) {
-				elecSelected[1].ShowBitmap(2);
-			}
-		}
-		*/
+
 	}
 		// TODO 王跳出來 score跳出來的畫面
 		// 背景一藍一白是固定的

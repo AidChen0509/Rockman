@@ -88,6 +88,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	cutman_stage.OnInit();
+	// CAudio::Instance()->Load(AUDIO_Cutman, "resources/sound/CutManStage.wav");
+	
 	// other stages' Oninit
 
 }
@@ -169,6 +171,8 @@ void CGameStateRun::OnShow()
 
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.Onshow();
+		// 加進來會變得很卡，不知道是不是檔案太大還是怎樣
+		// CAudio::Instance()->Play(AUDIO_Cutman);
 	}
 	else if (CGameStateInit::stage == 1) {
 		// guts
