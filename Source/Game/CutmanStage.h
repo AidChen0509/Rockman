@@ -179,12 +179,24 @@ namespace game_framework {
 				}
 			}
 
+
+			
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// cutman
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
 
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
+				if (enemyContainer[i]->getIsActivate()) { //怪物is acitivated
+					if (!rockman.isHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
+						// 沒被攻擊中，而且被打到
+						// 可以呼叫怪物的isAttackFromRight()，set給rockman
+						// 
+						rockman.decreaseBlood(enemyContainer[i]->getDamage());
+						rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
+
+					}
+				}
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
 			
@@ -374,8 +386,10 @@ namespace game_framework {
 			dx = 4;
 			dy = 8;
 			transitionState = 0;
-			stage_x = 2048 * 2;
-			stage_y = 768 * 2;
+			stage_x = 0;
+			stage_y = 4096;
+			// stage_x = 2048 * 2;
+			// stage_y = 768 * 2;
 			rockman.OnBeginState(stage_x, stage_y);
 			cutman.OnBeginState();
 		}
@@ -396,16 +410,16 @@ namespace game_framework {
 		int dy = 8;
 		int transitionState = 0;
 		// 初始點
-		// int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
-		// int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
+		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
+		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
 
 
 		//剪刀窗戶的地方
 		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
 
-		int stage_x = 2048 * 2;
-		int stage_y = 768 * 2;
+		// int stage_x = 2048 * 2;
+		// int stage_y = 768 * 2;
 
 		
 		// 三個儲存點，之後再處理，X-Y要再對照一下

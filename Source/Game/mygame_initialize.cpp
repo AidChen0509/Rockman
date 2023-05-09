@@ -138,7 +138,6 @@ void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		else if (showState == 2) { //在select的時候按下enter，進入關卡
 			CAudio::Instance()->Stop(AUDIO_MenuSelectTheme);
-
 			GotoGameState(GAME_STATE_RUN);    // 切換至GAME_STATE_RUN
 		}
 	}

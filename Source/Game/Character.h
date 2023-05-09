@@ -422,6 +422,9 @@ namespace game_framework {
 					x += 1;
 				}
 			}
+
+			
+
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -430,11 +433,12 @@ namespace game_framework {
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
-
 		};
 		void OnBeginState(int stage_x, int stage_y) {
-			x = 2164 * 2;
-			y = 800 * 2;
+			x = 232;
+			y = 4368;
+			// x = 2164 * 2;
+			// y = 800 * 2;
 			dx = 4; // 已乘兩倍，左右橫移速度
 			dy = 10; //已成兩倍，向上
 			blood = 28;
@@ -528,6 +532,22 @@ namespace game_framework {
 		void setmap(vector<vector<int>> map) {
 			block_element_3darray = map;
 		}
+
+		CMovingBitmap getCurrentBitmap() {
+			// TODO
+			return resting[0];
+		}
+		bool isHit() {
+			// TODO
+			return false;
+		}
+		void decreaseBlood(int damage) {
+			blood -= damage;
+		}
+		void setIsAttackedFromRight(bool isAttackedFromRight) {
+			// TODO
+		}
+
 	private:
 		vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關 要再改
 		vector<int> level_top = { 2048 * 2 ,1792 * 2, 1536 * 2, 1280 * 2, 1024 * 2, 768 * 2, 512 * 2, 256 * 2, 0, 256 * 2, 512 * 2, 768 * 2 };//768王關 要再改 跟地圖數據level數不符
@@ -536,6 +556,7 @@ namespace game_framework {
 		CMovingBitmap running[2];
 		CMovingBitmap climbing[2];
 		CMovingBitmap jumping[2];
+		CMovingBitmap currentBitmap;
 
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
@@ -560,16 +581,16 @@ namespace game_framework {
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
 		//vector<int> initY_by_stage = { 4368};
-		// int x = 232;
-		// int y = 4368;
+		int x = 232;
+		int y = 4368;
 
 		// 剪刀窗戶的腳色位置
 		// int x = 1792;
 		// int y = 2304;
 
 		// 廊道前
-		int x = 2164*2;
-		int y = 800*2;
+		// int x = 2164*2;
+		// int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上
