@@ -45,11 +45,41 @@ namespace game_framework {
 			climbing[1].LoadBitmapByString({
 				"resources/rockman/climb3.bmp"
 				}, RGB(128, 0, 128));
+			idleshooting[0].LoadBitmap({
+				"resources/rockman/ShootingLeft.bmp"
+				}, RGB(128, 0, 128));
+			idleshooting[1].LoadBitmap({
+				"resources/rockman/ShootingRight.bmp"
+				}, RGB(128, 0, 128));
+			runningshooting[0].LoadBitmap({
+				"resources/rockman/MovingShootLeft2.bmp",
+				"resources/rockman/MovingShootLeft1.bmp",
+				"resources/rockman/MovingShootLeft3.bmp"
+				}, RGB(128, 0, 128));
+			runningshooting[1].LoadBitmap({
+				"resources/rockman/MovingShootRight2.bmp",
+				"resources/rockman/MovingShootRight1.bmp",
+				"resources/rockman/MovingShootRight3.bmp"
+				}, RGB(128, 0, 128));
+			jumpingshooting[0].LoadBitmap({
+				"resources/rockman/JumpingshootLeft.bmp"
+				}, RGB(128, 0, 128));
+			jumpingshooting[1].LoadBitmap({
+				"resources/rockman/JumpingshootRight.bmp"
+				}, RGB(128, 0, 128));
+			laddershooting[0].LoadBitmap({
+				"resources/rockman/ClimbingShootLeft.bmp"
+				}, RGB(128, 0, 128));
+			laddershooting[1].LoadBitmap({
+				"resources/rockman/ClimbingShootRight.bmp"
+				}, RGB(128, 0, 128));
 			running[0].SetAnimation(100, false);
 			running[1].SetAnimation(100, false);
 			resting[0].SetAnimation(200, false);
 			resting[1].SetAnimation(200, false);
 			climbing[0].SetAnimation(150, true);
+			runningshooting[0].SetAnimation(100, false);
+			runningshooting[1].SetAnimation(100, false);
 			// 最好是在Onshow設定位置，避免多餘的code
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
@@ -59,6 +89,14 @@ namespace game_framework {
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
+			idleshooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			idleshooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			runningshooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			runningshooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
 		void Onshow(int stage_x, int stage_y) {
 
@@ -66,30 +104,74 @@ namespace game_framework {
 			if ((!isJumping && !isFalling)||isClimbing) {
 				if (isResting) { // resting
 					if (isFacingRight == false) { // resting_left_side
-						resting[0].ShowBitmap(2);
+						if (isShooting == true) {
+							idleshooting[0].ShowBitmap(2);
+						}
+						else if (isShooting == false) {
+							resting[0].ShowBitmap(2);
+						}
 					}
 					else {  // 原本面右，繼續面右
-						resting[1].ShowBitmap(2);
+						if (isShooting == true) {
+							idleshooting[1].ShowBitmap(2);
+						}
+						else if (isShooting == false) {
+							resting[1].ShowBitmap(2);
+						}
 					}
 				}
 				else if (isClimbing) {
-					climbing[0].ShowBitmap(2);
+					if (isShooting) {
+						if (isFacingRight) {
+							laddershooting[1].ShowBitmap(2);
+						}
+						else
+						{
+							laddershooting[0].ShowBitmap(2);
+						}
+					}
+					else
+					{
+						climbing[0].ShowBitmap(2);
+					}
 				}
 				else if (!isResting) {
 					if (isFacingRight == false) { // running_left_side
-						running[0].ShowBitmap(2);
+						if (isShooting == true) {
+							runningshooting[0].ShowBitmap(2);
+						}
+						else if (isShooting == false) {
+							running[0].ShowBitmap(2);
+						}
 					}
 					else {  // 原本面右，繼續面右
-						running[1].ShowBitmap(2);
+						if (isShooting == true) {
+							runningshooting[1].ShowBitmap(2);
+						}
+						else if (isShooting == false) {
+							running[1].ShowBitmap(2);
+						}
 					}
 				}
 			}
-			else {
-				if (isFacingRight == false) { // running_left_side
-					jumping[0].ShowBitmap(2);
+			else if(isJumping||isFalling){
+				if (isShooting) {
+					if (isFacingRight == false) { // jumping_left_side
+						jumpingshooting[0].ShowBitmap(2);
+					}
+					else
+					{
+						jumpingshooting[1].ShowBitmap(2);
+					}
 				}
-				else {  // 原本面右，繼續面右
-					jumping[1].ShowBitmap(2);
+				else {
+					if (isFacingRight == false) { // jumping_left_side
+						jumping[0].ShowBitmap(2);
+					}
+					else
+					{
+						jumping[1].ShowBitmap(2);
+					}
 				}
 			}
 		}
@@ -113,9 +195,10 @@ namespace game_framework {
 			int down_y = y + 2 * (24 - 1);
 
 			if (transitionState == 0 || transitionState == 30 || transitionState == 40) {
-				if ((leftPressed && rightPressed&&upPressed&&downPressed) || !(leftPressed || rightPressed||upPressed||downPressed)) { //按雙鍵，維持原本的方向但不位移
-					if (!isClimbing)
+				if ((leftPressed && rightPressed) || !(leftPressed || rightPressed||upPressed||downPressed)|| (upPressed&&downPressed)) { //按雙鍵，維持原本的方向但不位移
+					if (!isClimbing) {
 						isResting = true;
+					}
 					else {
 						isClimbing = true;
 						isResting = false;
@@ -216,6 +299,7 @@ namespace game_framework {
 				if (isOnTheGround) {
 					dy = 10;
 					accePeriod = 6;
+					accePeriod_up = 1;
 					startfalling = true;
 				}
 				if (isFalling) {
@@ -228,9 +312,11 @@ namespace game_framework {
 				if (isJumping && dy - 1 >= 1) {
 					if (jumpCount == 0) {
 						dy--;
+						if (accePeriod_up +1<= 2)
+							accePeriod_up++;
 					}
 					jumpCount++;
-					jumpCount = jumpCount % 2;
+					jumpCount = jumpCount % accePeriod_up;
 				}
 
 				if (isFalling && dy + 1 <= 14) {
@@ -250,6 +336,14 @@ namespace game_framework {
 					}
 					fallCount++;
 					fallCount = fallCount % accePeriod;
+				}
+				if (shootPressed)
+				{
+					isShooting = true;
+				}
+				else if (!shootPressed)
+				{
+					isShooting = false;
 				}
 
 				if (isOnTheGround) {
@@ -433,6 +527,14 @@ namespace game_framework {
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
+			idleshooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			idleshooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			runningshooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			runningshooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
+			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
 		void OnBeginState(int stage_x, int stage_y) {
 			x = 232;
@@ -513,7 +615,7 @@ namespace game_framework {
 				jumpPressed = false;
 			}
 			if (nChar == 0x58) { // x was pressed
-				shootPressed = true;
+				shootPressed = false;
 			}
 		};
 
@@ -561,7 +663,11 @@ namespace game_framework {
 		CMovingBitmap climbing[2];
 		CMovingBitmap jumping[2];
 		CMovingBitmap currentBitmap;
-
+		CMovingBitmap idleshooting[2];
+		CMovingBitmap runningshooting[2];
+		CMovingBitmap climbingshooting[2];
+		CMovingBitmap jumpingshooting[2];
+		CMovingBitmap laddershooting[2];
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
@@ -577,7 +683,6 @@ namespace game_framework {
 		bool isShooting = false;
 		bool isFacingRight = false;
 		bool isClimbing = false;
-		bool isShotting = false;
 		int climbjumpstate = 0;
 		int fallingstate = 0;
 		bool startfalling = true;
@@ -605,6 +710,7 @@ namespace game_framework {
 		int jumpCount = 0;
 		int fallCount = 0;
 		int accePeriod = 5;
+		int accePeriod_up = 1;
 		int jumpingHeight = 0;
 	};
 }
