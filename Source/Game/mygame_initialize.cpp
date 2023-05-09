@@ -32,10 +32,10 @@ void CGameStateInit::OnInit()
 	ShowInitProgress(0, "Start Initialize...");	// 一開始的loading進度為0%
 	//
 	// 開始載入資料
+	CAudio::Instance()->Load(AUDIO_MenuSelectTheme, "resources/sound/MenuSelectTheme.wav");
 	CAudio::Instance()->Load(AUDIO_GameStart, "resources/sound/GameStart.wav");
 	CAudio::Instance()->Load(AUDIO_MenuSelect, "resources/sound/MenuSelect.wav");
 	
-
 
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
@@ -137,6 +137,8 @@ void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			showState = 1;
 		}
 		else if (showState == 2) { //在select的時候按下enter，進入關卡
+			CAudio::Instance()->Stop(AUDIO_MenuSelectTheme);
+
 			GotoGameState(GAME_STATE_RUN);    // 切換至GAME_STATE_RUN
 		}
 	}
@@ -166,6 +168,8 @@ void CGameStateInit::OnMove() {
 	if (showState == 1) {
 		if (startBackground.IsAnimationDone()) {
 			showState = 2;
+			// 進入選單同時撥音樂
+			CAudio::Instance()->Play(AUDIO_MenuSelectTheme);
 		}
 	}
 }

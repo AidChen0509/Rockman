@@ -47,6 +47,7 @@ namespace game_framework {
 	enum AUDIO_ID {				// 定義各種音效的編號
 		AUDIO_Cutman,
 		AUDIO_GameStart,
+		AUDIO_MenuSelectTheme,
 		AUDIO_MenuSelect,
 		AUDIO_DING,				// 0
 		AUDIO_LAKE,				// 1
