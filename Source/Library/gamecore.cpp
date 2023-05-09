@@ -9,11 +9,10 @@
 #include <string.h>
 #include "audio.h"
 #include "gameutil.h"
-#include "gamecore.h"
 #include "../Game/Character.h"
-#include "../Game/boss.h"
 #include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
+#include "gamecore.h"
 #include "Shlwapi.h"
 #include "../Game/config.h"
 #include "../Game/mygame.h"

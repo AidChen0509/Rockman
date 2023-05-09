@@ -516,9 +516,6 @@ namespace game_framework {
 					x += 1;
 				}
 			}
-
-			
-
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -536,47 +533,6 @@ namespace game_framework {
 			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
-		void OnBeginState(int stage_x, int stage_y) {
-			x = 232;
-			y = 4368;
-			// x = 2164 * 2;
-			// y = 800 * 2;
-			dx = 4; // 已乘兩倍，左右橫移速度
-			dy = 10; //已成兩倍，向上
-			blood = 28;
-			lives = 3;
-			jumpCount = 0;
-			fallCount = 0;
-			accePeriod = 5;
-			jumpingHeight = 0;
-			upPressed = false;
-			downPressed = false;
-			jumpPressed = false;
-			shootPressed = false;
-			isfirstclimb = true;
-			leftPressed = false;
-			rightPressed = false;
-			isResting = false;
-			isJumping = false;
-			isOnTheGround = true;
-			isFalling = true;
-			isShooting = false;
-			isFacingRight = false;
-			isClimbing = false;
-			isShotting = false;
-			climbjumpstate = 0;
-			fallingstate = 0;
-			startfalling = true;
-			canJump = true;
-			resting[0].SetTopLeft(x - stage_x, y - stage_y);
-			resting[1].SetTopLeft(x - stage_x, y - stage_y);
-			running[0].SetTopLeft(x - stage_x, y - stage_y);
-			running[1].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
-		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 			if (nChar == VK_LEFT) {
@@ -628,32 +584,9 @@ namespace game_framework {
 		int getBlood() {
 			return blood;
 		}
-		int getLives() {
-			return lives;
-		}
 		void setmap(vector<vector<int>> map) {
 			block_element_3darray = map;
 		}
-
-		CMovingBitmap getCurrentBitmap() {
-			// TODO
-			return resting[0];
-		}
-		bool getIsHit() {
-			// TODO
-			return false;
-		}
-		void decreaseBlood(int damage) {
-			blood -= damage;
-		}
-		void setIsAttackedFromRight(bool isAttackedFromRight) {
-			// TODO
-			this->isAttackedFromRight = isAttackedFromRight;
-		}
-		void setIsHit() {
-			isHit = true;
-		}
-
 	private:
 		vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關 要再改
 		vector<int> level_top = { 2048 * 2 ,1792 * 2, 1536 * 2, 1280 * 2, 1024 * 2, 768 * 2, 512 * 2, 256 * 2, 0, 256 * 2, 512 * 2, 768 * 2 };//768王關 要再改 跟地圖數據level數不符
@@ -662,7 +595,6 @@ namespace game_framework {
 		CMovingBitmap running[2];
 		CMovingBitmap climbing[2];
 		CMovingBitmap jumping[2];
-		CMovingBitmap currentBitmap;
 		CMovingBitmap idleshooting[2];
 		CMovingBitmap runningshooting[2];
 		CMovingBitmap climbingshooting[2];
@@ -687,8 +619,6 @@ namespace game_framework {
 		int fallingstate = 0;
 		bool startfalling = true;
 		bool canJump = true;
-		bool isHit;
-		bool isAttackedFromRight;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
 		//vector<int> initY_by_stage = { 4368};
@@ -700,8 +630,8 @@ namespace game_framework {
 		// int y = 2304;
 
 		// 廊道前
-		// int x = 2164*2;
-		// int y = 800*2;
+		//int x = 2164*2;
+		//int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上

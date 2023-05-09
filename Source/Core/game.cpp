@@ -35,11 +35,10 @@
 #include <direct.h>
 #include <string.h>
 #include "../Library/gameutil.h"
-#include "../Library/gamecore.h"
 #include "../Game/Character.h"
-#include "../Game/boss.h"
 #include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
+#include "../Library/gamecore.h"
 #include "../Game/config.h"
 #include "../Game/mygame.h"
 #include "gameView.h"

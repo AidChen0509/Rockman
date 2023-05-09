@@ -45,10 +45,6 @@ namespace game_framework {
 	/////////////////////////////////////////////////////////////////////////////
 
 	enum AUDIO_ID {				// 定義各種音效的編號
-		AUDIO_Cutman,
-		AUDIO_GameStart,
-		AUDIO_MenuSelectTheme,
-		AUDIO_MenuSelect,
 		AUDIO_DING,				// 0
 		AUDIO_LAKE,				// 1
 		AUDIO_NTUT				// 2
@@ -72,21 +68,14 @@ namespace game_framework {
 		static int stage;
 	protected:
 		void OnShow();									// 顯示這個狀態的遊戲畫面
-		void OnMove();									// 移動這個狀態的遊戲元素
-
 	private:
-		int showState = 0;
-		bool enterPressed = false;
-		int gameStateOfStages[6] = {0, 0, 0, 0, 0, 0};
-		CMovingBitmap startBackground;					
-		CMovingBitmap selectBackground;
-
-		CMovingBitmap cutSelected[3];
-		CMovingBitmap gutsSelected[3];
-		CMovingBitmap iceSelected[3];
-		CMovingBitmap bombSelected[3];
-		CMovingBitmap fireSelected[3];
-		CMovingBitmap elecSelected[3];
+		CMovingBitmap startBackground;								
+		CMovingBitmap cutSelected;
+		CMovingBitmap gutsSelected;
+		CMovingBitmap iceSelected;
+		CMovingBitmap bombSelected;
+		CMovingBitmap fireSelected;
+		CMovingBitmap elecSelected;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -107,12 +96,12 @@ namespace game_framework {
 		void OnMouseMove(UINT nFlags, CPoint point);	// 處理滑鼠的動作 
 		void OnRButtonDown(UINT nFlags, CPoint point);  // 處理滑鼠的動作
 		void OnRButtonUp(UINT nFlags, CPoint point);	// 處理滑鼠的動作
-		static int gameState; 
 	protected:
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
-		CutmanStage cutman_stage;
+		// CMovingBitmap cutmanStage;
+		CutmanStage stage;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////

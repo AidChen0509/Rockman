@@ -51,7 +51,6 @@ namespace game_framework {
 			right.LoadBitmapByString({ "resources/enemy/heli/heliLookRight1.bmp", "resources/enemy/heli/heliLookRight2.bmp" }, RGB(128, 0, 128));
 			left.SetAnimation(100, false);
 			right.SetAnimation(100, false);
-			currentBitmap = left;
 		}
 		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
 			if(blood > 0){
@@ -233,7 +232,7 @@ namespace game_framework {
 		bool successfullyAttack(CMovingBitmap rockman) override {
 			// 視不同怪物來實作邏輯
 			// Heli只有碰撞攻擊，所以判斷是否重疊就好
-			if (isActivate && CMovingBitmap::IsOverlap(rockman, currentBitmap)) { //有打中
+			if (CMovingBitmap::IsOverlap(rockman, currentBitmap) && isActivate) { //有打中
 				// Concern: 這裡判斷攻擊方向的方式，有可能不夠精確，但每秒32次的頻率之下，感覺不會有問題
 				if (rockman.GetLeft() < currentBitmap.GetLeft()) {
 					attackFromRight = true;

@@ -74,7 +74,6 @@ namespace game_framework {
 
 CAudio CAudio::audio;
 
-
 CAudio::CAudio()
 {
 	const int PIPE_SIZE = 400;
