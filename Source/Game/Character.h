@@ -537,7 +537,7 @@ namespace game_framework {
 			// TODO
 			return resting[0];
 		}
-		bool isHit() {
+		bool getIsHit() {
 			// TODO
 			return false;
 		}
@@ -546,6 +546,10 @@ namespace game_framework {
 		}
 		void setIsAttackedFromRight(bool isAttackedFromRight) {
 			// TODO
+			this->isAttackedFromRight = isAttackedFromRight;
+		}
+		void setIsHit() {
+			isHit = true;
 		}
 
 	private:
@@ -578,6 +582,8 @@ namespace game_framework {
 		int fallingstate = 0;
 		bool startfalling = true;
 		bool canJump = true;
+		bool isHit;
+		bool isAttackedFromRight;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
 		//vector<int> initY_by_stage = { 4368};

@@ -184,20 +184,36 @@ namespace game_framework {
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// cutman
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
-
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
-				if (enemyContainer[i]->getIsActivate()) { //怪物is acitivated
-					if (!rockman.isHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
-						// 沒被攻擊中，而且被打到
-						// 可以呼叫怪物的isAttackFromRight()，set給rockman
-						// 
-						rockman.decreaseBlood(enemyContainer[i]->getDamage());
-						rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
-
+				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
+			}
+			if (transitionState == 0) {
+				for (size_t i = 0; i < enemyContainer.size(); i++)
+				{
+					// enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
+					if (enemyContainer[i]->getIsActivate()) { //怪物is acitivated
+						if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
+							// 沒被攻擊中，而且被打到
+							// 可以呼叫怪物的isAttackFromRight()，set給rockman
+							rockman.setIsHit();
+							rockman.decreaseBlood(enemyContainer[i]->getDamage());
+							rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
+						}
 					}
 				}
-				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
+			}
+			else if (transitionState == 30) {
+				//到時候這邊會補上廊道怪物的container做loop
+			}
+			else if (transitionState == 40) {
+				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
+					// 沒被攻擊中，而且被打到
+					// 可以呼叫怪物的isAttackFromRight()，set給rockman
+					rockman.setIsHit();
+					rockman.decreaseBlood(cutman.getDamage());
+					rockman.setIsAttackedFromRight(cutman.isAttackFromRight());
+				}
 			}
 			
 
