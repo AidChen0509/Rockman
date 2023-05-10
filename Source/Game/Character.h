@@ -73,6 +73,10 @@ namespace game_framework {
 			laddershooting[1].LoadBitmap({
 				"resources/rockman/ClimbingShootRight.bmp"
 				}, RGB(128, 0, 128));
+			for (int i = 0; i < 3; i++)
+			{
+				beamammo[i].LoadBitmap({"resources/rockman/beamammo.bmp"}, RGB(128, 0, 128));
+			}
 			running[0].SetAnimation(100, false);
 			running[1].SetAnimation(100, false);
 			resting[0].SetAnimation(200, false);
@@ -95,9 +99,29 @@ namespace game_framework {
 			jumpingshooting[1].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			for (int i = 0; i < 3; i++)
+			{
+				if (isFacingRight)
+				{
+					ammoloc[i][0] = x+16;
+					ammoloc[i][1] = y;
+				}
+				else
+				{
+					ammoloc[i][0] = x;
+					ammoloc[i][1] = y;
+				}
+				beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
+			}
 		};
 		void Onshow(int stage_x, int stage_y) {
-
+			for (int i = 0; i < 3; i++)
+			{
+				if (isShot[i])
+				{
+					beamammo[i].ShowBitmap(2);
+				}
+			}
 			// 之後會需要if statement來決定是哪張圖or動畫
 			if ((!isJumping && !isFalling) || isClimbing) {
 				if (isResting) { // resting
@@ -336,11 +360,45 @@ namespace game_framework {
 				if (shootPressed)
 				{
 					isShooting = true;
+					if (!isShot[ammocount]&&canShot) {
+						isShot[ammocount] = true;
+						shooting_height = y;
+						if (ammocount<3)
+						{
+							ammocount += 1;
+						}
+						else
+						{
+							ammocount = 0;
+						}
+					}
+					canShot = false;
 				}
 				else if (!shootPressed)
 				{
+					canShot = true;
 					isShooting = false;
 				}
+				for (int i = 0; i < 3; i++)
+				{
+					if (!(ammoloc[i][0] < stage_x + 512 && ammoloc[i][0] > stage_x && ammoloc[i][1] > stage_y && ammoloc[i][1] < stage_y+512)) {
+						isShot[i] = false;
+						ammoloc[i][0] = x;
+						ammoloc[i][1] = shooting_height +15;
+					}
+					if (isShot[i]&&isFacingRight) {
+						ammoloc[i][0] += ammodx;
+						ammoloc[i][1] = shooting_height +15;
+						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
+					}
+					else if (isShot[i] && !isFacingRight)
+					{
+						ammoloc[i][0] -= ammodx;
+						ammoloc[i][1] = shooting_height +15;
+						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
+					}
+				}
+				
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
 						if ((block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 1&& block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 6)
@@ -564,6 +622,16 @@ namespace game_framework {
 			fallingstate = 0;
 			startfalling = true;
 			canJump = true;
+			canShot = true;
+			isShot[0] = false;
+			isShot[1] = false;
+			isShot[2] = false;
+			ammoperiod[0] = 0;
+			ammoperiod[1] = 0;
+			ammoperiod[2] = 0;
+			ammodx = 10;
+			ammocount = 0;
+			shooting_height = 0;
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -647,7 +715,7 @@ namespace game_framework {
 			this->isAttackedFromRight = isAttackedFromRight;
 		}
 		void setIsHit() {
-			isHit = false;
+			isHit = true;
 		}
 
 	private:
@@ -664,7 +732,8 @@ namespace game_framework {
 		CMovingBitmap climbingshooting[2];
 		CMovingBitmap jumpingshooting[2];
 		CMovingBitmap laddershooting[2];
-
+		CMovingBitmap beamammo[3];
+		bool isShot[3] = { false,false,false };
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
@@ -685,6 +754,7 @@ namespace game_framework {
 		int fallingstate = 0;
 		bool startfalling = true;
 		bool canJump = true;
+		bool canShot = true;
 		bool isHit;
 		bool isAttackedFromRight;
 		int accePeriod_up = 1;
@@ -710,5 +780,10 @@ namespace game_framework {
 		int fallCount = 0;
 		int accePeriod = 5;
 		int jumpingHeight = 0;
+		int ammoloc[3][2];
+		int ammoperiod[3] = { 0,0,0 };
+		int ammodx = 10;
+		int ammocount = 0;
+		int shooting_height = 0;
 	};
 }
