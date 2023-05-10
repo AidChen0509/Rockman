@@ -78,6 +78,8 @@ namespace game_framework {
 			resting[0].SetAnimation(200, false);
 			resting[1].SetAnimation(200, false);
 			climbing[0].SetAnimation(150, true);
+			runningshooting[0].SetAnimation(100, false);
+			runningshooting[1].SetAnimation(100, false);
 			// 最好是在Onshow設定位置，避免多餘的code
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
@@ -99,7 +101,7 @@ namespace game_framework {
 		void Onshow(int stage_x, int stage_y) {
 
 			// 之後會需要if statement來決定是哪張圖or動畫
-			if ((!isJumping && !isFalling) || isClimbing) {
+			if ((!isJumping && !isFalling)||isClimbing) {
 				if (isResting) { // resting
 					if (isFacingRight == false) { // resting_left_side
 						if (isShooting == true) {
@@ -152,7 +154,7 @@ namespace game_framework {
 					}
 				}
 			}
-			else if (isJumping || isFalling) {
+			else if(isJumping||isFalling){
 				if (isShooting) {
 					if (isFacingRight == false) { // jumping_left_side
 						jumpingshooting[0].ShowBitmap(2);
@@ -193,9 +195,10 @@ namespace game_framework {
 			int down_y = y + 2 * (24 - 1);
 
 			if (transitionState == 0 || transitionState == 30 || transitionState == 40) {
-				if ((leftPressed && rightPressed&&upPressed&&downPressed) || !(leftPressed || rightPressed||upPressed||downPressed)) { //按雙鍵，維持原本的方向但不位移
-					if (!isClimbing)
+				if ((leftPressed && rightPressed) || !(leftPressed || rightPressed||upPressed||downPressed)|| (upPressed&&downPressed)) { //按雙鍵，維持原本的方向但不位移
+					if (!isClimbing) {
 						isResting = true;
+					}
 					else {
 						isClimbing = true;
 						isResting = false;
@@ -296,6 +299,7 @@ namespace game_framework {
 				if (isOnTheGround) {
 					dy = 10;
 					accePeriod = 6;
+					accePeriod_up = 1;
 					startfalling = true;
 				}
 				if (isFalling) {
@@ -308,7 +312,7 @@ namespace game_framework {
 				if (isJumping && dy - 1 >= 1) {
 					if (jumpCount == 0) {
 						dy--;
-						if (accePeriod_up + 1 <= 2)
+						if (accePeriod_up +1<= 2)
 							accePeriod_up++;
 					}
 					jumpCount++;
@@ -341,6 +345,7 @@ namespace game_framework {
 				{
 					isShooting = false;
 				}
+
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
 						if ((block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 1&& block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 6)
@@ -511,9 +516,6 @@ namespace game_framework {
 					x += 1;
 				}
 			}
-
-			
-
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -531,48 +533,6 @@ namespace game_framework {
 			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
-		void OnBeginState(int stage_x, int stage_y) {
-			//x = 232;
-			//y = 4368;
-			 x = 2164 * 2;
-			 y = 800 * 2;
-			dx = 4; // 已乘兩倍，左右橫移速度
-			dy = 10; //已成兩倍，向上
-			blood = 28;
-			lives = 3;
-			jumpCount = 0;
-			fallCount = 0;
-			accePeriod = 5;
-			accePeriod_up = 1;
-			jumpingHeight = 0;
-			upPressed = false;
-			downPressed = false;
-			jumpPressed = false;
-			shootPressed = false;
-			isfirstclimb = true;
-			leftPressed = false;
-			rightPressed = false;
-			isResting = false;
-			isJumping = false;
-			isOnTheGround = true;
-			isFalling = true;
-			isShooting = false;
-			isFacingRight = false;
-			isClimbing = false;
-			isShotting = false;
-			climbjumpstate = 0;
-			fallingstate = 0;
-			startfalling = true;
-			canJump = true;
-			resting[0].SetTopLeft(x - stage_x, y - stage_y);
-			resting[1].SetTopLeft(x - stage_x, y - stage_y);
-			running[0].SetTopLeft(x - stage_x, y - stage_y);
-			running[1].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
-		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 			if (nChar == VK_LEFT) {
@@ -624,32 +584,9 @@ namespace game_framework {
 		int getBlood() {
 			return blood;
 		}
-		int getLives() {
-			return lives;
-		}
 		void setmap(vector<vector<int>> map) {
 			block_element_3darray = map;
 		}
-
-		CMovingBitmap getCurrentBitmap() {
-			// TODO
-			return resting[0];
-		}
-		bool getIsHit() {
-			// TODO
-			return false;
-		}
-		void decreaseBlood(int damage) {
-			blood -= damage;
-		}
-		void setIsAttackedFromRight(bool isAttackedFromRight) {
-			// TODO
-			this->isAttackedFromRight = isAttackedFromRight;
-		}
-		void setIsHit() {
-			isHit = false;
-		}
-
 	private:
 		vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關 要再改
 		vector<int> level_top = { 2048 * 2 ,1792 * 2, 1536 * 2, 1280 * 2, 1024 * 2, 768 * 2, 512 * 2, 256 * 2, 0, 256 * 2, 512 * 2, 768 * 2 };//768王關 要再改 跟地圖數據level數不符
@@ -658,13 +595,11 @@ namespace game_framework {
 		CMovingBitmap running[2];
 		CMovingBitmap climbing[2];
 		CMovingBitmap jumping[2];
-		CMovingBitmap currentBitmap;
 		CMovingBitmap idleshooting[2];
 		CMovingBitmap runningshooting[2];
 		CMovingBitmap climbingshooting[2];
 		CMovingBitmap jumpingshooting[2];
 		CMovingBitmap laddershooting[2];
-
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
@@ -680,27 +615,23 @@ namespace game_framework {
 		bool isShooting = false;
 		bool isFacingRight = false;
 		bool isClimbing = false;
-		bool isShotting = false;
 		int climbjumpstate = 0;
 		int fallingstate = 0;
 		bool startfalling = true;
 		bool canJump = true;
-		bool isHit;
-		bool isAttackedFromRight;
-		int accePeriod_up = 1;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
 		//vector<int> initY_by_stage = { 4368};
-		//int x = 232;
-		//int y = 4368;
+		int x = 232;
+		int y = 4368;
 
 		// 剪刀窗戶的腳色位置
 		// int x = 1792;
 		// int y = 2304;
 
 		// 廊道前
-		 int x = 2164*2;
-		 int y = 800*2;
+		//int x = 2164*2;
+		//int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上
@@ -709,6 +640,7 @@ namespace game_framework {
 		int jumpCount = 0;
 		int fallCount = 0;
 		int accePeriod = 5;
+		int accePeriod_up = 1;
 		int jumpingHeight = 0;
 	};
 }
