@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <string>
 namespace game_framework {
 	class Character
 	{
@@ -82,6 +83,8 @@ namespace game_framework {
 			resting[0].SetAnimation(200, false);
 			resting[1].SetAnimation(200, false);
 			climbing[0].SetAnimation(150, true);
+			runningshooting[0].SetAnimation(100, false);
+			runningshooting[1].SetAnimation(100, false);
 			// 最好是在Onshow設定位置，避免多餘的code
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
@@ -258,7 +261,7 @@ namespace game_framework {
 						}
 					}
 				}
-				else if (upPressed) { //向上爬梯子
+				else if (upPressed&&!shootPressed&&canClimb) { //向上爬梯子
 					if (block_element_3darray[(top_y - 10) / 32][(mid_x) / 32] == 2 
 						|| block_element_3darray[down_y / 32][(mid_x) / 32] == 2 
 						|| block_element_3darray[down_y / 32][(mid_x) / 32] == 6
@@ -283,7 +286,7 @@ namespace game_framework {
 						upPressed = false;
 					}
 				}
-				else if (downPressed) { //向下爬梯子
+				else if (downPressed&&!shootPressed&&canClimb) { //向下爬梯子
 					if (block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 2 
 						|| (block_element_3darray[(top_y - 2) / 32][(mid_x) / 32] == 2 
 							&& block_element_3darray[(down_y + 2) / 32][(mid_x) / 32] == 0)
@@ -357,13 +360,37 @@ namespace game_framework {
 					fallCount++;
 					fallCount = fallCount % accePeriod;
 				}
+				
 				if (shootPressed)
 				{
 					isShooting = true;
 					if (!isShot[ammocount]&&canShot) {
-						isShot[ammocount] = true;
-						shooting_height = y;
-						if (ammocount<3)
+						isShot[ammocount] = true;//索引值的bug懸疑題(超出索引卻沒報錯會改到宣告此陣列下方的變數)
+						if (isFacingRight&&!isClimbing)
+						{
+							ammodirect[ammocount] = 0;
+							ammoloc[ammocount][0] = x+36;
+							ammoloc[ammocount][1] = y+15;
+						}
+						else if (!isFacingRight && !isClimbing)
+						{
+							ammodirect[ammocount] = 1;
+							ammoloc[ammocount][0] = x-4;
+							ammoloc[ammocount][1] = y + 15;
+						}
+						else if (isFacingRight && isClimbing)
+						{
+							ammodirect[ammocount] = 0;
+							ammoloc[ammocount][0] = x + 28;
+							ammoloc[ammocount][1] = y + 15;
+						}
+						else if (!isFacingRight && isClimbing)
+						{
+							ammodirect[ammocount] = 1;
+							ammoloc[ammocount][0] = x-4;
+							ammoloc[ammocount][1] = y + 15;
+						}
+						if (ammocount<2)
 						{
 							ammocount += 1;
 						}
@@ -377,28 +404,69 @@ namespace game_framework {
 				else if (!shootPressed)
 				{
 					canShot = true;
-					isShooting = false;
+					gundown = false;
+					canClimb = true;
 				}
 				for (int i = 0; i < 3; i++)
 				{
 					if (!(ammoloc[i][0] < stage_x + 512 && ammoloc[i][0] > stage_x && ammoloc[i][1] > stage_y && ammoloc[i][1] < stage_y+512)) {
 						isShot[i] = false;
 						ammoloc[i][0] = x;
-						ammoloc[i][1] = shooting_height +15;
+						ammoloc[i][1] = y +15;
+						if (shootPressed)
+						{
+							gundown = true;
+						}
 					}
-					if (isShot[i]&&isFacingRight) {
+					if (isShot[i]&&ammodirect[i]==0) {
 						ammoloc[i][0] += ammodx;
-						ammoloc[i][1] = shooting_height +15;
 						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
 					}
-					else if (isShot[i] && !isFacingRight)
+					else if (isShot[i] && ammodirect[i]==1)
 					{
 						ammoloc[i][0] -= ammodx;
-						ammoloc[i][1] = shooting_height +15;
 						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
 					}
 				}
-				
+				if (gundown)
+				{
+					isShooting = false;
+				}
+				if (ammocount >= 1) {
+					if (abs(ammoloc[ammocount-1][0] - x) > 200) {
+						if (shootPressed)
+						{
+							isShooting = true;
+						}
+						else
+						{
+							isShooting = false;
+						}
+						canClimb = true;
+					}
+					else if(isShot[ammocount - 1])
+					{
+						canClimb = false;
+					}
+				}
+				else
+				{
+					if (abs(ammoloc[2][0] - x) > 200) {
+						if (shootPressed)
+						{
+							isShooting = true;
+						}
+						else
+						{
+							isShooting = false;
+						}
+						canClimb = true;
+					}
+					else if (isShot[2])
+					{
+						canClimb = false;
+					}
+				}
 				if (isOnTheGround) {
 					if (!jumpPressed) { //如果在地板上 && 沒有按跳 -> 要判斷懸空與否要著地
 						if ((block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 1&& block_element_3darray[(down_y + 2) / 32][(left_x) / 32] != 6)
@@ -556,6 +624,11 @@ namespace game_framework {
 							climbing[0].ToggleAnimation();
 						}
 					}
+					//重置子彈
+					for (int i = 0; i < 3; i++)
+					{
+						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
+					}
 				}
 				else if (transitionState == 2) {
 					if (isClimbing) {
@@ -563,10 +636,20 @@ namespace game_framework {
 							climbing[0].ToggleAnimation();
 						}
 					}
+					//重置子彈
+					for (int i = 0; i < 3; i++)
+					{
+						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
+					}
 				}
 				else if (transitionState == 3  || transitionState == 4) { 
 					// 滑步進廊道跟王關
 					x += 1;
+					//重置子彈
+					for (int i = 0; i < 3; i++)
+					{
+						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
+					}
 				}
 			}
 
@@ -617,21 +700,21 @@ namespace game_framework {
 			isShooting = false;
 			isFacingRight = false;
 			isClimbing = false;
-			isShotting = false;
 			climbjumpstate = 0;
 			fallingstate = 0;
 			startfalling = true;
 			canJump = true;
 			canShot = true;
+			canClimb = true;
+			gundown = false;
 			isShot[0] = false;
 			isShot[1] = false;
 			isShot[2] = false;
-			ammoperiod[0] = 0;
-			ammoperiod[1] = 0;
-			ammoperiod[2] = 0;
+			ammodirect[0] = 0;
+			ammodirect[1] = 1;
+			ammodirect[2] = 2;
 			ammodx = 10;
 			ammocount = 0;
-			shooting_height = 0;
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -733,6 +816,7 @@ namespace game_framework {
 		CMovingBitmap jumpingshooting[2];
 		CMovingBitmap laddershooting[2];
 		CMovingBitmap beamammo[3];
+		string message;
 		bool isShot[3] = { false,false,false };
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
@@ -749,12 +833,13 @@ namespace game_framework {
 		bool isShooting = false;
 		bool isFacingRight = false;
 		bool isClimbing = false;
-		bool isShotting = false;
 		int climbjumpstate = 0;
 		int fallingstate = 0;
 		bool startfalling = true;
 		bool canJump = true;
 		bool canShot = true;
+		bool canClimb = true;
+		bool gundown = false;
 		bool isHit;
 		bool isAttackedFromRight;
 		int accePeriod_up = 1;
@@ -781,9 +866,8 @@ namespace game_framework {
 		int accePeriod = 5;
 		int jumpingHeight = 0;
 		int ammoloc[3][2];
-		int ammoperiod[3] = { 0,0,0 };
-		int ammodx = 10;
+		int ammodirect[3];
+		int ammodx = 12;
 		int ammocount = 0;
-		int shooting_height = 0;
 	};
 }
