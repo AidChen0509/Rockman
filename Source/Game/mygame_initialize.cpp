@@ -131,7 +131,7 @@ void CGameStateInit::OnBeginState()
 void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar == VK_RETURN) {
-		if (showState == 0) { // TODO 要再加條件 避免後須按下enter會回朔
+		if (showState == 0) {
 			startBackground.ToggleAnimation();
 			CAudio::Instance()->Play(AUDIO_GameStart);
 			showState = 1;

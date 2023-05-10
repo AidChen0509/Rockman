@@ -1088,7 +1088,7 @@ namespace game_framework {
 			return false;
 		}
 		bool successfullyAttack(CMovingBitmap rockman) { //以怪物的角度，打中洛克人?
-			if (weaponThrew && CMovingBitmap::IsOverlap(rockman, rollingCutter[0])) {
+			if (weaponThrew && CMovingBitmap::IsOverlap(rockman, rollingCutter[0], 2)) {
 				damage = 5;
 				if (rockman.GetLeft() <= rollingCutter[0].GetLeft()) { //
 					attackFromRight = true;

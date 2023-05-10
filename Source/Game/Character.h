@@ -6,6 +6,61 @@ namespace game_framework {
 		Character() {};
 		~Character() {};
 		void OnInit(int stage_x, int stage_y) {
+			hitAnimation[0].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt0.bmp",
+				"resources/rockman/shine.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt0.bmp",
+				"resources/rockman/shine.bmp",
+				}, RGB(128, 0, 128));
+			hitAnimation[0].SetAnimation(100, true);
+			hitAnimation[1].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt1.bmp",
+				"resources/rockman/shine.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt1.bmp",
+				"resources/rockman/shine.bmp",
+				}, RGB(128, 0, 128));
+			hitAnimation[1].SetAnimation(100, true);
+
+			shine.LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				}, RGB(128, 0, 128));
+			shine.SetAnimation(100, true);
+
 			resting[0].LoadBitmapByString({
 				"resources/rockman/lookLeftOpenEyes.bmp" ,
 				"resources/rockman/lookLeftOpenEyes.bmp" ,
@@ -51,6 +106,8 @@ namespace game_framework {
 			resting[1].SetAnimation(200, false);
 			climbing[0].SetAnimation(150, true);
 			// 最好是在Onshow設定位置，避免多餘的code
+			hitAnimation[0].SetTopLeft(x - stage_x, y - stage_y);
+			hitAnimation[1].SetTopLeft(x - stage_x, y - stage_y);
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -63,7 +120,13 @@ namespace game_framework {
 		void Onshow(int stage_x, int stage_y) {
 
 			// 之後會需要if statement來決定是哪張圖or動畫
-			if ((!isJumping && !isFalling)||isClimbing) {
+			if (isHit) {
+				if (isAttackedFromRight) {
+					hitAnimation[1].ShowBitmap(2);
+				}else{
+					hitAnimation[0].ShowBitmap(2);
+				}
+			} else if ((!isJumping && !isFalling)||isClimbing) {
 				if (isResting) { // resting
 					if (isFacingRight == false) { // resting_left_side
 						resting[0].ShowBitmap(2);
@@ -113,7 +176,63 @@ namespace game_framework {
 			int down_y = y + 2 * (24 - 1);
 
 			if (transitionState == 0 || transitionState == 30 || transitionState == 40) {
-				if ((leftPressed && rightPressed&&upPressed&&downPressed) || !(leftPressed || rightPressed||upPressed||downPressed)) { //按雙鍵，維持原本的方向但不位移
+				if (isHit) {
+					if (isHitState == 1) {
+						if (isAttackedFromRight == true) {
+							hitAnimation[1].ToggleAnimation();
+						}
+						else {
+							hitAnimation[0].ToggleAnimation();
+						}
+						if (isClimbing) {
+							isJumping = false;
+							isFalling = true;
+							isClimbing = false;
+							isOnTheGround = false;
+						}
+						isHitState = 2;
+					}
+					else if (isHitState == 2) {
+						
+						if (hitAnimation[0].IsAnimationDone() && hitAnimation[1].IsAnimationDone()) {
+							// 打完動畫已結束，就可動了
+							isHitState = 0;
+							isHit = false;
+						}
+						else {
+							// dx = 1不知道會不會有問題
+							if (isAttackedFromRight) {
+								if (left_x - 1 >= 0
+									&& block_element_3darray[top_y / 32][(left_x - 1) / 32] != -1
+									&& block_element_3darray[mid_y / 32][(left_x - 1) / 32] != -1
+									&& block_element_3darray[down_y / 32][(left_x - 1) / 32] != -1) {
+									// 檢查是否會撞牆
+									if (block_element_3darray[top_y / 32][(left_x - 1) / 32] != 1
+										&& block_element_3darray[mid_y / 32][(left_x - 1) / 32] != 1
+										&& block_element_3darray[down_y / 32][(left_x - 1) / 32] != 1
+										&& !isClimbing) {
+										x -= -1;
+									}
+								}
+							}
+							else {
+								if (right_x + 1 <= 6656
+									&& block_element_3darray[top_y / 32][(right_x + 1) / 32] != -1
+									&& block_element_3darray[mid_y / 32][(right_x + 1) / 32] != -1
+									&& block_element_3darray[down_y / 32][(right_x + 1) / 32] != -1) {
+
+									if (block_element_3darray[top_y / 32][(right_x + 1) / 32] != 1
+										&& block_element_3darray[mid_y / 32][(right_x + 1) / 32] != 1
+										&& block_element_3darray[down_y / 32][(right_x + 1) / 32] != 1
+										&& !isClimbing) {
+										x += 1;
+									}
+								}
+							}
+						}
+					}
+				}
+				else if ((leftPressed && rightPressed&&upPressed&&downPressed) || !(leftPressed || rightPressed||upPressed||downPressed)) { //按雙鍵，維持原本的方向但不位移
 					if (!isClimbing)
 						isResting = true;
 					else {
@@ -424,7 +543,8 @@ namespace game_framework {
 			}
 
 			
-
+			hitAnimation[0].SetTopLeft(x - stage_x, y - stage_y);
+			hitAnimation[1].SetTopLeft(x - stage_x, y - stage_y);
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -433,16 +553,20 @@ namespace game_framework {
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
+
 		};
-		void OnBeginState(int stage_x, int stage_y) {
-			x = 232;
-			y = 4368;
-			// x = 2164 * 2;
-			// y = 800 * 2;
+		void OnBeginState(int init_x, int init_y, int point) {
+			x = init_x;
+			y = init_y;
 			dx = 4; // 已乘兩倍，左右橫移速度
 			dy = 10; //已成兩倍，向上
+			if (point == -1) {
+				lives = 3;
+			}
+			else {
+				lives -= 1;
+			}
 			blood = 28;
-			lives = 3;
 			jumpCount = 0;
 			fallCount = 0;
 			accePeriod = 5;
@@ -466,14 +590,11 @@ namespace game_framework {
 			fallingstate = 0;
 			startfalling = true;
 			canJump = true;
-			resting[0].SetTopLeft(x - stage_x, y - stage_y);
-			resting[1].SetTopLeft(x - stage_x, y - stage_y);
-			running[0].SetTopLeft(x - stage_x, y - stage_y);
-			running[1].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
+			isHit = false;
+			isHitState = 0;
+
+			// try to delete these code, technically it doesn't fail;
+
 		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
@@ -539,17 +660,20 @@ namespace game_framework {
 		}
 		bool getIsHit() {
 			// TODO
-			return false;
+			if (isHitState == 0)
+				return false;
+			return true;
 		}
 		void decreaseBlood(int damage) {
 			blood -= damage;
 		}
 		void setIsAttackedFromRight(bool isAttackedFromRight) {
-			// TODO
 			this->isAttackedFromRight = isAttackedFromRight;
 		}
 		void setIsHit() {
 			isHit = true;
+			// state 0 當作沒被打
+			isHitState = 1;
 		}
 
 	private:
@@ -561,6 +685,10 @@ namespace game_framework {
 		CMovingBitmap climbing[2];
 		CMovingBitmap jumping[2];
 		CMovingBitmap currentBitmap;
+		CMovingBitmap hitAnimation[2];
+		CMovingBitmap shine;
+		
+
 
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
@@ -580,6 +708,7 @@ namespace game_framework {
 		bool isShotting = false;
 		int climbjumpstate = 0;
 		int fallingstate = 0;
+		int isHitState = 0;
 		bool startfalling = true;
 		bool canJump = true;
 		bool isHit;

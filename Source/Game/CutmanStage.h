@@ -158,10 +158,11 @@ namespace game_framework {
 			}
 		};
 		void OnMove() {
-			// 在rockman之前先做轉場判定
+
 			int rockmanX = rockman.getX();
 			int rockmanY = rockman.getY();
-			if (((rockmanY + 12) / 512) != (stage_y / 512)) { //除以512為了檢查是否在同一層
+			if (((rockmanY + 12) / 512) != (stage_y / 512)) { 
+				//除以512為了檢查是否在同一層
 				// case 1 洛克人在上面一層 -> (rockmanY + 12) / 512 < (stage_y / 512)
 				if (((rockmanY + 12) / 512) < (stage_y / 512)) {
 					transitionState = 1; // 1 代表向上轉場
@@ -170,7 +171,8 @@ namespace game_framework {
 				else {
 					transitionState = 2; // 2 代表向上轉場
 				}
-			}else if(map[rockmanY / 32][(rockmanX + 2 * (24 - 1 - 4)) / 32] == 4){
+			}
+			else if(map[rockmanY / 32][(rockmanX + 2 * (24 - 1 - 4)) / 32] == 4){
 				if (transitionState == 30) {
 					transitionState = 4; //進王關transition
 				}
@@ -179,8 +181,6 @@ namespace game_framework {
 				}
 			}
 
-
-			
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// cutman
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
@@ -205,6 +205,7 @@ namespace game_framework {
 			}
 			else if (transitionState == 30) {
 				//到時候這邊會補上廊道怪物的container做loop
+				// 或是一些transitionState
 			}
 			else if (transitionState == 40) {
 				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
@@ -248,7 +249,8 @@ namespace game_framework {
 			 }
 				*/
 			}
-			else if (transitionState == 30) { //廊道的camera
+			else if (transitionState == 30) { 
+				//廊道的camera
 				// 因為很單純，所以直接寫死
 				if ((stage_x < 5632 && rockman.getX() - 232 > 4608) || (stage_x > 4608 && rockman.getX() + 280 < 6144)) {
 					stage_x = rockman.getX() - 2 * 116;
@@ -303,7 +305,16 @@ namespace game_framework {
 			// 40  is the state rockman can move
 			}
 
+			// 到達savePoint的判斷
+			if (savePoint == 0 && stage_x == savePoint_stage[1][0] && stage_y <= savePoint_stage[1][1]) {
+				savePoint = 1;
+			}
+			else if (savePoint == 1 && stage_x >= savePoint_stage[2][0] && stage_y == savePoint_stage[2][1]) {
+				savePoint = 2;
+			}
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
+			
+			checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
 		};
 		void Onshow() {
 			cutman_stage.ShowBitmap(2);
@@ -388,31 +399,69 @@ namespace game_framework {
 			}
 		}
 		int getGamestate() {
-			if (cutman.getBlood() <= 0) {
-				return 1;
-			}
-			else if (rockman.getLives() <= 0) {
-				return 2;
-			}
-			else {
-				return 0;
-			}
+			// 1過關、2OVER
+			return gameState;
 		}
-		void OnBeginState() {
-			dx = 4;
-			dy = 8;
-			transitionState = 0;
-			stage_x = 0;
-			stage_y = 4096;
-			// stage_x = 2048 * 2;
-			// stage_y = 768 * 2;
-			rockman.OnBeginState(stage_x, stage_y);
-			cutman.OnBeginState();
+		void OnBeginState(int point) {
+			if (point == -1) {
+				// 第一次進遊戲
+				gameState = 0;
+				savePoint = 0;
+				transitionState = 0;
+				stage_x = savePoint_stage[0][0];
+				stage_y = savePoint_stage[0][1];
+				rockman.OnBeginState(savePoint_rockman[0][0], savePoint_rockman[0][1], -1);
+			}
+			else if (point == 0) {
+				transitionState = 0;
+				stage_x = savePoint_stage[0][0];
+				stage_y = savePoint_stage[0][1];
+				rockman.OnBeginState(savePoint_rockman[0][0], savePoint_rockman[0][1], 0);
+
+			}
+			else if (point == 1) {
+				transitionState = 0;
+				stage_x = savePoint_stage[1][0];
+				stage_y = savePoint_stage[1][1];
+				rockman.OnBeginState(savePoint_rockman[1][0], savePoint_rockman[1][1], 1);
+			}
+			else if (point == 2) {
+				// 在隧道的頭
+				transitionState = 30;
+				stage_x = savePoint_stage[2][0];
+				stage_y = savePoint_stage[2][1];
+				rockman.OnBeginState(savePoint_rockman[2][0], savePoint_rockman[2][1], 2);
+				cutman.OnBeginState();
+			}
+			
+			// 自從初始過後，不會再改變到
+			// dx = 4;
+			// dy = 8;
+			
+			// TODO 其他怪物的OnBeginState，可以塞入個別的savePoint，提高效能，或是全部都塞這
 		}
 		void enemyReset() {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				// enemyContainer[i]->OnBeginState();
+			}
+		}
+		void checkReset() {
+			if (cutman.getBlood() <= 0) {
+				//贏了
+				gameState = 1;
+			}
+			else if (rockman.getLives() > 0) {
+				// blood
+				int rockman_blood = rockman.getBlood();
+				if (rockman_blood <= 0) { //要初始
+					this->OnBeginState(savePoint);
+				}
+			}
+			else {
+				gameState = 2;
+				// GotoGameState(GAME_STATE_OVER);
+				// 要改狀態，讓mygame_run去跳state
 			}
 		}
 
@@ -425,10 +474,10 @@ namespace game_framework {
 		int dx = 4;
 		int dy = 8;
 		int transitionState = 0;
+		int gameState = 0;
 		// 初始點
 		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
 		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
-
 
 		//剪刀窗戶的地方
 		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
@@ -441,13 +490,13 @@ namespace game_framework {
 		// 三個儲存點，之後再處理，X-Y要再對照一下
 		int savePoint = 0;
 		int savePoint_stage[3][2] = {
-			{0, 4096},
-			{2560, 1024},
-			{2304*2, 768*2}};
+			{0, 4096}, 
+			{2560, 1536}, 
+			{4608, 1664}};
 		int savePoint_rockman[3][2] = {
 			{232, 4368},
-			{0, 0},
-			{0, 0}
+			{2792, 1808},
+			{4670, 1808}
 		};
 		bool leftPressed;
 		bool rightPressed;

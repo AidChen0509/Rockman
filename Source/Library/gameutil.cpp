@@ -379,8 +379,19 @@ namespace game_framework {
 		\param bmp2 第二個 CMovingBitmap 物件
 		\return 回傳布林值，代表兩物件是否交疊。
 	*/
-	bool CMovingBitmap::IsOverlap(CMovingBitmap bmp1, CMovingBitmap bmp2) {
+	bool CMovingBitmap::IsOverlap(CMovingBitmap bmp1, CMovingBitmap bmp2, double factor) {
 		CRect rect;
+		bmp1.locations[bmp1.GetFrameIndexOfBitmap()].right = bmp1.locations[bmp1.GetFrameIndexOfBitmap()].left 
+			+ (int)((bmp1.locations[bmp1.GetFrameIndexOfBitmap()].right - bmp1.locations[bmp1.GetFrameIndexOfBitmap()].left)*factor);
+		bmp1.locations[bmp1.GetFrameIndexOfBitmap()].bottom = bmp1.locations[bmp1.GetFrameIndexOfBitmap()].top
+			+ (int)((bmp1.locations[bmp1.GetFrameIndexOfBitmap()].bottom - bmp1.locations[bmp1.GetFrameIndexOfBitmap()].top)*factor);
+		
+		bmp2.locations[bmp2.GetFrameIndexOfBitmap()].right = bmp2.locations[bmp2.GetFrameIndexOfBitmap()].left
+			+ (int)((bmp2.locations[bmp2.GetFrameIndexOfBitmap()].right - bmp2.locations[bmp2.GetFrameIndexOfBitmap()].left)*factor);
+		bmp2.locations[bmp2.GetFrameIndexOfBitmap()].bottom = bmp2.locations[bmp2.GetFrameIndexOfBitmap()].top
+			+ (int)((bmp2.locations[bmp2.GetFrameIndexOfBitmap()].bottom - bmp2.locations[bmp2.GetFrameIndexOfBitmap()].top)*factor);
+
+
 		BOOL isOverlap = rect.IntersectRect(bmp1.locations[bmp1.GetFrameIndexOfBitmap()], bmp2.locations[bmp2.GetFrameIndexOfBitmap()]);
 		return isOverlap;
 	}
