@@ -8,7 +8,7 @@ namespace game_framework {
 		void OnInit(int stage_x, int stage_y) {
 			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
 			timer.SetTopLeft(0, 0);
-			timer.SetAnimation(3000, true);
+			timer.SetAnimation(1800, true);
 
 			hitAnimation[0].LoadBitmapByString({
 				"resources/rockman/purple.bmp",
@@ -322,12 +322,12 @@ namespace game_framework {
 									&& block_element_3darray[mid_y / 32][(left_x - 1) / 32] != 1
 									&& block_element_3darray[down_y / 32][(left_x - 1) / 32] != 1
 									&& !isClimbing) {
-									x -= -1;
+									x -= 1;
 								}
 							}
 						}
 						else {
-							if (right_x + 1 <= 6656
+							if (right_x + dx <= 6656
 								&& block_element_3darray[top_y / 32][(right_x + 1) / 32] != -1
 								&& block_element_3darray[mid_y / 32][(right_x + 1) / 32] != -1
 								&& block_element_3darray[down_y / 32][(right_x + 1) / 32] != -1) {
@@ -336,7 +336,7 @@ namespace game_framework {
 									&& block_element_3darray[mid_y / 32][(right_x + 1) / 32] != 1
 									&& block_element_3darray[down_y / 32][(right_x + 1) / 32] != 1
 									&& !isClimbing) {
-									x += 1;
+									 x += 1;
 								}
 							}
 						}
@@ -722,7 +722,6 @@ namespace game_framework {
 			fallingstate = 0;
 			startfalling = true;
 			canJump = true;
-			isHit = false;
 			isHitState = 0;
 
 			// try to delete these code, technically it doesn't fail;
@@ -828,7 +827,6 @@ namespace game_framework {
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
 		bool shootPressed = false; // 0x58 key x was pressed or not
-		// bool isJumpPressedKeyUp = true;
 		bool isfirstclimb = true;
 		bool leftPressed = false;
 		bool rightPressed = false;
@@ -845,7 +843,6 @@ namespace game_framework {
 		int isHitState = 0;
 		bool startfalling = true;
 		bool canJump = true;
-		bool isHit;
 		bool isAttackedFromRight;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};
