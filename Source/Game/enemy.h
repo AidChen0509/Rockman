@@ -58,11 +58,10 @@ namespace game_framework {
 				// 理想情況是往左往右都會生成怪物，但實際情況是洛克人回頭就不會再產怪了，要向右才會遇到
 				if (isActivate == false) { //怪物還沒生成
 					// 如果stage camera碰到生成點，就會生成->activate
-					// ( rockmanX < 生成點 && rockmanX + 280 > 生成點) || (rockmanX > 生成點 && rockmanX - 232 < 生成點 )
-						
+					// ( rockmanX < 生成點 && rockmanX + 280 > 生成點) || (rockmanX > 生成點 && rockmanX - 232 < 生成點 )				
 					if(_initY/512 == rockmanY/512){ //在同一層
-						if ((stage_x < _initX && _initX < stage_x + 512) &&
-							(stage_y < _initY && _initY < stage_y + 512)) { //怪物生成
+						if ((stage_x <= _initX && _initX < stage_x + 512) &&
+							(stage_y <= _initY && _initY < stage_y + 512)) { //怪物生成
 							if (canActivate) {
 								isActivate = true;
 								x = _initX;
@@ -217,12 +216,13 @@ namespace game_framework {
 					currentBitmap = left;
 				}
 			}
+			
 		};
 		
 		// 怪物被打中與否，有被打到洛克人子彈要消失
 		bool beenAttacked(CMovingBitmap bullet) override {
 			// 應該要isActivate才能被子彈打到
-			if ((CMovingBitmap::IsOverlap(bullet, currentBitmap, 2)) && isActivate) {
+			if (isActivate && (CMovingBitmap::IsOverlap(bullet, currentBitmap, 2))) {
 				blood -= 1;
 				return true;
 			}
@@ -297,7 +297,7 @@ namespace game_framework {
 		int targetY;
 		int _initX;
 		int _initY;
-
+		string message;
 		int blood = 1;
 		int damage = 2;
 
@@ -624,6 +624,7 @@ namespace game_framework {
 		int _initBulletY;
 		bool attackFromRight;
 
+		
 		int blood = 1;
 
 		CMovingBitmap open;

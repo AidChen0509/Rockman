@@ -200,6 +200,16 @@ namespace game_framework {
 							rockman.decreaseBlood(enemyContainer[i]->getDamage());
 							rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
 						}
+						
+						for (int j = 0; j < 3; j++)
+						{
+							if (rockman.getIsShot(j)) {
+								if (enemyContainer[i]->beenAttacked(rockman.getBullet(j))) {
+									rockman.setIsShotfalse(j);
+								}
+							}
+						}
+
 					}
 				}
 			}
@@ -214,6 +224,14 @@ namespace game_framework {
 					rockman.setIsHit();
 					rockman.decreaseBlood(cutman.getDamage());
 					rockman.setIsAttackedFromRight(cutman.isAttackFromRight());
+				}
+				for (int j = 0; j < 3; j++)
+				{
+					if (rockman.getIsShot(j)) {
+						if (cutman.beenAttacked(rockman.getBullet(j))) {
+							rockman.setIsShotfalse(j);
+						}
+					}
 				}
 			}
 			
@@ -351,11 +369,16 @@ namespace game_framework {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnShow();
+				
 			}
 
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
-			
+			CDC *px = CDDraw::GetBackCDC();
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 0));
+			message = to_string(cutman.getText());
+			CTextDraw::Print(px, 88, 213, message.c_str());
+			CDDraw::ReleaseBackCDC();
 		}
 		void readFile() {
 			// [144][208]
@@ -492,15 +515,16 @@ namespace game_framework {
 		int savePoint_stage[3][2] = {
 			{0, 4096}, 
 			{2560, 1536}, 
-			{4608, 1664}};
+			{4608, 1536}};
 		int savePoint_rockman[3][2] = {
 			{232, 4368},
 			{2792, 1808},
-			{4670, 1808}
+			{4636, 1808}
 		};
 		bool leftPressed;
 		bool rightPressed;
 
+		string message;
 		vector<Enemy*> enemyContainer;
 		vector<vector<int>> map;
 
