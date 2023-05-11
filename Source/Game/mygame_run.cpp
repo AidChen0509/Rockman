@@ -34,7 +34,8 @@ void CGameStateRun::OnBeginState()
 	gameState = 0;
 	// 關卡內容初始化
 	if (CGameStateInit::stage == 0) {
-		cutman_stage.OnBeginState();
+		// -1為第一次進遊戲
+		cutman_stage.OnBeginState(-1);
 	}
 	else if (CGameStateInit::stage == 1) {
 		// guts

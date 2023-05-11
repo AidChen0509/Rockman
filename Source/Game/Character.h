@@ -7,6 +7,65 @@ namespace game_framework {
 		Character() {};
 		~Character() {};
 		void OnInit(int stage_x, int stage_y) {
+			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(1800, true);
+
+			hitAnimation[0].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt0.bmp",
+				"resources/rockman/shine.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt0.bmp",
+				"resources/rockman/shine.bmp",
+				}, RGB(128, 0, 128));
+			hitAnimation[0].SetAnimation(100, true);
+			hitAnimation[1].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt1.bmp",
+				"resources/rockman/shine.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/hurt1.bmp",
+				"resources/rockman/shine.bmp",
+				}, RGB(128, 0, 128));
+			hitAnimation[1].SetAnimation(100, true);
+
+			shine.LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/purple.bmp",
+				}, RGB(128, 0, 128));
+			shine.SetAnimation(100, true);
+
 			resting[0].LoadBitmapByString({
 				"resources/rockman/lookLeftOpenEyes.bmp" ,
 				"resources/rockman/lookLeftOpenEyes.bmp" ,
@@ -23,6 +82,35 @@ namespace game_framework {
 				"resources/rockman/lookRightOpenEyes.bmp" ,
 				"resources/rockman/lookRightCloseEyes.bmp" ,
 				}, RGB(128, 0, 128));
+			restingShine[0].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookLeftOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookLeftOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookLeftOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookLeftOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookLeftOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookLeftCloseEyes.bmp" ,
+				}, RGB(128, 0, 128));
+			restingShine[1].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookRightOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookRightOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookRightOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookRightOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookRightOpenEyes.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/lookRightCloseEyes.bmp" ,
+				}, RGB(128, 0, 128));
+
 			running[0].LoadBitmapByString({ // index 0 refers to running left
 				"resources/rockman/RunningLeft1.bmp" ,
 				"resources/rockman/RunningLeft2.bmp" ,
@@ -33,12 +121,37 @@ namespace game_framework {
 				"resources/rockman/RunningRight2.bmp" ,
 				"resources/rockman/RunningRight3.bmp" ,
 				}, RGB(128, 0, 128));
+			runningShine[0].LoadBitmapByString({ // index 0 refers to running left
+				"resources/rockman/purple.bmp",
+				"resources/rockman/RunningLeft1.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/RunningLeft2.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/RunningLeft3.bmp" ,
+				}, RGB(128, 0, 128));
+			runningShine[1].LoadBitmapByString({ // index 1 refers to running right
+				"resources/rockman/purple.bmp",
+				"resources/rockman/RunningRight1.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/RunningRight2.bmp" ,
+				"resources/rockman/purple.bmp",
+				"resources/rockman/RunningRight3.bmp" ,
+				}, RGB(128, 0, 128));
 			jumping[0].LoadBitmapByString({
 				"resources/rockman/jumpingLeft.bmp" ,
 				}, RGB(128, 0, 128));
 			jumping[1].LoadBitmapByString({
 				"resources/rockman/jumpingRight.bmp" ,
 				}, RGB(128, 0, 128));
+			jumpingShine[0].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/jumpingLeft.bmp" ,
+				}, RGB(128, 0, 128));
+			jumpingShine[1].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/jumpingRight.bmp" ,
+				}, RGB(128, 0, 128));
+			
 			climbing[0].LoadBitmapByString({
 				"resources/rockman/climb1.bmp",
 				"resources/rockman/climb2.bmp"
@@ -78,6 +191,16 @@ namespace game_framework {
 			{
 				beamammo[i].LoadBitmap({"resources/rockman/beamammo.bmp"}, RGB(128, 0, 128));
 			}
+			climbingShine[0].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/climb1.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/climb2.bmp"
+				}, RGB(128, 0, 128));
+			climbingShine[1].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/climb2.bmp"
+				}, RGB(128, 0, 128));
 			running[0].SetAnimation(100, false);
 			running[1].SetAnimation(100, false);
 			resting[0].SetAnimation(200, false);
@@ -85,7 +208,17 @@ namespace game_framework {
 			climbing[0].SetAnimation(150, true);
 			runningshooting[0].SetAnimation(100, false);
 			runningshooting[1].SetAnimation(100, false);
+			runningShine[0].SetAnimation(100, false);
+			runningShine[1].SetAnimation(100, false);
+			restingShine[0].SetAnimation(100, false);
+			restingShine[1].SetAnimation(100, false);
+			jumpingShine[0].SetAnimation(100, false);
+			jumpingShine[1].SetAnimation(100, false);
+			climbingShine[0].SetAnimation(75, true);
+			climbingShine[1].SetAnimation(75, false);
 			// 最好是在Onshow設定位置，避免多餘的code
+			hitAnimation[0].SetTopLeft(x - stage_x, y - stage_y);
+			hitAnimation[1].SetTopLeft(x - stage_x, y - stage_y);
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -126,27 +259,42 @@ namespace game_framework {
 				}
 			}
 			// 之後會需要if statement來決定是哪張圖or動畫
-			if ((!isJumping && !isFalling) || isClimbing) {
+			timer.ShowBitmap();
+			if (isHitState == 1 || isHitState == 2) {
+				if (isAttackedFromRight) {
+					hitAnimation[1].ShowBitmap(2);
+				}else{
+					hitAnimation[0].ShowBitmap(2);
+				}
+			} else if ((!isJumping && !isFalling)||isClimbing) {
 				if (isResting) { // resting
 					if (isFacingRight == false) { // resting_left_side
-						if (isShooting == true) {
+						if(isHitState != 4){
+              if (isShooting == true) {
 							idleshooting[0].ShowBitmap(2);
-						}
-						else if (isShooting == false) {
-							resting[0].ShowBitmap(2);
-						}
+						  }
+              else{
+                resting[0].ShowBitmap(2);
+              }
+            }
+						else
+							restingShine[0].ShowBitmap(2);
 					}
 					else {  // 原本面右，繼續面右
-						if (isShooting == true) {
+						if (isHitState != 4)
+							if (isShooting == true) {
 							idleshooting[1].ShowBitmap(2);
-						}
-						else if (isShooting == false) {
-							resting[1].ShowBitmap(2);
-						}
+						  }
+              else{
+                resting[1].ShowBitmap(2);
+              }
+						else
+							restingShine[1].ShowBitmap(2);
 					}
 				}
 				else if (isClimbing) {
-					if (isShooting) {
+					if (isHitState != 4){
+						if (isShooting) {
 						if (isFacingRight) {
 							laddershooting[1].ShowBitmap(2);
 						}
@@ -156,47 +304,72 @@ namespace game_framework {
 						}
 					}
 					else
-					{
-						climbing[0].ShowBitmap(2);
+            {
+              climbing[0].ShowBitmap(2);
+            }
+          }
+					else {
+						if(!climbingShine[0].IsAnimationDone())
+							climbingShine[0].ShowBitmap(2);
+						else
+							climbingShine[1].ShowBitmap(2);
 					}
 				}
 				else if (!isResting) {
 					if (isFacingRight == false) { // running_left_side
-						if (isShooting == true) {
+						if (isHitState != 4)
+            {
+              if (isShooting == true) {
 							runningshooting[0].ShowBitmap(2);
-						}
+						    }
 						else if (isShooting == false) {
 							running[0].ShowBitmap(2);
-						}
+						    }
+            }
+						else
+							runningShine[0].ShowBitmap(2);
 					}
 					else {  // 原本面右，繼續面右
-						if (isShooting == true) {
+						if (isHitState != 4)
+            {
+              if (isShooting == true) {
 							runningshooting[1].ShowBitmap(2);
-						}
+						  }
 						else if (isShooting == false) {
 							running[1].ShowBitmap(2);
-						}
+						  }
+            }
+						else
+							runningShine[1].ShowBitmap(2);
 					}
 				}
 			}
-			else if (isJumping || isFalling) {
-				if (isShooting) {
-					if (isFacingRight == false) { // jumping_left_side
-						jumpingshooting[0].ShowBitmap(2);
-					}
+			else {
+				if (isFacingRight == false) { // running_left_side
+					if (isHitState != 4)
+          {
+            if(isShooting == true){
+              jumpingshooting[0].ShowBitmap(2);
+            }
+            else{
+              jumping[0].ShowBitmap(2);
+            }
+          }
 					else
-					{
-						jumpingshooting[1].ShowBitmap(2);
-					}
+						jumpingShine[0].ShowBitmap(2);
 				}
-				else {
-					if (isFacingRight == false) { // jumping_left_side
-						jumping[0].ShowBitmap(2);
-					}
+				else {  // 原本面右，繼續面右
+					if (isHitState != 4)
+          {
+            if(isShooting == true){
+              jumpingshooting[1].ShowBitmap(2);
+            }
+            else{
+              jumping[1].ShowBitmap(2);
+            }
+          }
 					else
-					{
-						jumping[1].ShowBitmap(2);
-					}
+						jumpingShine[1].ShowBitmap(2);
 				}
 			}
 		}
@@ -220,7 +393,69 @@ namespace game_framework {
 			int down_y = y + 2 * (24 - 1);
 
 			if (transitionState == 0 || transitionState == 30 || transitionState == 40) {
-				if ((leftPressed && rightPressed&&upPressed&&downPressed) || !(leftPressed || rightPressed||upPressed||downPressed)) { //按雙鍵，維持原本的方向但不位移
+				if (isHitState == 3) {
+					timer.ToggleAnimation();
+					isHitState = 4;
+				}
+				else if (isHitState == 4) {
+					if (timer.IsAnimationDone()) {
+						isHitState = 0;
+					}
+				}
+				
+				if (isHitState == 1) {
+					if (isAttackedFromRight == true) {
+						hitAnimation[1].ToggleAnimation();
+					}
+					else {
+						hitAnimation[0].ToggleAnimation();
+					}
+					if (isClimbing) {
+						isJumping = false;
+						isFalling = true;
+						isClimbing = false;
+						isOnTheGround = false;
+					}
+					isHitState = 2;
+				}
+				else if (isHitState == 2) {	
+					if (hitAnimation[0].IsAnimationDone() && hitAnimation[1].IsAnimationDone()) {
+						// 打完動畫已結束，就可動了
+						isHitState = 3;
+					}
+					else {
+						// dx = 1不知道會不會有問題
+						if (isAttackedFromRight) {
+							if (left_x - 1 >= 0
+								&& block_element_3darray[top_y / 32][(left_x - 1) / 32] != -1
+								&& block_element_3darray[mid_y / 32][(left_x - 1) / 32] != -1
+								&& block_element_3darray[down_y / 32][(left_x - 1) / 32] != -1) {
+								// 檢查是否會撞牆
+								if (block_element_3darray[top_y / 32][(left_x - 1) / 32] != 1
+									&& block_element_3darray[mid_y / 32][(left_x - 1) / 32] != 1
+									&& block_element_3darray[down_y / 32][(left_x - 1) / 32] != 1
+									&& !isClimbing) {
+									x -= 1;
+								}
+							}
+						}
+						else {
+							if (right_x + dx <= 6656
+								&& block_element_3darray[top_y / 32][(right_x + 1) / 32] != -1
+								&& block_element_3darray[mid_y / 32][(right_x + 1) / 32] != -1
+								&& block_element_3darray[down_y / 32][(right_x + 1) / 32] != -1) {
+
+								if (block_element_3darray[top_y / 32][(right_x + 1) / 32] != 1
+									&& block_element_3darray[mid_y / 32][(right_x + 1) / 32] != 1
+									&& block_element_3darray[down_y / 32][(right_x + 1) / 32] != 1
+									&& !isClimbing) {
+									 x += 1;
+								}
+							}
+						}
+					}
+				}
+				else if ((leftPressed && rightPressed&&upPressed&&downPressed) || !(leftPressed || rightPressed||upPressed||downPressed)) { //按雙鍵，維持原本的方向但不位移
 					if (!isClimbing)
 						isResting = true;
 					else {
@@ -276,6 +511,10 @@ namespace game_framework {
 						if (climbing[0].IsAnimationDone()) {
 							climbing[0].ToggleAnimation();
 						}
+						if (climbingShine[0].IsAnimationDone()) {
+							climbingShine[0].ToggleAnimation();
+						}
+						
 						y -= 3;
 						x = (mid_x / 32) * 32 - 8;
 					}
@@ -298,6 +537,9 @@ namespace game_framework {
 						isOnTheGround = true;
 						if (climbing[0].IsAnimationDone()) {
 							climbing[0].ToggleAnimation();
+						}
+						if (climbingShine[0].IsAnimationDone()) {
+							climbingShine[0].ToggleAnimation();
 						}
 						y += 3;
 						x = (mid_x / 32) * 32 - 8;
@@ -623,6 +865,9 @@ namespace game_framework {
 						if (climbing[0].IsAnimationDone()) {
 							climbing[0].ToggleAnimation();
 						}
+						if (climbingShine[0].IsAnimationDone()) {
+							climbingShine[0].ToggleAnimation();
+						}
 					}
 					//重置子彈
 					for (int i = 0; i < 3; i++)
@@ -634,6 +879,9 @@ namespace game_framework {
 					if (isClimbing) {
 						if (climbing[0].IsAnimationDone()) {
 							climbing[0].ToggleAnimation();
+						}
+						if (climbingShine[0].IsAnimationDone()) {
+							climbingShine[0].ToggleAnimation();
 						}
 					}
 					//重置子彈
@@ -654,7 +902,8 @@ namespace game_framework {
 			}
 
 			
-
+			hitAnimation[0].SetTopLeft(x - stage_x, y - stage_y);
+			hitAnimation[1].SetTopLeft(x - stage_x, y - stage_y);
 			resting[0].SetTopLeft(x - stage_x, y - stage_y);
 			resting[1].SetTopLeft(x - stage_x, y - stage_y);
 			running[0].SetTopLeft(x - stage_x, y - stage_y);
@@ -671,16 +920,27 @@ namespace game_framework {
 			jumpingshooting[1].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
+			restingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			restingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			runningShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			runningShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			climbingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			climbingShine[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
-		void OnBeginState(int stage_x, int stage_y) {
-			//x = 232;
-			//y = 4368;
-			 x = 2164 * 2;
-			 y = 800 * 2;
+		void OnBeginState(int init_x, int init_y, int point) {
+			x = init_x;
+			y = init_y;
 			dx = 4; // 已乘兩倍，左右橫移速度
 			dy = 10; //已成兩倍，向上
+			if (point == -1) {
+				lives = 3;
+			}
+			else {
+				lives -= 1;
+			}
 			blood = 28;
-			lives = 3;
 			jumpCount = 0;
 			fallCount = 0;
 			accePeriod = 5;
@@ -723,6 +983,9 @@ namespace game_framework {
 			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
 			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
+			isHitState = 0;
+
+			// try to delete these code, technically it doesn't fail;
 		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
@@ -787,18 +1050,19 @@ namespace game_framework {
 			return resting[0];
 		}
 		bool getIsHit() {
-			// TODO
-			return false;
+			if (isHitState == 0)
+				return false;
+			return true;
 		}
 		void decreaseBlood(int damage) {
 			blood -= damage;
 		}
 		void setIsAttackedFromRight(bool isAttackedFromRight) {
-			// TODO
 			this->isAttackedFromRight = isAttackedFromRight;
 		}
 		void setIsHit() {
-			isHit = true;
+			// state 0 當作沒被打
+			isHitState = 1;
 		}
 
 	private:
@@ -818,11 +1082,18 @@ namespace game_framework {
 		CMovingBitmap beamammo[3];
 		string message;
 		bool isShot[3] = { false,false,false };
+		CMovingBitmap hitAnimation[2];
+		CMovingBitmap shine;
+		CMovingBitmap restingShine[2];
+		CMovingBitmap runningShine[2];
+		CMovingBitmap climbingShine[2];
+		CMovingBitmap jumpingShine[2];
+		CMovingBitmap timer;
+
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
 		bool shootPressed = false; // 0x58 key x was pressed or not
-		// bool isJumpPressedKeyUp = true;
 		bool isfirstclimb = true;
 		bool leftPressed = false;
 		bool rightPressed = false;
@@ -835,6 +1106,7 @@ namespace game_framework {
 		bool isClimbing = false;
 		int climbjumpstate = 0;
 		int fallingstate = 0;
+		int isHitState = 0;
 		bool startfalling = true;
 		bool canJump = true;
 		bool canShot = true;
