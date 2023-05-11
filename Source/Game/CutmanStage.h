@@ -374,11 +374,7 @@ namespace game_framework {
 
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
-			CDC *px = CDDraw::GetBackCDC();
-			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 0));
-			message = to_string(cutman.getText());
-			CTextDraw::Print(px, 88, 213, message.c_str());
-			CDDraw::ReleaseBackCDC();
+
 		}
 		void readFile() {
 			// [144][208]
@@ -477,7 +473,7 @@ namespace game_framework {
 			else if (rockman.getLives() > 0) {
 				// blood
 				int rockman_blood = rockman.getBlood();
-				if (rockman_blood <= 0) { //要初始
+				if (rockman_blood <= 0 || rockman.getDieDirectly()) { //要初始
 					this->OnBeginState(savePoint);
 				}
 			}
