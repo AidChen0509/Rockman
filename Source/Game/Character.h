@@ -1152,6 +1152,21 @@ namespace game_framework {
 		int getLives() {
 			return lives;
 		}
+		int getBulletCount() {
+			// TODO: 之後一般化
+			// return 
+		}
+		CMovingBitmap getBullet(int index) {
+			return beamammo[index];
+		}
+		bool getIsShot(int index) {
+			return isShot[index];
+		}
+		void setIsShotfalse(int index) {
+			isShot[index] = false;
+			ammoloc[index][0] = x;
+			ammoloc[index][1] = y + 15;
+		}
 		void setmap(vector<vector<int>> map) {
 			block_element_3darray = map;
 		}

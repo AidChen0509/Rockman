@@ -35,7 +35,7 @@ void CGameStateRun::OnBeginState()
 	// 關卡內容初始化
 	if (CGameStateInit::stage == 0) {
 		// -1為第一次進遊戲
-		cutman_stage.OnBeginState(-1);
+		cutman_stage.OnBeginState(2);
 	}
 	else if (CGameStateInit::stage == 1) {
 		// guts
@@ -59,10 +59,12 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	if (CGameStateInit::stage == 0) { //進入的是cutman關
 		if (cutman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
 			gameState = 1;
+			cutman_stage.OnBeginState(-1);
 			GotoGameState(GAME_STATE_INIT);
 		}
 		else if (cutman_stage.getGamestate() == 2) { // rockman沒命了->over
 			gameState = 2;
+			cutman_stage.OnBeginState(-1);
 			GotoGameState(GAME_STATE_OVER);
 		}
 		else {

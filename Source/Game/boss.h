@@ -1043,8 +1043,7 @@ namespace game_framework {
 						rollingCutter[0].ShowBitmap(2);
 				}
 			}
-			// CDC *pDC = CDDraw::GetBackCDC();
-			// CTextDraw::Print(pDC, 32, 32, "Some text here.");
+			
 		};
 		void OnBeginState() {
 			x = 3252 * 2;
@@ -1075,10 +1074,19 @@ namespace game_framework {
 		}
 		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
 			if (shine.IsAnimationDone()) { //被擊退動畫結束
+				
 				if (bullet.GetTop() + bullet.GetHeight() >= beingAttackN[0].GetTop() + 24
 					&& bullet.GetLeft() + bullet.GetWidth() >= beingAttackN[0].GetLeft()
 					&& bullet.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
 					&& bullet.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
+				
+				// if(CMovingBitmap::IsOverlap(beingAttackN[0], bullet, 2)){
+					if (bullet.GetLeft() <= (beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()/2)) {
+						beenAttackedByLeft = true;
+					}
+					else{
+						beenAttackedByLeft = false;
+					}
 					isHit = true;
 					blood -= 3;
 					return true;
@@ -1135,7 +1143,9 @@ namespace game_framework {
 		int getBlood() { //怪物目前的血量
 			return blood;
 		}
-
+		bool getText() {
+			return attackFromRight;
+		}
 
 	private:
 		int x = 3252*2;
