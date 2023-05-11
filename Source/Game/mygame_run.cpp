@@ -36,6 +36,7 @@ void CGameStateRun::OnBeginState()
 	if (CGameStateInit::stage == 0) {
 		// -1為第一次進遊戲
 		cutman_stage.OnBeginState(-1);
+		CAudio::Instance()->Play(AUDIO_Cutman, true);
 	}
 	else if (CGameStateInit::stage == 1) {
 		// guts
@@ -89,8 +90,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
 	cutman_stage.OnInit();
-	// CAudio::Instance()->Load(AUDIO_Cutman, "resources/sound/CutManStage.wav");
-	
+
+	//CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
 	// other stages' Oninit
 
 }

@@ -49,6 +49,7 @@ namespace game_framework {
 		AUDIO_GameStart,
 		AUDIO_MenuSelectTheme,
 		AUDIO_MenuSelect,
+		AUDIO_MegaBuster,
 		AUDIO_DING,				// 0
 		AUDIO_LAKE,				// 1
 		AUDIO_NTUT				// 2

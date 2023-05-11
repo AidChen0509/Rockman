@@ -35,7 +35,8 @@ void CGameStateInit::OnInit()
 	CAudio::Instance()->Load(AUDIO_MenuSelectTheme, "resources/sound/MenuSelectTheme.wav");
 	CAudio::Instance()->Load(AUDIO_GameStart, "resources/sound/GameStart.wav");
 	CAudio::Instance()->Load(AUDIO_MenuSelect, "resources/sound/MenuSelect.wav");
-	
+	CAudio::Instance()->Load(AUDIO_Cutman, "resources/sound/CutManStage.wav");
+	CAudio::Instance()->Load(AUDIO_MegaBuster, "resources/sound/MegaBuster.wav");
 
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
@@ -168,7 +169,7 @@ void CGameStateInit::OnMove() {
 		if (startBackground.IsAnimationDone()) {
 			showState = 2;
 			// 進入選單同時撥音樂
-			CAudio::Instance()->Play(AUDIO_MenuSelectTheme);
+			CAudio::Instance()->Play(AUDIO_MenuSelectTheme,true);
 		}
 	}
 }

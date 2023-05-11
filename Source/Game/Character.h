@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include "../Library/audio.h"
 namespace game_framework {
 	class Character
 	{
@@ -766,6 +767,7 @@ namespace game_framework {
 						isShot[i] = false;
 						ammoloc[i][0] = x;
 						ammoloc[i][1] = y +15;
+						CAudio::Instance()->Play(4, false);
 						if (shootPressed)
 						{
 							gundown = true;
