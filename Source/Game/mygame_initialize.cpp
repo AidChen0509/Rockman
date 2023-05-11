@@ -131,14 +131,13 @@ void CGameStateInit::OnBeginState()
 void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (nChar == VK_RETURN) {
-		if (showState == 0) { // TODO 要再加條件 避免後須按下enter會回朔
+		if (showState == 0) {
 			startBackground.ToggleAnimation();
 			CAudio::Instance()->Play(AUDIO_GameStart);
 			showState = 1;
 		}
 		else if (showState == 2) { //在select的時候按下enter，進入關卡
 			CAudio::Instance()->Stop(AUDIO_MenuSelectTheme);
-
 			GotoGameState(GAME_STATE_RUN);    // 切換至GAME_STATE_RUN
 		}
 	}

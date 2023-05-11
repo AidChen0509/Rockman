@@ -51,6 +51,7 @@ namespace game_framework {
 			right.LoadBitmapByString({ "resources/enemy/heli/heliLookRight1.bmp", "resources/enemy/heli/heliLookRight2.bmp" }, RGB(128, 0, 128));
 			left.SetAnimation(100, false);
 			right.SetAnimation(100, false);
+			currentBitmap = left;
 		}
 		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
 			if(blood > 0){
@@ -221,7 +222,7 @@ namespace game_framework {
 		// 怪物被打中與否，有被打到洛克人子彈要消失
 		bool beenAttacked(CMovingBitmap bullet) override {
 			// 應該要isActivate才能被子彈打到
-			if ((CMovingBitmap::IsOverlap(bullet, currentBitmap)) && isActivate) {
+			if ((CMovingBitmap::IsOverlap(bullet, currentBitmap, 2)) && isActivate) {
 				blood -= 1;
 				return true;
 			}
@@ -232,9 +233,10 @@ namespace game_framework {
 		bool successfullyAttack(CMovingBitmap rockman) override {
 			// 視不同怪物來實作邏輯
 			// Heli只有碰撞攻擊，所以判斷是否重疊就好
-			if (CMovingBitmap::IsOverlap(rockman, currentBitmap) && isActivate) { //有打中
+			if (isActivate && CMovingBitmap::IsOverlap(rockman, currentBitmap, 2)) { //有打中
 				// Concern: 這裡判斷攻擊方向的方式，有可能不夠精確，但每秒32次的頻率之下，感覺不會有問題
-				if (rockman.GetLeft() < currentBitmap.GetLeft()) {
+				// if (rockman.GetLeft() < currentBitmap.GetLeft()) {
+				if (!direction) {
 					attackFromRight = true;
 				}
 				else {
@@ -524,7 +526,7 @@ namespace game_framework {
 		
 		bool beenAttacked(CMovingBitmap rockmanbullet) override {
 			if(isActivate){
-				if (CMovingBitmap::IsOverlap(open, rockmanbullet)) {
+				if (CMovingBitmap::IsOverlap(open, rockmanbullet, 2)) {
 					if (state == 0 || state == 1) {
 						if (open.GetFrameIndexOfBitmap() != 0) {
 							blood -= 1;
@@ -548,7 +550,7 @@ namespace game_framework {
 			// 優先判定子彈有沒有射到
 			for (int i = 0; i < 4; i++)
 			{
-				if (isShot[i] && CMovingBitmap::IsOverlap(bullet[i], rockman)) {
+				if (isShot[i] && CMovingBitmap::IsOverlap(bullet[i], rockman, 2)) {
 					damage = 2;
 					if (rockman.GetLeft() <= bullet[i].GetLeft()) {
 						attackFromRight = true;
@@ -559,7 +561,7 @@ namespace game_framework {
 					return true;
 				}
 			}
-			if (CMovingBitmap::IsOverlap(open, rockman)) {
+			if (CMovingBitmap::IsOverlap(open, rockman, 2)) {
 				damage = 1;
 				if (rockman.GetLeft() <= open.GetLeft()) {
 					attackFromRight = true;
@@ -798,7 +800,7 @@ namespace game_framework {
 		bool beenAttacked(CMovingBitmap rockmanbullet) override {
 			// TODO
 			if (isActivate) {
-				if (CMovingBitmap::IsOverlap(open, rockmanbullet)) {
+				if (CMovingBitmap::IsOverlap(open, rockmanbullet, 2)) {
 					blood -= 1;
 					return true;
 				}
@@ -809,7 +811,7 @@ namespace game_framework {
 		// 將每個敵人跟rockman做交流
 		// 回傳是否有打中洛克人
 		bool successfullyAttack(CMovingBitmap rockman) {
-			if (CMovingBitmap::IsOverlap(rockman, open) && isActivate) { //有打中
+			if (CMovingBitmap::IsOverlap(rockman, open, 2) && isActivate) { //有打中
 				// Concern: 這裡判斷攻擊方向的方式，有可能不夠精確，但每秒32次的頻率之下，感覺不會有問題
 				if (rockman.GetLeft() < open.GetLeft()) {
 					attackFromRight = true;

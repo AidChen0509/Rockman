@@ -21,9 +21,13 @@ CGameStateOver::CGameStateOver(CGame *g): CGameState(g)
 {
 }
 
+void CGameStateOver::OnLButtonDown(UINT nFlags, CPoint point) {
+	GotoGameState(GAME_STATE_INIT);
+}
+
 void CGameStateOver::OnMove()
 {
-	GotoGameState(GAME_STATE_INIT);
+	// GotoGameState(GAME_STATE_INIT);
 }
 
 void CGameStateOver::OnBeginState()
