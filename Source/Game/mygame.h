@@ -50,6 +50,13 @@ namespace game_framework {
 		AUDIO_MenuSelectTheme,
 		AUDIO_MenuSelect,
 		AUDIO_MegaBuster,
+		AUDIO_EnemyDamage,
+		AUDIO_MegamanLand,
+		AUDIO_MegamanDamage,
+		AUDIO_BossBattle,
+		AUDIO_EnergyFill,
+		AUDIO_RollingCutter,
+		AUDIO_EnemyShoot,
 		AUDIO_DING,				// 0
 		AUDIO_LAKE,				// 1
 		AUDIO_NTUT				// 2

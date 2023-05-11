@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Library/audio.h"
 namespace game_framework {
 	class Cutman
 	{
@@ -261,6 +262,7 @@ namespace game_framework {
 					if (throwingLeft) {
 						if (throwing[0].GetFrameIndexOfBitmap() == 1) {
 							// throwing left
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = -6;
@@ -278,6 +280,7 @@ namespace game_framework {
 					}
 					else {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = 6;
@@ -397,6 +400,7 @@ namespace game_framework {
 					if (throwingLeft) {
 						if (throwing[0].GetFrameIndexOfBitmap() == 1) {
 							// throwing left
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = -6;
@@ -414,6 +418,7 @@ namespace game_framework {
 					}
 					else {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = 6;
@@ -457,6 +462,7 @@ namespace game_framework {
 					if (throwingLeft) {
 						if (throwing[0].GetFrameIndexOfBitmap() == 1) {
 							// throwing left
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = -6;
@@ -475,6 +481,7 @@ namespace game_framework {
 					}
 					else {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = 6;
@@ -668,6 +675,7 @@ namespace game_framework {
 					// 丟剪刀
 					if (throwingLeft) {
 						if (throwing[0].GetFrameIndexOfBitmap() == 1) {
+							playsound = true;
 							weaponThrew = true;
 							weapon_dx = -6;
 							if (rockmanY >= y) {
@@ -684,6 +692,7 @@ namespace game_framework {
 					}
 					else {
 						if (throwing[1].GetFrameIndexOfBitmap() == 1) {
+							playsound = true;
 							weaponThrew = true;
 							// count dx dy
 							weapon_dx = 6;
@@ -847,6 +856,7 @@ namespace game_framework {
 					int distanceY = abs(weaponY - y);
 
 					if (weaponX == x && weaponY == y) {
+						CAudio::Instance()->Stop(10);
 						weaponThrew = false;
 					}
 					else if (distanceX <= 4 && distanceY <= 4) {
@@ -869,7 +879,10 @@ namespace game_framework {
 					}
 				}
 			}
-
+			if (playsound) {
+				CAudio::Instance()->Play(10, false);
+				playsound = false;
+			}
 			// gravity test
 			/*
 			if (transitionState == 40) {
@@ -1176,7 +1189,7 @@ namespace game_framework {
 		bool isHit = false;
 		bool beenAttackedByLeft = false;
 		bool attackFromRight = false;
-
+		bool playsound = false;
 		CMovingBitmap shine;
 		CMovingBitmap restingY[2];
 		CMovingBitmap restingN[2];

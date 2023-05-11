@@ -61,6 +61,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		if (cutman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
 			gameState = 1;
 			cutman_stage.OnBeginState(-1);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
+			CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
 			GotoGameState(GAME_STATE_INIT);
 		}
 		else if (cutman_stage.getGamestate() == 2) { // rockman沒命了->over
@@ -175,7 +177,7 @@ void CGameStateRun::OnShow()
 
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.Onshow();
-		// 加進來會變得很卡，不知道是不是檔案太大還是怎樣
+		// 加進來會變得很卡，不知道是不是檔案太大還是怎樣(我知道為什麼了byAiden)
 		// CAudio::Instance()->Play(AUDIO_Cutman);
 	}
 	else if (CGameStateInit::stage == 1) {

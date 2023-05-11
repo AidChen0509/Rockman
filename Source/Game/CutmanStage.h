@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <fstream>
+#include "../Library/audio.h"
 namespace game_framework {
 	class CutmanStage
 	{
@@ -196,6 +197,7 @@ namespace game_framework {
 						if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
 							// 沒被攻擊中，而且被打到
 							// 可以呼叫怪物的isAttackFromRight()，set給rockman
+							CAudio::Instance()->Play(7, false);
 							rockman.setIsHit();
 							rockman.decreaseBlood(enemyContainer[i]->getDamage());
 							rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
@@ -221,6 +223,7 @@ namespace game_framework {
 				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
 					// 沒被攻擊中，而且被打到
 					// 可以呼叫怪物的isAttackFromRight()，set給rockman
+					CAudio::Instance()->Play(7, false);
 					rockman.setIsHit();
 					rockman.decreaseBlood(cutman.getDamage());
 					rockman.setIsAttackedFromRight(cutman.isAttackFromRight());
@@ -229,6 +232,7 @@ namespace game_framework {
 				{
 					if (rockman.getIsShot(j)) {
 						if (cutman.beenAttacked(rockman.getBullet(j))) {
+							CAudio::Instance()->Play(5, false);
 							rockman.setIsShotfalse(j);
 						}
 					}
@@ -297,7 +301,8 @@ namespace game_framework {
 				else if (transitionState == 4) {
 					stage_x += dx; //512;
 					if (stage_x % 512 == 0) {
-						
+						CAudio::Instance()->Stop(0);
+						CAudio::Instance()->Play(8, true);
 						stageShine.ToggleAnimation();
 						transitionState = 31;
 					}
@@ -312,11 +317,15 @@ namespace game_framework {
 					if (bossGate.IsAnimationDone()) {
 						//bossGate.SetFrameIndexOfBitmap(3);
 						cutman_blood.ToggleAnimation();
+						CAudio::Instance()->Pause();
+						CAudio::Instance()->Play(9, false);
 						transitionState = 33;
 					}
 				}
 				else if (transitionState == 33) {
 					if (cutman_blood.IsAnimationDone()) {
+						CAudio::Instance()->Stop(9);
+						CAudio::Instance()->Resume();
 						transitionState = 40;
 					}
 				}
@@ -447,6 +456,8 @@ namespace game_framework {
 			else if (point == 2) {
 				// 在隧道的頭
 				transitionState = 30;
+				CAudio::Instance()->Stop(8);
+				CAudio::Instance()->Play(0, true);
 				stage_x = savePoint_stage[2][0];
 				stage_y = savePoint_stage[2][1];
 				rockman.OnBeginState(savePoint_rockman[2][0], savePoint_rockman[2][1], 2);

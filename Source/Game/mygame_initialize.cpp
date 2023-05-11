@@ -37,7 +37,13 @@ void CGameStateInit::OnInit()
 	CAudio::Instance()->Load(AUDIO_MenuSelect, "resources/sound/MenuSelect.wav");
 	CAudio::Instance()->Load(AUDIO_Cutman, "resources/sound/CutManStage.wav");
 	CAudio::Instance()->Load(AUDIO_MegaBuster, "resources/sound/MegaBuster.wav");
-
+	CAudio::Instance()->Load(AUDIO_EnemyDamage, "resources/sound/EnemyDamage.wav");
+	CAudio::Instance()->Load(AUDIO_MegamanLand, "resources/sound/MegamanLand.wav");
+	CAudio::Instance()->Load(AUDIO_MegamanDamage, "resources/sound/MegamanDamage.wav");
+	CAudio::Instance()->Load(AUDIO_BossBattle, "resources/sound/BossBattle.wav");
+	CAudio::Instance()->Load(AUDIO_EnergyFill, "resources/sound/EnergyFill3.wav");
+	CAudio::Instance()->Load(AUDIO_RollingCutter, "resources/sound/RollingCutter.wav");
+	CAudio::Instance()->Load(AUDIO_EnemyShoot, "resources/sound/EnemyShoot.wav");
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
 		"resources/start&over/initBackground2.bmp",

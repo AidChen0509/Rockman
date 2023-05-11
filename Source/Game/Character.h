@@ -483,6 +483,7 @@ namespace game_framework {
 					}
 				}
 			}
+			
 		}
 		void OnMove(int stage_x, int stage_y, int transitionState) {
 			//int bitmapLeft_x = this->x - left_boundary; //以left_boundary為基準的rockman_x(左上角)
@@ -763,15 +764,20 @@ namespace game_framework {
 				}
 				for (int i = 0; i < 3; i++)
 				{
-					if (!(ammoloc[i][0] < stage_x + 512 && ammoloc[i][0] > stage_x && ammoloc[i][1] > stage_y && ammoloc[i][1] < stage_y+512)) {
+					if (!(ammoloc[i][0] < stage_x + 512 && ammoloc[i][0] > stage_x && ammoloc[i][1] > stage_y && ammoloc[i][1] < stage_y+512)&&isShot[i]) {
 						isShot[i] = false;
 						ammoloc[i][0] = x;
-						ammoloc[i][1] = y +15;
-						CAudio::Instance()->Play(4, false);
+						ammoloc[i][1] = y;
+						playbuster = true;
 						if (shootPressed)
 						{
 							gundown = true;
 						}
+					}
+					if (!isShot[i])
+					{
+						ammoloc[i][0] = x;
+						ammoloc[i][1] = y;
 					}
 					if (isShot[i]&&ammodirect[i]==0) {
 						ammoloc[i][0] += ammodx;
@@ -782,6 +788,10 @@ namespace game_framework {
 						ammoloc[i][0] -= ammodx;
 						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
 					}
+				}
+				if (playbuster) {
+					CAudio::Instance()->Play(4, false);
+					playbuster = false;
 				}
 				if (gundown)
 				{
@@ -968,6 +978,7 @@ namespace game_framework {
 						else { // 表示跟地板還有一些縫隙，或是剛剛好OntTheGround
 							y = (y / 32) * 32 + 16; // 小於dy的位移
 							jumpingHeight = 0; // 非跳躍要歸零
+							CAudio::Instance()->Play(6, false);
 							isOnTheGround = true; // 經過位移後就會OnTheGround
 							isFalling = false;
 							isJumping = false;
@@ -1244,6 +1255,8 @@ namespace game_framework {
 		CMovingBitmap laddershootingShine[2];
 
 		string message;
+		string message2;
+		string message3;
 		bool isShot[3] = { false,false,false };
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
@@ -1270,6 +1283,7 @@ namespace game_framework {
 		bool isHit;
 		bool isAttackedFromRight;
 		bool dieDirectly = false;
+		bool playbuster = false;
 		int accePeriod_up = 1;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};

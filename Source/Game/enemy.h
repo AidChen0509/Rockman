@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "../Library/audio.h"
 namespace game_framework {
 	class Enemy
 	{
@@ -224,6 +225,7 @@ namespace game_framework {
 			// 應該要isActivate才能被子彈打到
 			if (isActivate && (CMovingBitmap::IsOverlap(bullet, currentBitmap, 2))) {
 				blood -= 1;
+				CAudio::Instance()->Play(5, false);
 				return true;
 			}
 			return false;
@@ -426,11 +428,13 @@ namespace game_framework {
 								if (i == 0) {
 									if (!isShot[i]) {
 										isShot[i] = true;
+										CAudio::Instance()->Play(11, false);
 									}
 								}
 								else {
 									if (!isShot[i] && distance[i - 1] > 4 * 32) { //看起來是差四格，下一顆才能噴射
 										isShot[i] = true;
+										CAudio::Instance()->Play(11, false);
 									}
 								}
 							}
@@ -530,12 +534,14 @@ namespace game_framework {
 					if (state == 0 || state == 1) {
 						if (open.GetFrameIndexOfBitmap() != 0) {
 							blood -= 1;
+							CAudio::Instance()->Play(5, false);
 							return true;
 						}
 					}
 					if (state == 2 || state == 3){
 						if (!(3 <= close.GetFrameIndexOfBitmap() && close.GetFrameIndexOfBitmap() <= 17)) {
 							blood -= 1;
+							CAudio::Instance()->Play(5, false);
 							return true;
 						}
 					}	
@@ -803,6 +809,7 @@ namespace game_framework {
 			if (isActivate) {
 				if (CMovingBitmap::IsOverlap(open, rockmanbullet, 2)) {
 					blood -= 1;
+					CAudio::Instance()->Play(5, false);
 					return true;
 				}
 			}
