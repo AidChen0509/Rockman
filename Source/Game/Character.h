@@ -975,16 +975,8 @@ namespace game_framework {
 			ammodirect[2] = 2;
 			ammodx = 10;
 			ammocount = 0;
-			resting[0].SetTopLeft(x - stage_x, y - stage_y);
-			resting[1].SetTopLeft(x - stage_x, y - stage_y);
-			running[0].SetTopLeft(x - stage_x, y - stage_y);
-			running[1].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[0].SetTopLeft(x - stage_x, y - stage_y);
-			jumping[1].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[0].SetTopLeft(x - stage_x, y - stage_y);
-			climbing[1].SetTopLeft(x - stage_x, y - stage_y);
-			isHitState = 0;
 
+			isHitState = 0;
 			// try to delete these code, technically it doesn't fail;
 		}
 		void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
