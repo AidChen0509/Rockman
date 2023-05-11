@@ -151,7 +151,16 @@ namespace game_framework {
 				"resources/rockman/purple.bmp",
 				"resources/rockman/jumpingRight.bmp" ,
 				}, RGB(128, 0, 128));
-			
+			climbingShine[0].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/climb1.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/climb2.bmp"
+				}, RGB(128, 0, 128));
+			climbingShine[1].LoadBitmapByString({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/climb2.bmp"
+				}, RGB(128, 0, 128));
 			climbing[0].LoadBitmapByString({
 				"resources/rockman/climb1.bmp",
 				"resources/rockman/climb2.bmp"
@@ -159,6 +168,8 @@ namespace game_framework {
 			climbing[1].LoadBitmapByString({
 				"resources/rockman/climb3.bmp"
 				}, RGB(128, 0, 128));
+
+
 			idleshooting[0].LoadBitmap({
 				"resources/rockman/ShootingLeft.bmp"
 				}, RGB(128, 0, 128));
@@ -187,20 +198,61 @@ namespace game_framework {
 			laddershooting[1].LoadBitmap({
 				"resources/rockman/ClimbingShootRight.bmp"
 				}, RGB(128, 0, 128));
+			
+			idleshootingShine[0].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/ShootingLeft.bmp"
+				}, RGB(128, 0, 128));
+			idleshootingShine[1].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/ShootingRight.bmp"
+				}, RGB(128, 0, 128));
+			runningshootingShine[0].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/MovingShootLeft2.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/MovingShootLeft1.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/MovingShootLeft3.bmp"
+				}, RGB(128, 0, 128));
+			runningshootingShine[1].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/MovingShootRight2.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/MovingShootRight1.bmp",
+				"resources/rockman/purple.bmp",
+				"resources/rockman/MovingShootRight3.bmp"
+				}, RGB(128, 0, 128));
+			jumpingshootingShine[0].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/JumpingshootLeft.bmp"
+				}, RGB(128, 0, 128));
+			jumpingshootingShine[1].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/JumpingshootRight.bmp"
+				}, RGB(128, 0, 128));
+			laddershootingShine[0].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/ClimbingShootLeft.bmp"
+				}, RGB(128, 0, 128));
+			laddershootingShine[1].LoadBitmap({
+				"resources/rockman/purple.bmp",
+				"resources/rockman/ClimbingShootRight.bmp"
+				}, RGB(128, 0, 128));
+			
+			idleshootingShine[0].SetAnimation(100, false);
+			idleshootingShine[1].SetAnimation(100, false);
+			runningshootingShine[0].SetAnimation(100, false);
+			runningshootingShine[1].SetAnimation(100, false);
+			jumpingshootingShine[0].SetAnimation(100, false);
+			jumpingshootingShine[1].SetAnimation(100, false);
+			laddershootingShine[0].SetAnimation(75, false);
+			laddershootingShine[1].SetAnimation(75, false);
+
 			for (int i = 0; i < 3; i++)
 			{
 				beamammo[i].LoadBitmap({"resources/rockman/beamammo.bmp"}, RGB(128, 0, 128));
 			}
-			climbingShine[0].LoadBitmapByString({
-				"resources/rockman/purple.bmp",
-				"resources/rockman/climb1.bmp",
-				"resources/rockman/purple.bmp",
-				"resources/rockman/climb2.bmp"
-				}, RGB(128, 0, 128));
-			climbingShine[1].LoadBitmapByString({
-				"resources/rockman/purple.bmp",
-				"resources/rockman/climb2.bmp"
-				}, RGB(128, 0, 128));
 			running[0].SetAnimation(100, false);
 			running[1].SetAnimation(100, false);
 			resting[0].SetAnimation(200, false);
@@ -208,6 +260,8 @@ namespace game_framework {
 			climbing[0].SetAnimation(150, true);
 			runningshooting[0].SetAnimation(100, false);
 			runningshooting[1].SetAnimation(100, false);
+
+
 			runningShine[0].SetAnimation(100, false);
 			runningShine[1].SetAnimation(100, false);
 			restingShine[0].SetAnimation(100, false);
@@ -216,6 +270,7 @@ namespace game_framework {
 			jumpingShine[1].SetAnimation(100, false);
 			climbingShine[0].SetAnimation(75, true);
 			climbingShine[1].SetAnimation(75, false);
+
 			// 最好是在Onshow設定位置，避免多餘的code
 			hitAnimation[0].SetTopLeft(x - stage_x, y - stage_y);
 			hitAnimation[1].SetTopLeft(x - stage_x, y - stage_y);
@@ -235,6 +290,15 @@ namespace game_framework {
 			jumpingshooting[1].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[0].SetTopLeft(x - stage_x, y - stage_y);
 			laddershooting[1].SetTopLeft(x - stage_x, y - stage_y);
+
+			idleshootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			idleshootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			runningshootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			runningshootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			laddershootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			laddershootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
 			for (int i = 0; i < 3; i++)
 			{
 				if (isFacingRight)
@@ -270,106 +334,152 @@ namespace game_framework {
 				if (isResting) { // resting
 					if (isFacingRight == false) { // resting_left_side
 						if(isHitState != 4){
-              if (isShooting == true) {
-							idleshooting[0].ShowBitmap(2);
-						  }
-              else{
-                resting[0].ShowBitmap(2);
-              }
-            }
-						else
-							restingShine[0].ShowBitmap(2);
+							if (isShooting == true) {
+								idleshooting[0].ShowBitmap(2);
+							}
+							else{
+								resting[0].ShowBitmap(2);
+							}
+						}
+						else {
+							if (isShooting == true) {
+								idleshootingShine[0].ShowBitmap(2);
+							}
+							else {
+								restingShine[0].ShowBitmap(2);
+							}
+						}
 					}
 					else {  // 原本面右，繼續面右
 						if (isHitState != 4)
 							if (isShooting == true) {
-							idleshooting[1].ShowBitmap(2);
-						  }
-              else{
-                resting[1].ShowBitmap(2);
-              }
-						else
-							restingShine[1].ShowBitmap(2);
+								idleshooting[1].ShowBitmap(2);
+							}
+							else{
+								resting[1].ShowBitmap(2);
+							}
+						else {
+							if (isShooting == true) {
+								idleshootingShine[1].ShowBitmap(2);
+							}
+							else {
+								restingShine[1].ShowBitmap(2);
+							}
+							
+						}
 					}
 				}
 				else if (isClimbing) {
 					if (isHitState != 4){
 						if (isShooting) {
-						if (isFacingRight) {
-							laddershooting[1].ShowBitmap(2);
+							if (isFacingRight) {
+								laddershooting[1].ShowBitmap(2);
+							}
+							else
+							{
+								laddershooting[0].ShowBitmap(2);
+							}
 						}
-						else
-						{
-							laddershooting[0].ShowBitmap(2);
+						else {
+							if (!climbingShine[0].IsAnimationDone())
+								climbing[0].ShowBitmap(2);
+							else
+								climbing[1].ShowBitmap(2);
 						}
 					}
-					else
-            {
-              climbing[0].ShowBitmap(2);
-            }
-          }
 					else {
-						if(!climbingShine[0].IsAnimationDone())
-							climbingShine[0].ShowBitmap(2);
-						else
-							climbingShine[1].ShowBitmap(2);
+						if (isShooting) {
+							if (isFacingRight) {
+								laddershootingShine[1].ShowBitmap(2);
+							}
+							else
+							{
+								laddershootingShine[0].ShowBitmap(2);
+							}
+						}
+						else {
+							if(!climbingShine[0].IsAnimationDone())
+								climbingShine[0].ShowBitmap(2);
+							else
+								climbingShine[1].ShowBitmap(2);
+						}
 					}
 				}
 				else if (!isResting) {
 					if (isFacingRight == false) { // running_left_side
 						if (isHitState != 4)
-            {
-              if (isShooting == true) {
-							runningshooting[0].ShowBitmap(2);
-						    }
-						else if (isShooting == false) {
-							running[0].ShowBitmap(2);
-						    }
-            }
-						else
-							runningShine[0].ShowBitmap(2);
+						{
+							if (isShooting == true) {
+								runningshooting[0].ShowBitmap(2);
+							} else if (isShooting == false) {
+								running[0].ShowBitmap(2);
+							}
+						}
+						else {
+							if (isShooting == true) {
+								runningshootingShine[0].ShowBitmap(2);
+							} else if (isShooting == false) {
+								runningShine[0].ShowBitmap(2);
+							}
+						}
 					}
 					else {  // 原本面右，繼續面右
 						if (isHitState != 4)
-            {
-              if (isShooting == true) {
-							runningshooting[1].ShowBitmap(2);
-						  }
-						else if (isShooting == false) {
-							running[1].ShowBitmap(2);
-						  }
-            }
-						else
-							runningShine[1].ShowBitmap(2);
+						{
+							if (isShooting == true) {
+								runningshooting[1].ShowBitmap(2);
+							}
+							else if (isShooting == false) {
+								running[1].ShowBitmap(2);
+							}
+						}
+						else {
+							if (isShooting == true) {
+								runningshootingShine[1].ShowBitmap(2);
+							}
+							else if (isShooting == false) {
+								runningShine[1].ShowBitmap(2);
+							}
+						}
 					}
 				}
 			}
 			else {
 				if (isFacingRight == false) { // running_left_side
-					if (isHitState != 4)
-          {
-            if(isShooting == true){
-              jumpingshooting[0].ShowBitmap(2);
-            }
-            else{
-              jumping[0].ShowBitmap(2);
-            }
-          }
-					else
-						jumpingShine[0].ShowBitmap(2);
+					if (isHitState != 4){
+						if(isShooting == true){
+							jumpingshooting[0].ShowBitmap(2);
+						}
+						else{
+							jumping[0].ShowBitmap(2);
+						}
+					}
+					else {
+						if (isShooting == true) {
+							jumpingshootingShine[0].ShowBitmap(2);
+						}
+						else {
+							jumpingShine[0].ShowBitmap(2);
+						}
+					}
 				}
 				else {  // 原本面右，繼續面右
-					if (isHitState != 4)
-          {
-            if(isShooting == true){
-              jumpingshooting[1].ShowBitmap(2);
-            }
-            else{
-              jumping[1].ShowBitmap(2);
-            }
-          }
-					else
-						jumpingShine[1].ShowBitmap(2);
+					if (isHitState != 4) {
+						if(isShooting == true){
+						  jumpingshooting[1].ShowBitmap(2);
+						}
+						else{
+						  jumping[1].ShowBitmap(2);
+						}
+					}
+					else {
+						if (isShooting == true) {
+							jumpingshootingShine[1].ShowBitmap(2);
+						}
+						else {
+							jumpingShine[1].ShowBitmap(2);
+						}
+					}
 				}
 			}
 		}
@@ -421,6 +531,7 @@ namespace game_framework {
 				else if (isHitState == 2) {	
 					if (hitAnimation[0].IsAnimationDone() && hitAnimation[1].IsAnimationDone()) {
 						// 打完動畫已結束，就可動了
+						canShot = true;
 						isHitState = 3;
 					}
 					else {
@@ -928,6 +1039,14 @@ namespace game_framework {
 			jumpingShine[1].SetTopLeft(x - stage_x, y - stage_y);
 			climbingShine[0].SetTopLeft(x - stage_x, y - stage_y);
 			climbingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			idleshootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			idleshootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			runningshootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			runningshootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			jumpingshootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
+			laddershootingShine[0].SetTopLeft(x - stage_x, y - stage_y);
+			laddershootingShine[1].SetTopLeft(x - stage_x, y - stage_y);
 		};
 		void OnBeginState(int init_x, int init_y, int point) {
 			x = init_x;
@@ -1055,33 +1174,41 @@ namespace game_framework {
 		void setIsHit() {
 			// state 0 當作沒被打
 			isHitState = 1;
+			canShot = false;
 		}
 
 	private:
 		vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關 要再改
 		vector<int> level_top = { 2048 * 2 ,1792 * 2, 1536 * 2, 1280 * 2, 1024 * 2, 768 * 2, 512 * 2, 256 * 2, 0, 256 * 2, 512 * 2, 768 * 2 };//768王關 要再改 跟地圖數據level數不符
 		vector<vector<int>> block_element_3darray;
+		CMovingBitmap currentBitmap;
 		CMovingBitmap resting[2];
 		CMovingBitmap running[2];
 		CMovingBitmap climbing[2];
 		CMovingBitmap jumping[2];
-		CMovingBitmap currentBitmap;
+
 		CMovingBitmap idleshooting[2];
 		CMovingBitmap runningshooting[2];
 		CMovingBitmap climbingshooting[2];
 		CMovingBitmap jumpingshooting[2];
 		CMovingBitmap laddershooting[2];
 		CMovingBitmap beamammo[3];
-		string message;
-		bool isShot[3] = { false,false,false };
+
 		CMovingBitmap hitAnimation[2];
 		CMovingBitmap shine;
+		CMovingBitmap timer;
 		CMovingBitmap restingShine[2];
 		CMovingBitmap runningShine[2];
 		CMovingBitmap climbingShine[2];
 		CMovingBitmap jumpingShine[2];
-		CMovingBitmap timer;
+		CMovingBitmap idleshootingShine[2];
+		CMovingBitmap runningshootingShine[2];
+		CMovingBitmap climbingshootingShine[2];
+		CMovingBitmap jumpingshootingShine[2];
+		CMovingBitmap laddershootingShine[2];
 
+		string message;
+		bool isShot[3] = { false,false,false };
 		bool upPressed = false; // used to moving up while climbing ladder
 		bool downPressed = false; // used to moving down while climbing ladder
 		bool jumpPressed = false; // 0x5A key z was pressed or not
