@@ -786,30 +786,30 @@ namespace game_framework {
 					isShooting = false;
 				}
 				if (ammocount >= 1) {
-					if (abs(ammoloc[ammocount-1][0] - x) > 200) {
-						if (shootPressed)
-						{
-							isShooting = true;
-						}
-						else
+					if (abs(ammoloc[ammocount - 1][0] - x) > 200) {
+						if (!shootPressed)
 						{
 							isShooting = false;
 						}
 						canClimb = true;
 					}
-					else if(isShot[ammocount - 1])
+					else if (isShot[ammocount - 1])
 					{
+						isShooting = true;
 						canClimb = false;
+					}
+					else if (ammoloc[ammocount - 1][0] - x == 0) {
+						if (!shootPressed)
+						{
+							isShooting = false;
+						}
+						canClimb = true;
 					}
 				}
 				else
 				{
 					if (abs(ammoloc[2][0] - x) > 200) {
-						if (shootPressed)
-						{
-							isShooting = true;
-						}
-						else
+						if (!shootPressed)
 						{
 							isShooting = false;
 						}
@@ -817,7 +817,15 @@ namespace game_framework {
 					}
 					else if (isShot[2])
 					{
+						isShooting = true;
 						canClimb = false;
+					}
+					else if (ammoloc[2][0] - x == 0) {
+						if (!shootPressed)
+						{
+							isShooting = false;
+						}
+						canClimb = true;
 					}
 				}
 				if (isOnTheGround) {
