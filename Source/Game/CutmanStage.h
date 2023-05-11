@@ -476,15 +476,15 @@ namespace game_framework {
 		int transitionState = 0;
 		int gameState = 0;
 		// 初始點
-		int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
-		int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
+		//int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
+		//int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的
 
 		//剪刀窗戶的地方
 		//int stage_x = 768*2;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 1024*2; //以整張圖的角度，所以setTopLeft要用負的
 
-		// int stage_x = 2048 * 2;
-		// int stage_y = 768 * 2;
+		 int stage_x = 2048 * 2;
+		 int stage_y = 768 * 2;
 
 		
 		// 三個儲存點，之後再處理，X-Y要再對照一下
