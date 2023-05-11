@@ -971,6 +971,13 @@ namespace game_framework {
 							isJumping = false;
 							fallingstate = 1;
 						}
+						/*判斷地板是不是刺，之後要改成死亡動畫*/
+						if (block_element_3darray[(down_y) / 32][(right_x) / 32] == 3
+							|| block_element_3darray[(down_y) / 32][(right_x) / 32] == 3
+							|| block_element_3darray[(down_y) / 32][(right_x) / 32] == 5
+							|| block_element_3darray[(down_y) / 32][(right_x) / 32] == 5) {
+							dieDirectly = true;
+						}
 					}
 				}
 
@@ -1067,6 +1074,7 @@ namespace game_framework {
 			else {
 				lives -= 1;
 			}
+			dieDirectly = false;
 			blood = 28;
 			jumpCount = 0;
 			fallCount = 0;
@@ -1159,6 +1167,9 @@ namespace game_framework {
 		}
 		int getLives() {
 			return lives;
+		}
+		bool getDieDirectly() {
+			return dieDirectly;
 		}
 		int getBulletCount() {
 			// TODO: 之後一般化
@@ -1256,6 +1267,7 @@ namespace game_framework {
 		bool gundown = false;
 		bool isHit;
 		bool isAttackedFromRight;
+		bool dieDirectly = false;
 		int accePeriod_up = 1;
 		// 開發到別的Stage時會需要
 		//vector<int> initX_by_stage = { 232};

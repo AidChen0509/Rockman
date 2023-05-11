@@ -1143,9 +1143,6 @@ namespace game_framework {
 		int getBlood() { //怪物目前的血量
 			return blood;
 		}
-		bool getText() {
-			return attackFromRight;
-		}
 
 	private:
 		int x = 3252*2;
