@@ -439,6 +439,7 @@ namespace game_framework {
 				stage_x = savePoint_stage[0][0];
 				stage_y = savePoint_stage[0][1];
 				rockman.OnBeginState(savePoint_rockman[0][0], savePoint_rockman[0][1], -1);
+				cutman.OnBeginState();
 			}
 			else if (point == 0) {
 				transitionState = 0;
