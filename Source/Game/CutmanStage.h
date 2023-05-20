@@ -373,16 +373,12 @@ namespace game_framework {
 			cutman.OnShow(transitionState);
 
 			// new edit
-			if (transitionState == 0) {
-				for (size_t i = 0; i < enemyContainer.size(); i++)
-				{
-					enemyContainer[i]->OnShow();
-				}
-			}
+			
 			if (31 <= transitionState && transitionState < 40) {
+				inBossStage = true;
 				cutman_blood.ShowBitmap(2);
 			}
-			else if(transitionState == 40){
+			else if(transitionState == 40 || (inBossStage && transitionState == -1)){
 				// TODO: 要注意如果blood < 0
 				if(cutman.getBlood() >= 0)
 					cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
@@ -390,7 +386,7 @@ namespace game_framework {
 					cutman_blood.SetFrameIndexOfBitmap(0);
 				cutman_blood.ShowBitmap(2);
 			}
-			if (transitionState >= 32) {
+			if (transitionState >= 32 || (inBossStage && transitionState == -1)) {
 				bossGate.ShowBitmap(2);
 			}
 
@@ -462,6 +458,7 @@ namespace game_framework {
 				rockman.OnBeginState(savePoint_rockman[0][0], savePoint_rockman[0][1], -1);
 				cutman.OnBeginState();
 				cutman_blood.SetFrameIndexOfBitmap(0); // 圖片也要歸零，不然下次進關卡看到的會先有血量
+				inBossStage = false;
 			}
 			else if (point == 0) {
 				transitionState = 0;
@@ -485,6 +482,8 @@ namespace game_framework {
 				stage_y = savePoint_stage[2][1];
 				rockman.OnBeginState(savePoint_rockman[2][0], savePoint_rockman[2][1], 2);
 				cutman.OnBeginState();
+				cutman_blood.SetFrameIndexOfBitmap(0); // 圖片也要歸零，不然下次進關卡看到的會先有血量
+				inBossStage = false;
 			}
 			
 			// 自從初始過後，不會再改變到
@@ -540,6 +539,7 @@ namespace game_framework {
 		int dy = 8;
 		int transitionState = 0;
 		int gameState = 0;
+		bool inBossStage = false;
 		// 初始點
 		//int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的

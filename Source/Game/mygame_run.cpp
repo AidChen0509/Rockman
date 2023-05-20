@@ -35,7 +35,7 @@ void CGameStateRun::OnBeginState()
 	// 關卡內容初始化
 	if (CGameStateInit::stage == 0) {
 		// -1為第一次進遊戲
-		cutman_stage.OnBeginState(-1);
+		cutman_stage.OnBeginState(-1); // -1
 		CAudio::Instance()->Play(AUDIO_Cutman, true);
 	}
 	else if (CGameStateInit::stage == 1) {

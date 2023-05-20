@@ -1057,6 +1057,24 @@ namespace game_framework {
 				}
 			}
 			
+			if (transitionState == -1) {
+				if (isJumping) {
+					if (jumpLeft) {
+						jumpingY[0].ShowBitmap(2);
+					}
+					else {
+						jumpingY[1].ShowBitmap(2);
+					}
+				}
+				else {
+					if (facingLeft) {
+						restingY[0].ShowBitmap(2);
+					}
+					else {
+						restingY[1].ShowBitmap(2);
+					}
+				}
+			}
 		};
 		void OnBeginState() {
 			x = 3252 * 2;
