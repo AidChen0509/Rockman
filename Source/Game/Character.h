@@ -510,8 +510,11 @@ namespace game_framework {
 			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 0));
 			message = "deadState: "+to_string(deadState);
 			message2 = "transitionState: " + to_string(transitionState);
+			message3 = "Lives: " + to_string(lives);
 			CTextDraw::Print(px, 44, 150, message.c_str());
 			CTextDraw::Print(px, 44, 180, message2.c_str());
+			CTextDraw::Print(px, 44, 200, message3.c_str());
+
 			CDDraw::ReleaseBackCDC();
 		}
 		void OnMove(int stage_x, int stage_y, int transitionState) {

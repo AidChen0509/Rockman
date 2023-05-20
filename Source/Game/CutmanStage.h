@@ -172,7 +172,7 @@ namespace game_framework {
 					else {
 						transitionState = 0;
 					}
-					if (rockman.getLives() > 0) {
+					if (rockman.getLives()-1 > 0) { // 因為到onbegin才會扣命，所以這邊判斷會延遲，要扣1
 						this->OnBeginState(savePoint);
 					}
 					else {
@@ -508,7 +508,7 @@ namespace game_framework {
 			}
 			else if (rockman.getBlood() <= 0 || rockman.getDieDirectly()) {
 				// 只要血量低於0就是要啟動死亡動畫
-				// rockman.toggleDeadAnimation(); 應該不需要
+				// 播放死亡音效，once
 				transitionState = -1;
 			}
 			/*else if (rockman.getLives() > 0) {
