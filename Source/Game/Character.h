@@ -506,6 +506,7 @@ namespace game_framework {
 			}
 			
 			// debug text
+			/*
 			CDC *px = CDDraw::GetBackCDC();
 			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 0));
 			message = "deadState: "+to_string(deadState);
@@ -516,6 +517,7 @@ namespace game_framework {
 			CTextDraw::Print(px, 44, 200, message3.c_str());
 
 			CDDraw::ReleaseBackCDC();
+			*/
 		}
 		void OnMove(int stage_x, int stage_y, int transitionState) {
 			//int bitmapLeft_x = this->x - left_boundary; //以left_boundary為基準的rockman_x(左上角)
