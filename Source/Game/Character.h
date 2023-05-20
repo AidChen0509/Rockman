@@ -170,6 +170,22 @@ namespace game_framework {
 				"resources/rockman/climb3.bmp"
 				}, RGB(128, 0, 128));
 
+			
+			for (int i = 0; i < 12; i++)
+			{
+				deadBubble[i].LoadBitmapByString({
+					"resources/rockman/dead0.bmp",
+					"resources/rockman/dead1.bmp",
+					"resources/rockman/dead2.bmp",
+					"resources/rockman/dead3.bmp",
+					}, RGB(128, 0, 128));
+				if (i % 2 == 0) {
+					deadBubble[i].SetAnimation(50, false);
+				}
+				else {
+					deadBubble[i].SetAnimation(55, false);
+				}
+			}
 
 			idleshooting[0].LoadBitmap({
 				"resources/rockman/ShootingLeft.bmp"
@@ -315,7 +331,7 @@ namespace game_framework {
 				beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
 			}
 		};
-		void Onshow(int stage_x, int stage_y) {
+		void Onshow(int stage_x, int stage_y, int transitionState) {
 			for (int i = 0; i < 3; i++)
 			{
 				if (isShot[i])
@@ -323,9 +339,14 @@ namespace game_framework {
 					beamammo[i].ShowBitmap(2);
 				}
 			}
-			// 之後會需要if statement來決定是哪張圖or動畫
 			timer.ShowBitmap();
-			if (isHitState == 1 || isHitState == 2) {
+			// 加入正在死亡的state
+			if (deadState != 0) {
+				for (int i = 0; i < 12; i++)
+				{
+					deadBubble[i].ShowBitmap(2);
+				}
+			} else if (isHitState == 1 || isHitState == 2) {
 				if (isAttackedFromRight) {
 					hitAnimation[1].ShowBitmap(2);
 				}else{
@@ -484,6 +505,14 @@ namespace game_framework {
 				}
 			}
 			
+			// debug text
+			CDC *px = CDDraw::GetBackCDC();
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 0));
+			message = "deadState: "+to_string(deadState);
+			message2 = "transitionState: " + to_string(transitionState);
+			CTextDraw::Print(px, 44, 150, message.c_str());
+			CTextDraw::Print(px, 44, 180, message2.c_str());
+			CDDraw::ReleaseBackCDC();
 		}
 		void OnMove(int stage_x, int stage_y, int transitionState) {
 			//int bitmapLeft_x = this->x - left_boundary; //以left_boundary為基準的rockman_x(左上角)
@@ -1038,6 +1067,40 @@ namespace game_framework {
 						beamammo[i].SetTopLeft(ammoloc[i][0] - stage_x, ammoloc[i][1] - stage_y);
 					}
 				}
+				else if (transitionState == -1) {
+					// 這裡做死亡的動畫
+					if (deadState == 0){
+						// 動畫位置初始化
+						for (int i = 0; i < 12; i++)
+						{
+							bubble_XY[i][0] = x + 4*2;
+							bubble_XY[i][1] = y + 4*2;
+						}
+						deadState = 1;
+					}
+					else if (deadState == 1) {
+						bool tempBool = false;
+						for (int i = 0; i < 12; i++)
+						{
+							if (stage_x - 16 * 2 <= bubble_XY[i][0] && bubble_XY[i][0] <= stage_x + 512
+								&& stage_y - 16 * 2 <= bubble_XY[i][1] && bubble_XY[i][1] <= stage_y + 512) {
+								bubble_XY[i][0] += bubble_dXdY[i][0];
+								bubble_XY[i][1] += bubble_dXdY[i][1];
+								tempBool = true;
+							}
+						}
+						if (!tempBool) {
+							deadState = 2;
+							
+						}
+					}
+					
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].SetTopLeft(int(bubble_XY[i][0]) - stage_x, int(bubble_XY[i][1]) - stage_y);
+					}
+					
+				}
 			}
 
 			
@@ -1087,6 +1150,7 @@ namespace game_framework {
 			else {
 				lives -= 1;
 			}
+			deadState = 0;
 			dieDirectly = false;
 			blood = 28;
 			jumpCount = 0;
@@ -1176,7 +1240,10 @@ namespace game_framework {
 			return y;
 		}
 		int getBlood() {
-			return blood;
+			if (blood >= 0) {
+				return blood;
+			}
+			return 0;
 		}
 		int getLives() {
 			return lives;
@@ -1187,6 +1254,23 @@ namespace game_framework {
 		int getBulletCount() {
 			// TODO: 之後一般化
 			// return 
+		}
+		bool deadAnimationDone() {
+			if (deadState != 2) { //先隨便設一個值
+				return false;
+			}
+			// deadState = 0;
+			return true;
+		}
+		void toggleDeadAnimation() {
+
+		}
+		bool canGameOver() {
+			if (deadState != 2) { //先隨便設一個值
+				return false;
+			}
+			deadState = 0;
+			return true; //只有2可以return true，使得可以gameover
 		}
 		CMovingBitmap getBullet(int index) {
 			return beamammo[index];
@@ -1240,6 +1324,7 @@ namespace game_framework {
 		CMovingBitmap jumpingshooting[2];
 		CMovingBitmap laddershooting[2];
 		CMovingBitmap beamammo[3];
+		CMovingBitmap deadBubble[12];
 
 		CMovingBitmap hitAnimation[2];
 		CMovingBitmap shine;
@@ -1275,6 +1360,8 @@ namespace game_framework {
 		int climbjumpstate = 0;
 		int fallingstate = 0;
 		int isHitState = 0;
+		int deadState = 0;
+
 		bool startfalling = true;
 		bool canJump = true;
 		bool canShot = true;
@@ -1311,5 +1398,20 @@ namespace game_framework {
 		int ammodirect[3];
 		int ammodx = 12;
 		int ammocount = 0;
+		double bubble_XY[12][2]; // rockmanX + 4*2, rockmanY + 4*2
+		double bubble_dXdY[12][2] = {
+			{1.6, 0}, // 4顆從最右邊開始
+			{0, 1.6},
+			{-1.6, 0},
+			{0, -1.6},
+			{3.2, 0}, // 8顆從最右邊開始
+			{3.2, 3.2},
+			{0, 3.2},
+			{-3.2, 3.2},
+			{-3.2, 0},
+			{-3.2, -3.2},
+			{0, -3.2},
+			{3.2, -3.2}
+		};
 	};
 }

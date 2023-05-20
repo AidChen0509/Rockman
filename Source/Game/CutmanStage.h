@@ -162,7 +162,26 @@ namespace game_framework {
 
 			int rockmanX = rockman.getX();
 			int rockmanY = rockman.getY();
-			if (((rockmanY + 12) / 512) != (stage_y / 512)) { 
+			// 判斷transition state的更換
+			if (transitionState == -1) { // -1代表在死亡動畫
+				if (rockman.deadAnimationDone()) { //死亡動畫結束
+					// 回到正常的transition，順便重製
+					if (savePoint == 2) {
+						transitionState = 30;
+					}
+					else {
+						transitionState = 0;
+					}
+					if (rockman.getLives() > 0) {
+						this->OnBeginState(savePoint);
+					}
+					else {
+						// game over
+						gameState = 2;
+					}
+				}
+			}
+			else if (((rockmanY + 12) / 512) != (stage_y / 512)) { 
 				//除以512為了檢查是否在同一層
 				// case 1 洛克人在上面一層 -> (rockmanY + 12) / 512 < (stage_y / 512)
 				if (((rockmanY + 12) / 512) < (stage_y / 512)) {
@@ -189,6 +208,7 @@ namespace game_framework {
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
+			// 根據不同的transitionState判斷敵人碰撞
 			if (transitionState == 0) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
@@ -245,6 +265,7 @@ namespace game_framework {
 			//int index_y = stage_y/32; //最上面的index : index_y 
 									  //最右邊的index : index_x + 16 //若 >= 208，不做array的access
 									  //最下面的index : index_y + 16 //若 >= 144，不做array的access
+			// cutmanStage camera
 			if (transitionState == 0) {
 				// 王關之前的camera
 				// 每個and的註解，以符合所有情況，應該沒問題了
@@ -348,7 +369,7 @@ namespace game_framework {
 			if (transitionState == 31) {
 				stageShine.ShowBitmap(2);
 			}
-			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
+			rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
 			cutman.OnShow(transitionState);
 
 			// new edit
@@ -374,7 +395,7 @@ namespace game_framework {
 			}
 
 
-			rockman.Onshow(stage_x, stage_y); // 256*2是最邊邊，48是角色寬度
+			// rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnShow();
@@ -440,6 +461,7 @@ namespace game_framework {
 				stage_y = savePoint_stage[0][1];
 				rockman.OnBeginState(savePoint_rockman[0][0], savePoint_rockman[0][1], -1);
 				cutman.OnBeginState();
+				cutman_blood.SetFrameIndexOfBitmap(0); // 圖片也要歸零，不然下次進關卡看到的會先有血量
 			}
 			else if (point == 0) {
 				transitionState = 0;
@@ -482,18 +504,30 @@ namespace game_framework {
 				//贏了
 				gameState = 1;
 			}
-			else if (rockman.getLives() > 0) {
+			else if (rockman.getBlood() <= 0 || rockman.getDieDirectly()) {
+				// 只要血量低於0就是要啟動死亡動畫
+				// rockman.toggleDeadAnimation(); 應該不需要
+				transitionState = -1;
+			}
+			/*else if (rockman.getLives() > 0) {
 				// blood
 				int rockman_blood = rockman.getBlood();
-				if (rockman_blood <= 0 || rockman.getDieDirectly()) { //要初始
-					this->OnBeginState(savePoint);
+				if ((rockman_blood <= 0 || rockman.getDieDirectly())) {
+					transitionState = -1;
+					// this->OnBeginState(savePoint);
 				}
 			}
 			else {
-				gameState = 2;
+				// game over
+				transitionState = -1;
+				
+				if (rockman.canGameOver()) {
+				 	gameState = 2;
+				}
+				
 				// GotoGameState(GAME_STATE_OVER);
 				// 要改狀態，讓mygame_run去跳state
-			}
+			}*/
 		}
 
 	private:

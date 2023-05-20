@@ -838,7 +838,7 @@ namespace game_framework {
 						y -= dy;
 					}
 				}
-}
+			}
 			if (weaponThrew) { //丟出去了要處理飛行位移
 				if (isWeaponGo) {
 					int tempY = (weaponY + weapon_dy);
