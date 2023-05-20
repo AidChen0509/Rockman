@@ -10,6 +10,7 @@ namespace game_framework {
 		virtual void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) = 0;
 		virtual void OnShow() = 0;
 		virtual void OnInit() = 0;
+		virtual void OnBeginState() = 0;
 		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
 		virtual bool beenAttacked(CMovingBitmap bullet) = 0;
 
@@ -219,7 +220,15 @@ namespace game_framework {
 			}
 			
 		};
-		
+		void OnBeginState() override {
+			isActivate = false;
+			isUpAttack = false;
+			isDownAttack = false;
+			canActivate = true;
+			blood = 1;
+			dx = 3;
+			dy = 0;
+		}
 		// 怪物被打中與否，有被打到洛克人子彈要消失
 		bool beenAttacked(CMovingBitmap bullet) override {
 			// 應該要isActivate才能被子彈打到
@@ -527,7 +536,11 @@ namespace game_framework {
 					bullet[i].ShowBitmap(2);
 			}
 		}
-		
+		void OnBeginState() override {
+			isActivate = false;
+			blood = 1;
+			resetBullet();
+		}
 		bool beenAttacked(CMovingBitmap rockmanbullet) override {
 			if(isActivate){
 				if (CMovingBitmap::IsOverlap(open, rockmanbullet, 2)) {
@@ -802,7 +815,9 @@ namespace game_framework {
 				}
 			}
 		}
-
+		void OnBeginState() override {
+			reset();
+		}
 		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
 		bool beenAttacked(CMovingBitmap rockmanbullet) override {
 			// TODO

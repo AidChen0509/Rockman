@@ -491,17 +491,20 @@ namespace game_framework {
 			// dy = 8;
 			
 			// TODO 其他怪物的OnBeginState，可以塞入個別的savePoint，提高效能，或是全部都塞這
+			enemyReset();
 		}
 		void enemyReset() {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
-				// enemyContainer[i]->OnBeginState();
+				enemyContainer[i]->OnBeginState();
 			}
 		}
 		void checkReset() {
 			if (cutman.getBlood() <= 0) {
 				//贏了
-				gameState = 1;
+				if (cutman.deadAnimationDone()) {
+					gameState = 1;
+				}
 			}
 			else if (rockman.getBlood() <= 0 || rockman.getDieDirectly()) {
 				// 只要血量低於0就是要啟動死亡動畫
