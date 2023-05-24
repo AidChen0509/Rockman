@@ -120,6 +120,21 @@ namespace game_framework {
 				}, RGB(128, 0, 128));
 			rollingCutter[1].SetAnimation(100, false);
 
+			for (int i = 0; i < 12; i++)
+			{
+				deadBubble[i].LoadBitmapByString({
+					"resources/enemy/dead0.bmp",
+					"resources/enemy/dead1.bmp",
+					"resources/enemy/dead2.bmp",
+					"resources/enemy/dead3.bmp",
+					}, RGB(128, 0, 128));
+				if (i < 4) {
+					deadBubble[i].SetAnimation(50, false);
+				}
+				else {
+					deadBubble[i].SetAnimation(55, false);
+				}
+			}
 
 		};
 		void OnMove(int stageX, int stageY, int rockmanX, int rockmanY, int transitionState) {
@@ -146,7 +161,30 @@ namespace game_framework {
 				// mid = 128 (3*32
 				// long = 
 				// middle of the bitmap = 3204 * 2
-				if (isHit) {
+				if (deadState != 0) {
+					//觸發死亡動畫
+					if (deadState == 1) {
+						bool tempBool = false;
+						for (int i = 0; i < 12; i++)
+						{
+							if (stageX - 16 * 2 <= bubble_XY[i][0] && bubble_XY[i][0] <= stageX + 512
+								&& stageY - 16 * 2 <= bubble_XY[i][1] && bubble_XY[i][1] <= stageY + 512) {
+								bubble_XY[i][0] += bubble_dXdY[i][0];
+								bubble_XY[i][1] += bubble_dXdY[i][1];
+								tempBool = true;
+							}
+						}
+						if (!tempBool) {
+							deadState = 2;
+						}
+					}
+
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].SetTopLeft(int(bubble_XY[i][0]) - stageX, int(bubble_XY[i][1]) - stageY);
+					}
+				}
+				else if (isHit) {
 					shine.ToggleAnimation();
 					isHit = false;
 				}
@@ -838,7 +876,7 @@ namespace game_framework {
 						y -= dy;
 					}
 				}
-}
+			}
 			if (weaponThrew) { //丟出去了要處理飛行位移
 				if (isWeaponGo) {
 					int tempY = (weaponY + weapon_dy);
@@ -1041,6 +1079,12 @@ namespace game_framework {
 			else {
 				// boss is dead; 
 				// explode animation
+				if (blood <= 0) {
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].ShowBitmap(2);
+					}
+				}
 			}
 			if (weaponThrew) { //丟出
 				if (throwingLeft) {
@@ -1057,6 +1101,24 @@ namespace game_framework {
 				}
 			}
 			
+			if (transitionState == -1) { // 洛克人死掉
+				if (isJumping) {
+					if (jumpLeft) {
+						jumpingY[0].ShowBitmap(2);
+					}
+					else {
+						jumpingY[1].ShowBitmap(2);
+					}
+				}
+				else {
+					if (facingLeft) {
+						restingY[0].ShowBitmap(2);
+					}
+					else {
+						restingY[1].ShowBitmap(2);
+					}
+				}
+			}
 		};
 		void OnBeginState() {
 			x = 3252 * 2;
@@ -1078,6 +1140,7 @@ namespace game_framework {
 			isHit = false;
 			beenAttackedByLeft = false;
 			attackFromRight = false;
+			deadState = 0;
 		}
 		void setmap(vector<vector<int>> map) {
 			this->map = map;
@@ -1102,6 +1165,14 @@ namespace game_framework {
 					}
 					isHit = true;
 					blood -= 3;
+					if (blood <= 0) {
+						deadState = 1;
+						for (int i = 0; i < 12; i++)
+						{
+							bubble_XY[i][0] = x + 4 * 2;
+							bubble_XY[i][1] = y + 12 * 2;
+						}
+					}
 					return true;
 				}
 				return false;
@@ -1146,6 +1217,12 @@ namespace game_framework {
 
 		bool isAttackFromRight() {  //怪物是從右邊打洛克人的嗎?必須先successfullyAttack == true
 			return attackFromRight;
+		}
+		bool deadAnimationDone() {
+			if (deadState == 2) {
+				return true;
+			}
+			return false;
 		}
 		int getX() { //左上x(absolute
 			return x;
@@ -1202,7 +1279,24 @@ namespace game_framework {
 		CMovingBitmap rollingCutter[2];
 		CMovingBitmap throwing[2];
 		CMovingBitmap timer;
+		CMovingBitmap deadBubble[12];
 
+		int deadState = 0;
+		double bubble_XY[12][2]; // rockmanX + 4*2, rockmanY + 4*2
+		double bubble_dXdY[12][2] = {
+			{1.6, 0}, // 4顆從最右邊開始
+			{0, 1.6},
+			{-1.6, 0},
+			{0, -1.6},
+			{3.2, 0}, // 8顆從最右邊開始
+			{3.2, 3.2},
+			{0, 3.2},
+			{-3.2, 3.2},
+			{-3.2, 0},
+			{-3.2, -3.2},
+			{0, -3.2},
+			{3.2, -3.2}
+		};
 
 		vector<vector<int>> map;
 

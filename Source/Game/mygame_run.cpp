@@ -35,7 +35,7 @@ void CGameStateRun::OnBeginState()
 	// 關卡內容初始化
 	if (CGameStateInit::stage == 0) {
 		// -1為第一次進遊戲
-		cutman_stage.OnBeginState(-1);
+		cutman_stage.OnBeginState(-1); // -1
 		CAudio::Instance()->Play(AUDIO_Cutman, true);
 	}
 	else if (CGameStateInit::stage == 1) {
@@ -68,6 +68,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		else if (cutman_stage.getGamestate() == 2) { // rockman沒命了->over
 			gameState = 2;
 			cutman_stage.OnBeginState(-1);
+			CAudio::Instance()->Stop(AUDIO_Cutman);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
+			// 播放gameover的音效，once
 			GotoGameState(GAME_STATE_OVER);
 		}
 		else {
@@ -93,11 +96,10 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
+	ShowInitProgress(33, "Initialize...");
 	cutman_stage.OnInit();
-
 	//CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
 	// other stages' Oninit
-
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
