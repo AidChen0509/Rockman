@@ -1388,8 +1388,8 @@ namespace game_framework {
 		// int y = 2304;
 
 		// 廊道前
-		 int x = 2164*2;
-		 int y = 800*2;
+		int x = 2164*2;
+		int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上
