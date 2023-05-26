@@ -13,7 +13,7 @@ namespace game_framework {
 			// 初始化怪物
 			
 			// enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
-
+			// enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
 
 		};
 		~FiremanStage() {
@@ -23,7 +23,7 @@ namespace game_framework {
 			}
 		};
 		void OnInit() {
-			fireman_Stage.LoadBitmapByString({ "resources/stage/FiremanStage.bmp" });
+			fireman_Stage.LoadBitmapByString({ "resources/stage/firemanStage/FiremanStage.bmp" });
 			rockman_blood.LoadBitmapByString({ "resources/rockman/blood/blood0.bmp",
 											   "resources/rockman/blood/blood1.bmp",
 												"resources/rockman/blood/blood2.bmp",
@@ -54,13 +54,28 @@ namespace game_framework {
 												"resources/rockman/blood/blood27.bmp",
 												"resources/rockman/blood/blood28.bmp", });
 			rockman_blood.SetTopLeft(48, 50);
-			
+			stageShine.LoadBitmapByString({
+				"resources/stage/firemanStage/firemanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/firemanStage/firemanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/firemanStage/firemanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/firemanStage/firemanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/firemanStage/firemanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				"resources/stage/firemanStage/firemanStageShine.bmp",
+				"resources/stage/purple.bmp",
+				}, RGB(128, 0, 128));
+			stageShine.SetTopLeft(0, 0);
+			stageShine.SetAnimation(100, true);
 
 			bossGate.LoadBitmapByString({
-				"resources/stage/bossStageGate1.bmp",
-				"resources/stage/bossStageGate2.bmp",
-				"resources/stage/bossStageGate3.bmp",
-				"resources/stage/bossStageGate4.bmp",
+				"resources/stage/firemanStage/bossStageGate1.bmp",
+				"resources/stage/firemanStage/bossStageGate2.bmp",
+				"resources/stage/firemanStage/bossStageGate3.bmp",
+				"resources/stage/firemanStage/bossStageGate4.bmp",
 				});
 			bossGate.SetTopLeft(0, 192); // TO Change
 			bossGate.SetAnimation(100, true);
@@ -245,6 +260,9 @@ namespace game_framework {
 				}
 
 			}
+			else if (transitionState == 40) {
+
+			}
 			else { //轉場觸發
 				if (transitionState == 1) { //向上轉場
 					stage_y -= dy; //512
@@ -265,7 +283,7 @@ namespace game_framework {
 						transitionState = 30;
 					}
 				}
-				/*
+				
 				else if (transitionState == 4) {
 					stage_x += dx; //512;
 					if (stage_x % 512 == 0) {
@@ -297,7 +315,7 @@ namespace game_framework {
 						transitionState = 40;
 					}
 				}
-				*/
+				
 				// 40  is the state rockman can move
 			}
 
@@ -310,36 +328,38 @@ namespace game_framework {
 			}
 			fireman_Stage.SetTopLeft(-stage_x, -stage_y);
 
-			// checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
+			checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
 		};
 		void Onshow() {
 			fireman_Stage.ShowBitmap(2);
-			/*
+			
 			if (transitionState == 31) {
 				stageShine.ShowBitmap(2);
 			}
-			*/
+			
 			rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
 			// cutman.OnShow(transitionState);
 
 			// new edit
-			/*
+			
 			if (31 <= transitionState && transitionState < 40) {
 				inBossStage = true;
 				fireman_blood.ShowBitmap(2);
 			}
 			else if (transitionState == 40 || (inBossStage && transitionState == -1)) {
 				// TODO: 要注意如果blood < 0
+				/*
 				if (cutman.getBlood() >= 0)
 					fireman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
 				else
 					fireman_blood.SetFrameIndexOfBitmap(0);
 				fireman_blood.ShowBitmap(2);
+				*/
 			}
 			if (transitionState >= 32 || (inBossStage && transitionState == -1)) {
 				bossGate.ShowBitmap(2);
 			}
-			*/
+			
 
 
 			// rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
@@ -465,7 +485,7 @@ namespace game_framework {
 				// 播放死亡音效，once
 				transitionState = -1;
 			}
-			else if (rockman.getLives() > 0) {
+			/*else if (rockman.getLives() > 0) {
 				// blood
 				int rockman_blood = rockman.getBlood();
 				if ((rockman_blood <= 0 || rockman.getDieDirectly())) {
@@ -480,10 +500,7 @@ namespace game_framework {
 				if (rockman.canGameOver()) {
 					gameState = 2;
 				}
-
-				// GotoGameState(GAME_STATE_OVER);
-				// 要改狀態，讓mygame_run去跳state
-			}
+			}*/
 		}
 
 	private:
@@ -529,10 +546,11 @@ namespace game_framework {
 		CMovingBitmap fireman_blood;
 		CMovingBitmap fireman_Stage;
 		CMovingBitmap rockman_blood;
-		// CMovingBitmap stageShine;
+		CMovingBitmap stageShine;
 		CMovingBitmap bossGate;
 
-		RockmanF rockman;
+		Character rockman;
+		// RockmanF rockman;
 		// Cutman cutman;
 	};
 }

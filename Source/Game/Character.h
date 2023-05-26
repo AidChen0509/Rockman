@@ -630,8 +630,8 @@ namespace game_framework {
 				else if (rightPressed) { //movingRight
 					isFacingRight = true;
 					isResting = false;
-					if (right_x + dx <= 6656
-						&& block_element_3darray[top_y / 32][(right_x + dx) / 32] != -1
+					if (// right_x + dx <= 6656
+						block_element_3darray[top_y / 32][(right_x + dx) / 32] != -1
 						&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != -1
 						&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != -1) {
 

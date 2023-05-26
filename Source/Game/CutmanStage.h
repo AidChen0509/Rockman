@@ -300,6 +300,9 @@ namespace game_framework {
 				}
 
 			}
+			else if (transitionState == 40) {
+
+			}
 			else { //轉場觸發
 				if (transitionState == 1) { //向上轉場
 					stage_y -= dy; //512
