@@ -9,7 +9,6 @@
 #include "../Game/boss.h"
 #include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
-#include "../Game/human.h"
 #include "../Game/firemanStage.h"
 #include "mygame.h"
 

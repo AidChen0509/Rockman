@@ -9,7 +9,6 @@
 #include "../Game/boss.h"
 #include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
-#include "../Game/human.h"
 #include "../Game/firemanStage.h"
 #include "mygame.h"
 
@@ -99,7 +98,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
 			GotoGameState(GAME_STATE_INIT);
 		}
-		else if (cutman_stage.getGamestate() == 2) { // rockman沒命了->over
+		else if (fireman_stage.getGamestate() == 2) { // rockman沒命了->over
 			gameState = 2;
 			fireman_stage.OnBeginState(-1);
 			// CAudio::Instance()->Stop(AUDIO_Cutman);
@@ -157,8 +156,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.OnKeyUp(nChar, nRepCnt, nFlags);
-		// if()
-		// GotoGameState(GAME_STATE_INIT);
+
 	}
 	else if (CGameStateInit::stage == 1) {
 		// guts

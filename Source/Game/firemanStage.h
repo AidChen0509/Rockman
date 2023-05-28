@@ -12,8 +12,15 @@ namespace game_framework {
 			// cutman.setmap(map);
 			// 初始化怪物
 			
-			// enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
-			// enemyContainer.push_back(new Heli(280 * 2, 2110 * 2));
+			enemyContainer.push_back(new Screw(112 * 2, 624 * 2, 0, 0));
+			enemyContainer.push_back(new Screw(112 * 2, 560 * 2, 0, 0));
+			enemyContainer.push_back(new Screw(232 * 2, 560 * 2, 0, 0));
+			enemyContainer.push_back(new Screw(432 * 2, 560 * 2, 0, 0));
+			enemyContainer.push_back(new Screw(352 * 2, 624 * 2, 0, 0));
+			enemyContainer.push_back(new Screw(2728 * 2, 96 * 2, 1, 0));
+			enemyContainer.push_back(new Screw(2888 * 2, 96 * 2, 1, 0));
+			enemyContainer.push_back(new Screw(3032 * 2, 96 * 2, 1, 0));
+			enemyContainer.push_back(new Screw(3160 * 2, 96 * 2, 1, 0));
 
 		};
 		~FiremanStage() {
