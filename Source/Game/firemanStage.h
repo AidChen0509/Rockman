@@ -411,6 +411,9 @@ namespace game_framework {
 			if (nChar == VK_RIGHT) {
 				rightPressed = true;
 			}
+			if (nChar == 0x52) {
+				rockman.resetBlood();
+			}
 		}
 		void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			rockman.OnKeyUp(nChar, nRepCnt, nFlags);
