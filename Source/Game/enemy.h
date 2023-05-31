@@ -1104,7 +1104,7 @@ namespace game_framework {
 				else {
 					// resetBullet();
 					OnBeginState();
-					blood = 4;
+					blood = 3;
 				}
 				if (isActivate) {
 					if (state == 0) { //toggle開砲台
@@ -1204,7 +1204,7 @@ namespace game_framework {
 				else {
 					// 出去範圍後，初始化
 					OnBeginState();
-					blood = 4;
+					blood = 3;
 				}
 			}
 			open.SetTopLeft(_initX - stage_x, _initY - stage_y);
@@ -1223,7 +1223,6 @@ namespace game_framework {
 					close.ShowBitmap(2);
 				}
 			}
-			// 要改
 			for (int j = 0; j < 2; j++) {
 				if (canShot[j]) {
 					for (int i = 0; i < 5; i++) {
@@ -1250,13 +1249,61 @@ namespace game_framework {
 				location[1][i][1] = _initBulletY;
 			}
 		};
-		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打到怪物，會回傳true，讓子彈消失
 		bool beenAttacked(CMovingBitmap bullet) override {
-			if (blood > 0) {
-
-			}
-			else {
-
+			if (isActivate) {
+				if (CMovingBitmap::IsOverlap(open, bullet, 2)) { //重疊了
+					if (state == 0 || state == 1) {
+						if (0 <= open.GetFrameIndexOfBitmap() && open.GetFrameIndexOfBitmap() <= 2) {
+							if (direction == 0 && bullet.GetTop()+12 >= _initY + 16) {// 朝上
+								blood -= 1;
+								CAudio::Instance()->Play(5, false);
+								return true;
+							}
+							else if(direction == 1 && bullet.GetTop() <= _initY + 16){ //朝下
+								blood -= 1;
+								CAudio::Instance()->Play(5, false);
+								return true;
+							}
+							else {
+								return false;
+							}
+						}
+						else {
+							blood -= 1;
+							CAudio::Instance()->Play(5, false);
+							return true;
+						}
+					}
+					else if (state == 2 || state == 3) {
+						// attack.ShowBitmap(2);
+						blood -= 1;
+						CAudio::Instance()->Play(5, false);
+						return true;
+					}
+					else {
+						if (close.GetFrameIndexOfBitmap() == 2) {
+							if (direction == 0 && bullet.GetTop() + 12 >= _initY + 16) {// 朝上
+								blood -= 1;
+								CAudio::Instance()->Play(5, false);
+								return true;
+							}
+							else if (direction == 1 && bullet.GetTop() <= _initY + 16) { //朝下
+								blood -= 1;
+								CAudio::Instance()->Play(5, false);
+								return true;
+							}
+							else {
+								return false;
+							}
+						}
+						else {
+							blood -= 1;
+							CAudio::Instance()->Play(5, false);
+							return true;
+						}
+					}
+				}
 			}
 			return false;
 		};
@@ -1264,6 +1311,68 @@ namespace game_framework {
 		// 將每個敵人跟rockman做交流
 		// 回傳是否有打中洛克人
 		bool successfullyAttack(CMovingBitmap rockman) override {
+			for (int j = 0; j < 2; j++) {
+				if (canShot[j]) {
+					for (int i = 0; i < 5; i++) {
+						damage = 2;
+						if (CMovingBitmap::IsOverlap(bullet[j][i], rockman, 2)) {
+							if (rockman.GetLeft() <= bullet[j][i].GetLeft()) {
+								attackFromRight = true;
+							}
+							else {
+								attackFromRight = false;
+							}
+							return true;
+						}
+					}
+				}
+			}
+			damage = 1;
+			if (rockman.GetLeft() <= open.GetLeft()) {
+				attackFromRight = true;
+			}
+			else {
+				attackFromRight = false;
+			}
+			if (CMovingBitmap::IsOverlap(open, rockman, 2)) { //重疊了
+				if (state == 0 || state == 1) {
+					if (0 <= open.GetFrameIndexOfBitmap() && open.GetFrameIndexOfBitmap() <= 2) {
+						if (direction == 0 && rockman.GetTop() + 48 >= _initY + 16) {// 朝上
+							return true;
+						}
+						else if (direction == 1 && rockman.GetTop() <= _initY + 16) { //朝下
+							return true;
+						}
+						else {
+							return false;
+						}
+					}
+					else {
+						return true;
+					}
+				}
+				else if (state == 2 || state == 3) {
+					return true;
+				}
+				else {
+					if (close.GetFrameIndexOfBitmap() == 2) {
+						if (direction == 0 && rockman.GetTop() + 48 >= _initY + 16) {// 朝上
+							blood -= 1;
+							CAudio::Instance()->Play(5, false);
+							return true;
+						}
+						else if (direction == 1 && rockman.GetTop() <= _initY + 16) { //朝下
+							return true;
+						}
+						else {
+							return false;
+						}
+					}
+					else {
+						return true;
+					}
+				}
+			}
 			return false;
 		};
 
@@ -1315,7 +1424,7 @@ namespace game_framework {
 		bool attackFromRight;
 
 
-		int blood = 4;
+		int blood = 3;
 
 		// 設定時間長一點，讓他自己無限打
 		CMovingBitmap open;
