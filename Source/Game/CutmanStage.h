@@ -49,6 +49,9 @@ namespace game_framework {
 			enemyContainer.push_back(new Octopus(1472 * 2, 288 * 2, 1472 * 2, 336 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
 			
+			enemyContainer.push_back(new Screw(2480 * 2, 912 * 2, 0, 1));
+			enemyContainer.push_back(new Screw(2720 * 2, 864 * 2, 1, 1));
+			enemyContainer.push_back(new Screw(2856 * 2, 912 * 2, 0, 1));
 
 		};
 		~CutmanStage() {
@@ -177,6 +180,7 @@ namespace game_framework {
 					}
 					else {
 						// game over
+						// TODO 加入重製Onbegin
 						gameState = 2;
 					}
 				}
@@ -204,12 +208,13 @@ namespace game_framework {
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// cutman
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
-			for (size_t i = 0; i < enemyContainer.size(); i++)
-			{
-				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
-			}
-			// 根據不同的transitionState判斷敵人碰撞
-			if (transitionState == 0) {
+
+			// 根據不同的transitionState判斷敵人碰撞跟OnMove
+			if (transitionState == 0 || transitionState == 30) {
+				for (size_t i = 0; i < enemyContainer.size(); i++)
+				{
+					enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
+				}
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
 					// enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
@@ -238,6 +243,7 @@ namespace game_framework {
 			else if (transitionState == 30) {
 				//到時候這邊會補上廊道怪物的container做loop
 				// 或是一些transitionState
+				
 			}
 			else if (transitionState == 40) {
 				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
@@ -300,6 +306,9 @@ namespace game_framework {
 				}
 
 			}
+			else if (transitionState == 40) {
+
+			}
 			else { //轉場觸發
 				if (transitionState == 1) { //向上轉場
 					stage_y -= dy; //512
@@ -315,13 +324,15 @@ namespace game_framework {
 				}
 				else if (transitionState == 3) { //進廊道的轉場
 					stage_x += dx; //512;
-					if (stage_x % 512 == 0) {
+					if ((stage_x / 512) != ((stage_x - dx) / 512)) { //換到下一張圖了
+						stage_x = (stage_x / 512) * 512;
 						transitionState = 30;
 					}
 				}
 				else if (transitionState == 4) {
 					stage_x += dx; //512;
-					if (stage_x % 512 == 0) {
+					if ((stage_x / 512) != ((stage_x - dx) / 512)) {
+						stage_x = (stage_x / 512) * 512;
 						CAudio::Instance()->Stop(0);
 						CAudio::Instance()->Play(8, true);
 						stageShine.ToggleAnimation();
@@ -373,14 +384,14 @@ namespace game_framework {
 			cutman.OnShow(transitionState);
 
 			// new edit
-			
+
 			if (31 <= transitionState && transitionState < 40) {
 				inBossStage = true;
 				cutman_blood.ShowBitmap(2);
 			}
-			else if(transitionState == 40 || (inBossStage && transitionState == -1)){
+			else if (transitionState == 40 || (inBossStage && transitionState == -1)) {
 				// TODO: 要注意如果blood < 0
-				if(cutman.getBlood() >= 0)
+				if (cutman.getBlood() >= 0)
 					cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
 				else
 					cutman_blood.SetFrameIndexOfBitmap(0);
@@ -389,13 +400,12 @@ namespace game_framework {
 			if (transitionState >= 32 || (inBossStage && transitionState == -1)) {
 				bossGate.ShowBitmap(2);
 			}
+			if (transitionState == 0 || transitionState == 30) {
+				for (size_t i = 0; i < enemyContainer.size(); i++)
+				{
+					enemyContainer[i]->OnShow();
 
-
-			// rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
-			for (size_t i = 0; i < enemyContainer.size(); i++)
-			{
-				enemyContainer[i]->OnShow();
-				
+				}
 			}
 
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
@@ -432,6 +442,9 @@ namespace game_framework {
 			}
 			if (nChar == VK_RIGHT) {
 				rightPressed = true;
+			}
+			if (nChar == 0x52) {
+				rockman.resetBlood();
 			}
 		}
 		void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
@@ -497,6 +510,10 @@ namespace game_framework {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnBeginState();
+			}
+			for (size_t i = 0; i < enemyContainer2.size(); i++)
+			{
+				enemyContainer2[i]->OnBeginState();
 			}
 		}
 		void checkReset() {
@@ -571,6 +588,8 @@ namespace game_framework {
 
 		string message;
 		vector<Enemy*> enemyContainer;
+		vector<Enemy*> enemyContainer2;
+
 		vector<vector<int>> map;
 
 		CMovingBitmap cutman_blood;

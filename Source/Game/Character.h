@@ -506,18 +506,19 @@ namespace game_framework {
 			}
 			
 			// debug text
-			/*
+			
 			CDC *px = CDDraw::GetBackCDC();
-			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 0));
-			message = "deadState: "+to_string(deadState);
-			message2 = "transitionState: " + to_string(transitionState);
-			message3 = "Lives: " + to_string(lives);
-			CTextDraw::Print(px, 44, 150, message.c_str());
-			CTextDraw::Print(px, 44, 180, message2.c_str());
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
+			message = "rockmanX =  "+to_string(x);
+			// message2 = "y = " + to_string(y);
+			message3 = "TransitionState: " + to_string(transitionState);
+			CTextDraw::Print(px, 44, 180, message.c_str());
+			// CTextDraw::Print(px, 44, 180, message2.c_str());
 			CTextDraw::Print(px, 44, 200, message3.c_str());
 
 			CDDraw::ReleaseBackCDC();
-			*/
+			
+			
 		}
 		void OnMove(int stage_x, int stage_y, int transitionState) {
 			//int bitmapLeft_x = this->x - left_boundary; //以left_boundary為基準的rockman_x(左上角)
@@ -630,8 +631,8 @@ namespace game_framework {
 				else if (rightPressed) { //movingRight
 					isFacingRight = true;
 					isResting = false;
-					if (right_x + dx <= 6656
-						&& block_element_3darray[top_y / 32][(right_x + dx) / 32] != -1
+					if (// right_x + dx <= 6656
+						block_element_3darray[top_y / 32][(right_x + dx) / 32] != -1
 						&& block_element_3darray[mid_y / 32][(right_x + dx) / 32] != -1
 						&& block_element_3darray[down_y / 32][(right_x + dx) / 32] != -1) {
 
@@ -1312,7 +1313,9 @@ namespace game_framework {
 			isHitState = 1;
 			canShot = false;
 		}
-
+		void resetBlood() {
+			blood = 28;
+		}
 	private:
 		vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關 要再改
 		vector<int> level_top = { 2048 * 2 ,1792 * 2, 1536 * 2, 1280 * 2, 1024 * 2, 768 * 2, 512 * 2, 256 * 2, 0, 256 * 2, 512 * 2, 768 * 2 };//768王關 要再改 跟地圖數據level數不符
@@ -1388,8 +1391,8 @@ namespace game_framework {
 		// int y = 2304;
 
 		// 廊道前
-		 int x = 2164*2;
-		 int y = 800*2;
+		int x = 2164*2;
+		int y = 800*2;
 
 		int dx = 4; // 已乘兩倍，左右橫移速度
 		int dy = 10; //已成兩倍，向上

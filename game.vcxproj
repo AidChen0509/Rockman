@@ -267,6 +267,7 @@
     <ClInclude Include="Source\Game\config.h" />
     <ClInclude Include="Source\Game\CutmanStage.h" />
     <ClInclude Include="Source\Game\enemy.h" />
+    <ClInclude Include="Source\Game\firemanStage.h" />
     <ClInclude Include="Source\Game\mygame.h" />
     <ClInclude Include="Source\Library\audio.h" />
     <ClInclude Include="Source\Library\gamecore.h" />
