@@ -9,7 +9,7 @@ namespace game_framework {
 			// map initialize
 			this->readFile();
 			rockman.setmap(map);
-			// cutman.setmap(map);
+			fireman.setmap(map);
 			// 初始化怪物
 			
 			enemyContainer.push_back(new Screw(112 * 2, 624 * 2, 0, 0));
@@ -124,8 +124,8 @@ namespace game_framework {
 
 			fireman_Stage.SetTopLeft(-stage_x, -stage_y);
 			rockman.OnInit(stage_x, stage_y);
-			// cutman
-			// cutman.OnInit();
+			// fireman
+			fireman.OnInit();
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnInit();
@@ -176,16 +176,15 @@ namespace game_framework {
 
 			rockman.OnMove(stage_x, stage_y, transitionState);
 			// cutman
-			// cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
+			fireman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
 			// 根據不同的transitionState判斷敵人碰撞
-			if (transitionState == 0) {
+			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
-					// enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 					if (enemyContainer[i]->getIsActivate()) { //怪物is acitivated
 						if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
 							// 沒被攻擊中，而且被打到
@@ -208,30 +207,26 @@ namespace game_framework {
 					}
 				}
 			}
-			else if (transitionState == 30) {
-				//到時候這邊會補上廊道怪物的container做loop
-				// 或是一些transitionState
-			}
 			else if (transitionState == 40) {
-				/*
-				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
+				if (!rockman.getIsHit() && fireman.successfullyAttack(rockman.getCurrentBitmap())) {
 					// 沒被攻擊中，而且被打到
 					// 可以呼叫怪物的isAttackFromRight()，set給rockman
 					CAudio::Instance()->Play(7, false);
 					rockman.setIsHit();
-					rockman.decreaseBlood(cutman.getDamage());
-					rockman.setIsAttackedFromRight(cutman.isAttackFromRight());
+					rockman.decreaseBlood(fireman.getDamage());
+					rockman.setIsAttackedFromRight(fireman.isAttackFromRight());
 				}
+				// 豆彈打到boss
 				for (int j = 0; j < 3; j++)
 				{
 					if (rockman.getIsShot(j)) {
-						if (cutman.beenAttacked(rockman.getBullet(j))) {
+						if (fireman.beenAttacked(rockman.getBullet(j))) {
 							CAudio::Instance()->Play(5, false);
 							rockman.setIsShotfalse(j);
 						}
 					}
 				}
-				*/
+				
 			}
 
 
@@ -286,14 +281,16 @@ namespace game_framework {
 				
 				else if (transitionState == 3) { //進廊道的轉場
 					stage_x += dx; //512;
-					if (stage_x % 512 == 0) {
+					if ((stage_x / 512) != ((stage_x - dx) / 512)) {
+						stage_x = (stage_x / 512) * 512;
 						transitionState = 30;
 					}
 				}
 				
 				else if (transitionState == 4) {
 					stage_x += dx; //512;
-					if (stage_x % 512 == 0) {
+					if ((stage_x / 512) != ((stage_x - dx) / 512)) {
+						stage_x = (stage_x / 512) * 512;
 						CAudio::Instance()->Stop(0);
 						CAudio::Instance()->Play(8, true);
 						stageShine.ToggleAnimation();
@@ -345,7 +342,7 @@ namespace game_framework {
 			}
 			
 			rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
-			// cutman.OnShow(transitionState);
+			fireman.OnShow(transitionState);
 
 			// new edit
 			
@@ -355,13 +352,13 @@ namespace game_framework {
 			}
 			else if (transitionState == 40 || (inBossStage && transitionState == -1)) {
 				// TODO: 要注意如果blood < 0
-				/*
-				if (cutman.getBlood() >= 0)
-					fireman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
+				
+				if (fireman.getBlood() >= 0)
+					fireman_blood.SetFrameIndexOfBitmap(fireman.getBlood());
 				else
 					fireman_blood.SetFrameIndexOfBitmap(0);
 				fireman_blood.ShowBitmap(2);
-				*/
+				
 			}
 			if (transitionState >= 32 || (inBossStage && transitionState == -1)) {
 				bossGate.ShowBitmap(2);
@@ -438,7 +435,7 @@ namespace game_framework {
 				stage_x = savePoint_stage[0][0];
 				stage_y = savePoint_stage[0][1];
 				rockman.OnBeginState(savePoint_rockman[0][0], savePoint_rockman[0][1], -1);
-				// cutman.OnBeginState();
+				fireman.OnBeginState();
 				fireman_blood.SetFrameIndexOfBitmap(0); // 圖片也要歸零，不然下次進關卡看到的會先有血量
 				inBossStage = false;
 			}
@@ -458,12 +455,12 @@ namespace game_framework {
 			else if (point == 2) {
 				// 在隧道的頭
 				transitionState = 30;
-				// CAudio::Instance()->Stop(8);
-				// CAudio::Instance()->Play(0, true);
+				CAudio::Instance()->Stop(8);
+				CAudio::Instance()->Play(0, true);
 				stage_x = savePoint_stage[2][0];
 				stage_y = savePoint_stage[2][1];
 				rockman.OnBeginState(savePoint_rockman[2][0], savePoint_rockman[2][1], 2);
-				// cutman.OnBeginState();
+				fireman.OnBeginState();
 				fireman_blood.SetFrameIndexOfBitmap(0); // 圖片也要歸零，不然下次進關卡看到的會先有血量
 				inBossStage = false;
 			}
@@ -484,13 +481,13 @@ namespace game_framework {
 		}
 		void checkReset() {
 			
-			/*if (cutman.getBlood() <= 0) {
+			if (fireman.getBlood() <= 0) {
 				//贏了
-				if (cutman.deadAnimationDone()) {
+				if (fireman.deadAnimationDone()) {
 					gameState = 1;
 				}
 			}
-			else */if (rockman.getBlood() <= 0 || rockman.getDieDirectly()) {
+			else if (rockman.getBlood() <= 0 || rockman.getDieDirectly()) {
 				// 只要血量低於0就是要啟動死亡動畫
 				// 播放死亡音效，once
 				transitionState = -1;
@@ -560,7 +557,6 @@ namespace game_framework {
 		CMovingBitmap bossGate;
 
 		Character rockman;
-		// RockmanF rockman;
-		// Cutman cutman;
+		Fireman fireman;
 	};
 }

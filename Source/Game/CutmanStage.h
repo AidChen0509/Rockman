@@ -359,13 +359,15 @@ namespace game_framework {
 				}
 				else if (transitionState == 3) { //進廊道的轉場
 					stage_x += dx; //512;
-					if (stage_x % 512 == 0) {
+					if ((stage_x / 512) != ((stage_x - dx) / 512)) { //換到下一張圖了
+						stage_x = (stage_x / 512) * 512;
 						transitionState = 30;
 					}
 				}
 				else if (transitionState == 4) {
 					stage_x += dx; //512;
-					if (stage_x % 512 == 0) {
+					if ((stage_x / 512) != ((stage_x - dx) / 512)) {
+						stage_x = (stage_x / 512) * 512;
 						CAudio::Instance()->Stop(0);
 						CAudio::Instance()->Play(8, true);
 						stageShine.ToggleAnimation();

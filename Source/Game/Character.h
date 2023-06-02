@@ -508,15 +508,16 @@ namespace game_framework {
 			// debug text
 			
 			CDC *px = CDDraw::GetBackCDC();
-			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(0, 0, 153));
-			message = "x =  "+to_string(x);
-			message2 = "y = " + to_string(y);
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
+			message = "rockmanX =  "+to_string(x);
+			// message2 = "y = " + to_string(y);
 			// message3 = "Lives: " + to_string(lives);
-			CTextDraw::Print(px, 44, 150, message.c_str());
-			CTextDraw::Print(px, 44, 180, message2.c_str());
+			CTextDraw::Print(px, 44, 180, message.c_str());
+			// CTextDraw::Print(px, 44, 180, message2.c_str());
 			// CTextDraw::Print(px, 44, 200, message3.c_str());
 
 			CDDraw::ReleaseBackCDC();
+			
 			
 		}
 		void OnMove(int stage_x, int stage_y, int transitionState) {

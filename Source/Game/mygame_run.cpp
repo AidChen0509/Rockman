@@ -51,7 +51,7 @@ void CGameStateRun::OnBeginState()
 	else if (CGameStateInit::stage == 4) {
 		// fire
 		fireman_stage.OnBeginState(-1);
-		// fireman audio
+		// fireman audio TODO
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -101,8 +101,8 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		else if (fireman_stage.getGamestate() == 2) { // rockman沒命了->over
 			gameState = 2;
 			fireman_stage.OnBeginState(-1);
-			// CAudio::Instance()->Stop(AUDIO_Cutman);
-			// CAudio::Instance()->Stop(AUDIO_BossBattle);
+			CAudio::Instance()->Stop(AUDIO_Cutman);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
 			// 播放gameover的音效，once
 			GotoGameState(GAME_STATE_OVER);
 		}
