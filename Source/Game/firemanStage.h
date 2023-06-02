@@ -367,10 +367,12 @@ namespace game_framework {
 
 
 			// rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
-			for (size_t i = 0; i < enemyContainer.size(); i++)
-			{
-				enemyContainer[i]->OnShow();
+			if (transitionState == 0 || transitionState == 30) {
+				for (size_t i = 0; i < enemyContainer.size(); i++)
+				{
+					enemyContainer[i]->OnShow();
 
+				}
 			}
 
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());

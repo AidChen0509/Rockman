@@ -49,19 +49,15 @@ namespace game_framework {
 			enemyContainer.push_back(new Octopus(1472 * 2, 288 * 2, 1472 * 2, 336 * 2, 2000));
 			enemyContainer.push_back(new Octopus(1312 * 2, 320 * 2, 1488 * 2, 320 * 2, 2000));
 			
-			enemyContainer2.push_back(new Screw(2480 * 2, 912 * 2, 0, 1));
-			enemyContainer2.push_back(new Screw(2720 * 2, 864 * 2, 1, 1));
-			enemyContainer2.push_back(new Screw(2856 * 2, 912 * 2, 0, 1));
+			enemyContainer.push_back(new Screw(2480 * 2, 912 * 2, 0, 1));
+			enemyContainer.push_back(new Screw(2720 * 2, 864 * 2, 1, 1));
+			enemyContainer.push_back(new Screw(2856 * 2, 912 * 2, 0, 1));
 
 		};
 		~CutmanStage() {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				delete enemyContainer[i];
-			}
-			for (size_t i = 0; i < enemyContainer2.size(); i++)
-			{
-				delete enemyContainer2[i];
 			}
 		};
 		void OnInit() {
@@ -164,10 +160,6 @@ namespace game_framework {
 			{
 				enemyContainer[i]->OnInit();
 			}
-			for (size_t i = 0; i < enemyContainer2.size(); i++)
-			{
-				enemyContainer2[i]->OnInit();
-			}
 		};
 		void OnMove() {
 
@@ -218,14 +210,10 @@ namespace game_framework {
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
 
 			// 根據不同的transitionState判斷敵人碰撞跟OnMove
-			if (transitionState == 0) {
+			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
 					enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
-				}
-				for (size_t i = 0; i < enemyContainer2.size(); i++)
-				{
-					enemyContainer2[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 				}
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
@@ -255,30 +243,7 @@ namespace game_framework {
 			else if (transitionState == 30) {
 				//到時候這邊會補上廊道怪物的container做loop
 				// 或是一些transitionState
-				for (size_t i = 0; i < enemyContainer2.size(); i++)
-				{
-					// enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
-					if (enemyContainer2[i]->getIsActivate()) { //怪物is acitivated
-						if (!rockman.getIsHit() && enemyContainer2[i]->successfullyAttack(rockman.getCurrentBitmap())) {
-							// 沒被攻擊中，而且被打到
-							// 可以呼叫怪物的isAttackFromRight()，set給rockman
-							CAudio::Instance()->Play(7, false);
-							rockman.setIsHit();
-							rockman.decreaseBlood(enemyContainer2[i]->getDamage());
-							rockman.setIsAttackedFromRight(enemyContainer2[i]->isAttackFromRight());
-						}
-
-						for (int j = 0; j < 3; j++)
-						{
-							if (rockman.getIsShot(j)) {
-								if (enemyContainer2[i]->beenAttacked(rockman.getBullet(j))) {
-									rockman.setIsShotfalse(j);
-								}
-							}
-						}
-
-					}
-				}
+				
 			}
 			else if (transitionState == 40) {
 				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
@@ -419,14 +384,14 @@ namespace game_framework {
 			cutman.OnShow(transitionState);
 
 			// new edit
-			
+
 			if (31 <= transitionState && transitionState < 40) {
 				inBossStage = true;
 				cutman_blood.ShowBitmap(2);
 			}
-			else if(transitionState == 40 || (inBossStage && transitionState == -1)){
+			else if (transitionState == 40 || (inBossStage && transitionState == -1)) {
 				// TODO: 要注意如果blood < 0
-				if(cutman.getBlood() >= 0)
+				if (cutman.getBlood() >= 0)
 					cutman_blood.SetFrameIndexOfBitmap(cutman.getBlood());
 				else
 					cutman_blood.SetFrameIndexOfBitmap(0);
@@ -435,20 +400,11 @@ namespace game_framework {
 			if (transitionState >= 32 || (inBossStage && transitionState == -1)) {
 				bossGate.ShowBitmap(2);
 			}
-
-
-			// rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
-			if (transitionState == 0) {
+			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
 					enemyContainer[i]->OnShow();
 
-				}
-			}
-			else if (transitionState == 30) {
-				for (size_t i = 0; i < enemyContainer2.size(); i++)
-				{
-					enemyContainer2[i]->OnShow();
 				}
 			}
 

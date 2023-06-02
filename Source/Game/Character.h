@@ -511,10 +511,10 @@ namespace game_framework {
 			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
 			message = "rockmanX =  "+to_string(x);
 			// message2 = "y = " + to_string(y);
-			// message3 = "Lives: " + to_string(lives);
+			message3 = "TransitionState: " + to_string(transitionState);
 			CTextDraw::Print(px, 44, 180, message.c_str());
 			// CTextDraw::Print(px, 44, 180, message2.c_str());
-			// CTextDraw::Print(px, 44, 200, message3.c_str());
+			CTextDraw::Print(px, 44, 200, message3.c_str());
 
 			CDDraw::ReleaseBackCDC();
 			
