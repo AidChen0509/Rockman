@@ -30,13 +30,21 @@ namespace game_framework {
 			enemyContainer.push_back(new Bolt(960 * 2, 112 * 2));
 
 
+			enemyContainerBehindScene.push_back(new Fireball(1696 * 2, 256 * 2, 1696 * 2, 336 * 2, 0, 5));
+			enemyContainerBehindScene.push_back(new Fireball(1704 * 2, 336 * 2, 1608 * 2, 336 * 2, 1, 6));
+			enemyContainerBehindScene.push_back(new Fireball(1600 * 2, 344 * 2, 1600 * 2, 408 * 2, 0, 4));
+			enemyContainerBehindScene.push_back(new Fireball(1608 * 2, 400 * 2, 1736 * 2, 400 * 2, 2, 8));
+			enemyContainerBehindScene.push_back(new Fireball(1728 * 2, 408 * 2, 1728 * 2, 488 * 2, 0, 5));
 
+
+
+
+			/*
 			enemyContainerBehindScene.push_back(new FireBlock(624 * 2, 672 * 2, 608 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(592 * 2, 448 * 2, 384 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(560 * 2, 384 * 2, 320 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(624 * 2, 160 * 2, 96 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(656 * 2, 192 * 2, 128 * 2));
-
 			enemyContainerBehindScene.push_back(new FireBlock(1104 * 2, 128 * 2, 64 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(1136 * 2, 96 * 2, 32 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(1168 * 2, 448 * 2, 384 * 2));
@@ -47,6 +55,8 @@ namespace game_framework {
 			enemyContainerBehindScene.push_back(new FireBlock(1584 * 2, 672 * 2, 608 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(2480 * 2, 160 * 2, 96 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(2512 * 2, 160 * 2, 96 * 2));
+			*/
+
 
 
 		};
@@ -108,6 +118,8 @@ namespace game_framework {
 				}, RGB(128, 0, 128));
 			stageShine.SetTopLeft(0, 0);
 			stageShine.SetAnimation(100, true);
+
+
 
 			bossGate.LoadBitmapByString({
 				"resources/stage/firemanStage/bossStageGate1.bmp",
@@ -440,6 +452,13 @@ namespace game_framework {
 
 				}
 			}
+			/*
+			CDC *px = CDDraw::GetBackCDC();
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
+			message = "Y =  " + to_string(enemyContainerBehindScene[0]->getY());
+			CTextDraw::Print(px, 44, 180, message.c_str());
+			CDDraw::ReleaseBackCDC();
+			*/
 
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
@@ -629,6 +648,7 @@ namespace game_framework {
 		CMovingBitmap rockman_blood;
 		CMovingBitmap stageShine;
 		CMovingBitmap bossGate;
+
 
 		Character rockman;
 		Fireman fireman;

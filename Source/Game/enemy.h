@@ -1925,4 +1925,141 @@ namespace game_framework {
 		CMovingBitmap timer;
 	};
 
+	class Fireball : public Enemy
+	{
+	public:
+		Fireball() = delete;
+		~Fireball() override {};
+		Fireball(int initX, int initY, int endX, int endY, int direction, int speed) {
+			startX = x = initX;
+			startY = y = initY;
+			this->endX = endX;
+			this->endY = endY;
+			this->speed = speed;
+			this->direction = direction;
+		}
+		void OnInit() override {
+			if (direction == 0) { //向下
+
+				fireball.LoadBitmapByString({
+					"resources/enemy/fireman/fireBallDown0.bmp",
+					"resources/enemy/fireman/fireBallDown1.bmp",
+					"resources/enemy/fireman/fireBallDown2.bmp",
+					}, RGB(128, 0, 128));
+			}
+			else if(direction == 1){ // 向左
+				fireball.LoadBitmapByString({
+					"resources/enemy/fireman/fireBallLeft0.bmp",
+					"resources/enemy/fireman/fireBallLeft1.bmp",
+					"resources/enemy/fireman/fireBallLeft2.bmp",
+					}, RGB(128, 0, 128));
+			}
+			else if (direction == 2) { //向右
+				fireball.LoadBitmapByString({
+					"resources/enemy/fireman/fireBallRight0.bmp",
+					"resources/enemy/fireman/fireBallRight1.bmp",
+					"resources/enemy/fireman/fireBallRight2.bmp",
+					}, RGB(128, 0, 128));
+			}
+			fireball.SetAnimation(250, false);
+
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+			if (direction == 0) { // 向下
+				if (y > endY) {
+					y = startY;
+				}
+				else {
+					y += speed;
+				}
+			}
+			else if (direction == 1) { // 向左
+				if (x < endX) {
+					x = startX;
+				}
+				else {
+					x -= speed;
+				}
+			}
+			else { //向右
+				if (x > endX) {
+					x = startX;
+				}
+				else {
+					x += speed;
+				}
+			}
+			fireball.SetTopLeft(x - stage_x, y - stage_y);
+		}
+		void OnShow() override {
+			fireball.ShowBitmap(2);
+		}
+		void OnBeginState() override {
+			// 不需要了
+		}
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap rockmanbullet) override {
+			return false;
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+			if (direction == 0
+				&& rockman.GetTop() + 46 >= fireball.GetTop()
+				&& (rockman.GetLeft() + 37) >= fireball.GetLeft()
+				&& rockman.GetTop() <= fireball.GetTop() + 32
+				&& (rockman.GetLeft() + 9) <= fireball.GetLeft() + 64) {
+				if ((rockman.GetLeft() + 24) <= (fireball.GetLeft() + 32)) {
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+
+		// getter
+		int getX() {
+			return x;
+		}
+		int getY() {
+			return y;
+		}
+		int getDamage() {
+			// 應該是4沒錯
+			return 3;
+		}
+		int getBlood() override {
+			return 1;
+		}
+		bool getIsActivate() override {
+			return true;
+		}
+		CMovingBitmap getBitmap() override {
+			return fireball;
+		}
+
+		bool isAttackFromRight() {
+			return attackFromRight;
+		}
+		bool isDead() override {
+			return false;
+		}
+	private:
+		int startX, startY;
+		int endX, endY;
+		int x, y;
+		int speed;
+		int direction;
+		int state = 0;
+
+		bool attackFromRight;
+
+		CMovingBitmap fireball;
+	};
+
 };
