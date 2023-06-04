@@ -1150,7 +1150,7 @@ namespace game_framework {
 			return damage;
 		}
 		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
-			if (shine.IsAnimationDone()) { //被擊退動畫結束
+			if (shine.IsAnimationDone() && deadState == 0) { //被擊退動畫結束
 				
 				if (bullet.GetTop() + bullet.GetHeight() >= beingAttackN[0].GetTop() + 24
 					&& bullet.GetLeft() + bullet.GetWidth() >= beingAttackN[0].GetLeft()
@@ -1515,12 +1515,31 @@ namespace game_framework {
 							fireBall[1].SetTopLeft(x + 24 - stageX, y - stageY); //直接給他相對位置了
 							fireBall_queue.push(fireBall[1]);
 						}
+						timer.SetAnimation(200, true);
 						timer.ToggleAnimation();
 						subState = 1;
 					}
-					else if (subState == 1 && timer.IsAnimationDone()) { //代表是有波動化的
-						subState = 2;
+					else if (subState == 1) { //代表是有波動化的
+						if (timer.IsAnimationDone()) {
+							subState = 2;
+						}
 					}
+					/*會更緊湊一點如果不像下面依樣射delay
+					else if (subState == 2) {
+						subState = 0;
+					}*/
+					else if(subState == 2){
+						timer.SetAnimation(400, true);
+						timer.ToggleAnimation();
+						subState = 3;
+					}
+					else if (subState == 3) {
+						if (timer.IsAnimationDone()) {
+							subState = 0;
+						}
+					}
+					
+					
 					if (!(158 <= distance && distance <= 163) && subState == 2) {// && subState == ?
 						state = 0; // 回到移動模式
 						canRun = true;
@@ -1631,12 +1650,14 @@ namespace game_framework {
 				}
 			}
 
+			/*
 			CDC *px = CDDraw::GetBackCDC();
 			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
 			message = "firemanX =  " + to_string(x);
 			CTextDraw::Print(px, 44, 150, message.c_str());
 
 			CDDraw::ReleaseBackCDC();
+			*/
 		};
 		void OnBeginState() {
 			x = 3508 * 2;
@@ -1644,7 +1665,7 @@ namespace game_framework {
 			dx = 4;
 			blood = 28;
 			damage = 0;
-
+			fireBall_queue = queue<CMovingBitmap>();
 			state = 0;
 			subState = 0; // preState
 			isShot = false;
@@ -1668,7 +1689,7 @@ namespace game_framework {
 			return damage;
 		}
 		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
-			if (shine.IsAnimationDone()) { //被擊退動畫結束
+			if (shine.IsAnimationDone() && deadState == 0) { //被擊退動畫結束
 				if (CMovingBitmap::IsOverlap(bullet, idle[0], 2)) {
 					isHit = true;
 					shine.ToggleAnimation();

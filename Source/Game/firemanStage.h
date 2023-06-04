@@ -22,15 +22,37 @@ namespace game_framework {
 			enemyContainer.push_back(new Screw(3032 * 2, 96 * 2, 1, 0));
 			enemyContainer.push_back(new Screw(3160 * 2, 96 * 2, 1, 0));
 
+			enemyContainerBehindScene.push_back(new FireBlock(624 * 2, 672 * 2, 608 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(592 * 2, 448 * 2, 384 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(560 * 2, 384 * 2, 320 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(624 * 2, 160 * 2, 96 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(656 * 2, 192 * 2, 128 * 2));
+
+			enemyContainerBehindScene.push_back(new FireBlock(1104 * 2, 128 * 2, 64 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1136 * 2, 96 * 2, 32 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1168 * 2, 448 * 2, 384 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1232 * 2, 448 * 2, 384 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1104 * 2, 704 * 2, 640 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1168 * 2, 672 * 2, 608 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1520 * 2, 704 * 2, 640 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(1584 * 2, 672 * 2, 608 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(2480 * 2, 160 * 2, 96 * 2));
+			enemyContainerBehindScene.push_back(new FireBlock(2512 * 2, 160 * 2, 96 * 2));
+
+
 		};
 		~FiremanStage() {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				delete enemyContainer[i];
 			}
+			for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
+			{
+				delete enemyContainerBehindScene[i];
+			}
 		};
 		void OnInit() {
-			fireman_Stage.LoadBitmapByString({ "resources/stage/firemanStage/FiremanStage.bmp" });
+			fireman_Stage.LoadBitmapByString({ "resources/stage/firemanStage/FiremanStage.bmp" }, RGB(128, 0, 128)); //加上去背整個變超怪，很多細節被去掉
 			rockman_blood.LoadBitmapByString({ "resources/rockman/blood/blood0.bmp",
 											   "resources/rockman/blood/blood1.bmp",
 												"resources/rockman/blood/blood2.bmp",
@@ -130,6 +152,10 @@ namespace game_framework {
 			{
 				enemyContainer[i]->OnInit();
 			}
+			for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
+			{
+				enemyContainerBehindScene[i]->OnInit();
+			}
 		};
 		void OnMove() {
 
@@ -181,6 +207,10 @@ namespace game_framework {
 			{
 				enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
+			for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
+			{
+				enemyContainerBehindScene[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
+			}
 			// 根據不同的transitionState判斷敵人碰撞
 			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
@@ -204,6 +234,27 @@ namespace game_framework {
 							}
 						}
 
+					}
+				}
+				for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
+				{
+					if (enemyContainerBehindScene[i]->getIsActivate()) { //怪物is acitivated
+						if (!rockman.getIsHit() && enemyContainerBehindScene[i]->successfullyAttack(rockman.getCurrentBitmap())) {
+							// 沒被攻擊中，而且被打到
+							// 可以呼叫怪物的isAttackFromRight()，set給rockman
+							CAudio::Instance()->Play(7, false);
+							rockman.setIsHit();
+							rockman.decreaseBlood(enemyContainerBehindScene[i]->getDamage());
+							rockman.setIsAttackedFromRight(enemyContainerBehindScene[i]->isAttackFromRight());
+						}
+						for (int j = 0; j < 3; j++)
+						{
+							if (rockman.getIsShot(j)) {
+								if (enemyContainerBehindScene[i]->beenAttacked(rockman.getBullet(j))) {
+									rockman.setIsShotfalse(j);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -335,6 +386,12 @@ namespace game_framework {
 			checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
 		};
 		void Onshow() {
+			if (transitionState == 0 || transitionState == 30) {
+				for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
+				{
+					enemyContainerBehindScene[i]->OnShow();
+				}
+			}
 			fireman_Stage.ShowBitmap(2);
 			
 			if (transitionState == 31) {
@@ -472,13 +529,17 @@ namespace game_framework {
 			// dy = 8;
 
 			// TODO 其他怪物的OnBeginState，可以塞入個別的savePoint，提高效能，或是全部都塞這
-			// enemyReset();
+			enemyReset();
 			
 		}
 		void enemyReset() {
 			for (size_t i = 0; i < enemyContainer.size(); i++)
 			{
 				enemyContainer[i]->OnBeginState();
+			}
+			for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
+			{
+				enemyContainerBehindScene[i]->OnBeginState();
 			}
 		}
 		void checkReset() {
@@ -550,6 +611,8 @@ namespace game_framework {
 
 		string message;
 		vector<Enemy*> enemyContainer;
+		vector<Enemy*> enemyContainerBehindScene;
+
 		vector<vector<int>> map;
 
 		CMovingBitmap fireman_blood;

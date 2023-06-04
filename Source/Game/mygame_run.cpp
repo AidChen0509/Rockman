@@ -94,7 +94,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		if (fireman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
 			gameState = 1;
 			fireman_stage.OnBeginState(-1);
-			// CAudio::Instance()->Stop(AUDIO_BossBattle);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
 			CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
 			GotoGameState(GAME_STATE_INIT);
 		}
