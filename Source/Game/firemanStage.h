@@ -21,6 +21,15 @@ namespace game_framework {
 			enemyContainer.push_back(new Screw(2888 * 2, 96 * 2, 1, 0));
 			enemyContainer.push_back(new Screw(3032 * 2, 96 * 2, 1, 0));
 			enemyContainer.push_back(new Screw(3160 * 2, 96 * 2, 1, 0));
+			enemyContainer.push_back(new Gaby(2000 * 2, 56 * 2, 1792 * 2, 56 * 2));
+			enemyContainer.push_back(new Gaby(1792 * 2, 120 * 2, 2000 * 2, 120 * 2));
+			enemyContainer.push_back(new Gaby(2032 * 2, 184 * 2, 1760 * 2, 184 * 2));
+
+			enemyContainer.push_back(new Bolt(800 * 2, 128 * 2));
+			enemyContainer.push_back(new Bolt(784 * 2, 176 * 2));
+			enemyContainer.push_back(new Bolt(960 * 2, 112 * 2));
+
+
 
 			enemyContainerBehindScene.push_back(new FireBlock(624 * 2, 672 * 2, 608 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(592 * 2, 448 * 2, 384 * 2));
