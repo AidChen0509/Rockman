@@ -1191,7 +1191,8 @@ namespace game_framework {
 				}
 				return true;
 			}
-			else if (rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop()+24
+			else if (deadState == 0
+				&& rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop()+24
 				&& rockman.GetLeft() + rockman.GetWidth() >= beingAttackN[0].GetLeft()
 				&& rockman.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
 				&& rockman.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
@@ -1711,10 +1712,25 @@ namespace game_framework {
 		}
 		bool successfullyAttack(CMovingBitmap rockman) { //以怪物的角度，打中洛克人?
 			queue<CMovingBitmap> temp_queue = fireBall_queue;
-			while (!temp_queue.empty()) {
-				if (CMovingBitmap::IsOverlap(rockman, temp_queue.front(), 2)) {
-					damage = 3;
-					if (rockman.GetLeft() <= temp_queue.front().GetLeft()) { //
+			if (deadState == 0) {
+
+				while (!temp_queue.empty()) {
+					if (CMovingBitmap::IsOverlap(rockman, temp_queue.front(), 2)) {
+						damage = 3;
+						if (rockman.GetLeft() <= temp_queue.front().GetLeft()) { //
+							attackFromRight = true;
+						}
+						else {
+							attackFromRight = false;
+						}
+						return true;
+					}
+					temp_queue.pop();
+				}
+				if (CMovingBitmap::IsOverlap(rockman, idle[0], 2)) {
+					// 重疊->判斷碰撞
+					damage = 5;
+					if (rockman.GetLeft() <= idle[0].GetLeft()) {
 						attackFromRight = true;
 					}
 					else {
@@ -1722,18 +1738,6 @@ namespace game_framework {
 					}
 					return true;
 				}
-				temp_queue.pop();
-			}
-			if (CMovingBitmap::IsOverlap(rockman, idle[0], 2)) {
-				// 重疊->判斷碰撞
-				damage = 5;
-				if (rockman.GetLeft() <= idle[0].GetLeft()) {
-					attackFromRight = true;
-				}
-				else {
-					attackFromRight = false;
-				}
-				return true;
 			}
 			return false;
 		}
