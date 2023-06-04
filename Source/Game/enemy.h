@@ -1605,4 +1605,324 @@ namespace game_framework {
 		CMovingBitmap timer;
 	};
 
+		
+	class Gaby : public Enemy
+	{
+	public:
+		Gaby() = delete;
+		~Gaby() override{};
+		Gaby(int initX, int initY, int endX, int endY) {
+			startX = initX;
+			startY = initY;
+			this->endX = endX;
+			this->endY = endY;
+		}
+		void OnInit() override {
+			gaby.LoadBitmapByString({
+				"resources/enemy/gabyoall/gabyBlue0.bmp",
+				"resources/enemy/gabyoall/gabyBlue1.bmp",
+				}, RGB(128, 0, 128));
+			gaby.SetAnimation(150, false);
+
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+			// activate 判定
+			
+			if ((startY / 512 == rockmanY / 512) &&
+				((stage_x < startX && startX < stage_x + 512) || (stage_x < endX && endX < stage_x + 512))) {
+				if (blood > 0)
+					isActivate = true;
+				else
+					isActivate = false;
+			}
+			else { // 在範圍外，不管有沒有死，都要reset
+				OnBeginState();
+			}
+			
+
+			if (isActivate) {
+				if (lastRockmanY == 0) {
+					lastRockmanY = rockmanY;
+				}
+				if (lastRockmanY == rockmanY && rockmanY == (startY - 32)) {
+					dx = 5;
+				}
+				else {
+					dx = 2;
+				}
+				if (state == 0) {
+					if ((x == endX)) {
+						state = 1;
+					}
+					else
+					{
+						if (endX > startX) { // 起點在左邊，目的為右邊，dx用加的
+							if (x + dx > endX) {
+								x = endX;
+							}
+							else {
+								x += dx;
+							}
+						}
+						else if (endX < startX) {
+							if (x - dx < endX) {
+								x = endX;
+							}
+							else {
+								x -= dx;
+							}
+						}
+					}
+				}
+				else if (state == 1) {
+					if (x == startX) {
+						state = 0;
+					}
+					else
+					{
+						if (endX > startX) { // 起點在左邊，目的為右邊，dx用加的
+							if (x - dx < startX) {
+								x = startX;
+							}
+							else {
+								x -= dx;
+							}
+						}
+						else if (endX < startX) {
+							if (x + dx > startX) {
+								x = startX;
+							}
+							else {
+								x += dx;
+							}
+						}
+					}
+				}
+				lastRockmanY = rockmanY;
+			}
+			gaby.SetTopLeft(x - stage_x, y - stage_y);
+		}
+		void OnShow() override {
+			if (isActivate) {
+				gaby.ShowBitmap(2);
+			}
+		}
+		void OnBeginState() override {
+			lastRockmanY = 0;
+			dx = 4;
+			state = 0;
+			blood = 2;
+			x = startX;
+			y = startY;
+			isActivate = false;
+		}
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap rockmanbullet) override {
+			if (isActivate) {
+				if (CMovingBitmap::IsOverlap(gaby, rockmanbullet, 2)) {
+					CAudio::Instance()->Play(5, false);
+					blood -= 1;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+			if (isActivate
+				&& rockman.GetTop() + 46 >= gaby.GetTop()
+				&& (rockman.GetLeft() + 37) >= gaby.GetLeft()
+				&& rockman.GetTop() <= gaby.GetTop() + 16
+				&& (rockman.GetLeft() + 9) <= gaby.GetLeft() + 32) {
+				if ((rockman.GetLeft() + 24) <= (gaby.GetLeft() + 16)) {
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+
+		// getter
+		int getX() {
+			return x;
+		}
+		int getY() {
+			return y;
+		}
+		int getDamage() {
+			// 應該是4沒錯
+			return 3;
+		}
+		int getBlood() override {
+			return blood;
+		}
+		bool getIsActivate() override {
+			return isActivate;
+		}
+		CMovingBitmap getBitmap() override {
+			return gaby;
+		}
+
+		// return true代表攻擊從洛克人的右手邊來
+		// return false代表攻擊從左手邊來
+		bool isAttackFromRight() {
+			return attackFromRight;
+		}
+		bool isDead() override {
+			if (blood > 0) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+	private:
+		int startX, startY;
+		int endX, endY;
+		int blood = 2;
+		int lastRockmanY = 0;
+		int x, y;
+		int  dx = 4;
+		int state = 0;
+		string m, m1, m2;
+
+		bool attackFromRight;
+		bool isActivate = false;
+
+		CMovingBitmap gaby;
+	};
+	
+	class Bolt : public Enemy
+	{
+	public:
+		Bolt(int initX, int initY) {
+			this->initX = x = initX;
+			this->initY = y = initY;
+		};
+		Bolt() = delete;
+		~Bolt() override {};
+		void OnInit() override {
+			bolt.LoadBitmapByString({
+				"resources/enemy/fireBolt/Bolt0.bmp",
+				"resources/enemy/fireBolt/bolt1.bmp",
+				"resources/enemy/fireBolt/Bolt0.bmp",
+				"resources/enemy/fireBolt/bolt1.bmp",
+				"resources/enemy/fireBolt/Bolt0.bmp",
+				"resources/enemy/fireBolt/bolt1.bmp",
+				"resources/enemy/fireBolt/Bolt0.bmp",
+				"resources/enemy/fireBolt/bolt1.bmp",
+
+				"resources/enemy/fireBolt/bolt2.bmp",
+				"resources/enemy/fireBolt/bolt3.bmp",
+				"resources/enemy/fireBolt/bolt2.bmp",
+				"resources/enemy/fireBolt/bolt3.bmp",
+				"resources/enemy/fireBolt/bolt2.bmp",
+				"resources/enemy/fireBolt/bolt3.bmp",
+				}, RGB(128, 0, 128));
+			bolt.SetAnimation(200, true);
+			//timer setup
+			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(550, true);
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+			// activate 判定
+			if ((initY / 512 == rockmanY / 512) &&
+				(stage_x < initX && initX < stage_x + 512)/* &&
+				(stage_y < startY && startY < stage_y + 512)*/) {
+				isActivate = true;
+			}
+			else { // 在範圍外，不管有沒有死，都要reset
+				OnBeginState();
+			}
+
+			if (isActivate) {
+				if (state == 0) {
+					bolt.ToggleAnimation();
+					state = 1;
+				}
+				else if (state == 1) {
+					if (bolt.IsAnimationDone()) {
+						state = 0;
+					}
+				}
+			}
+			bolt.SetTopLeft(x - stage_x, y - stage_y);
+		}
+		void OnShow() override {
+			if (isActivate) {
+				timer.ShowBitmap(2);
+				bolt.ShowBitmap(2);
+			}
+		}
+		void OnBeginState() override {
+			x = initX;
+			y = initY;
+			state = 0;
+			isActivate = false;
+		}
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap rockmanbullet) override {
+			return false;
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+			if (isActivate && CMovingBitmap::IsOverlap(bolt, rockman, 2)) {
+				attackFromRight = false;
+				return true;
+			}
+			return false;
+		}
+
+
+		// getter
+		int getX() {
+			return x;
+		}
+		int getY() {
+			return y;
+		}
+		int getDamage() {
+			// 應該是4沒錯
+			return 3;
+		}
+		int getBlood() override {
+			return 100;
+		}
+		bool getIsActivate() override {
+			return isActivate;
+		}
+		CMovingBitmap getBitmap() override {
+			return bolt;
+		}
+
+		// return true代表攻擊從洛克人的右手邊來
+		// return false代表攻擊從左手邊來
+		bool isAttackFromRight() {
+			return attackFromRight;
+		}
+		bool isDead() override {
+			return false;
+		}
+
+	private:
+		int initX, initY;
+		int x, y;
+		int state = 0;
+
+		bool attackFromRight;
+		bool isActivate = false;
+
+		CMovingBitmap bolt;
+		CMovingBitmap timer;
+	};
+
 };

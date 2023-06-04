@@ -167,7 +167,7 @@ namespace game_framework {
 				"resources/rockman/climb2.bmp"
 				}, RGB(128,0,128));
 			climbing[1].LoadBitmapByString({
-				"resources/rockman/climb3.bmp"
+				"resources/rockman/climb1.bmp"
 				}, RGB(128, 0, 128));
 
 			
