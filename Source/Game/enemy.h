@@ -1448,4 +1448,161 @@ namespace game_framework {
 		
 	};
 
+	class FireBlock : public Enemy
+	{
+	public:
+		FireBlock(int initX, int startY, int endY) {
+			this->initX = initX;
+			this->startY = startY;
+			this->endY = endY;
+			x = initX;
+			y = startY;
+		};
+		FireBlock() = delete;
+		~FireBlock() override {};
+		void OnInit() override {
+			block.LoadBitmapByString({
+				"resources/enemy/fireBlock/fireblock0.bmp",
+				"resources/enemy/fireBlock/fireblock1.bmp",
+				"resources/enemy/fireBlock/fireblock2.bmp",
+				}, RGB(128, 0, 128));
+			block.SetAnimation(300, false);
+			//timer setup
+			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(550, true);
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+			// activate 判定
+			if ((startY / 512 == rockmanY / 512) &&
+				((startY / 512) * 512 == stage_y) && //同一張512*512
+				(stage_x < initX && initX < stage_x + 512)/* &&
+				(stage_y < startY && startY < stage_y + 512)*/) {
+				isActivate = true;
+			}
+			else { // 在範圍外，不管有沒有死，都要reset
+				OnBeginState();
+			}
+
+			if (isActivate) {
+				if (state == 0) {
+					if (y == endY) {
+						state = 1; //timer
+						timer.ToggleAnimation();
+					}
+					else {
+						y -= dy;
+					}
+				}
+				else if (state == 1) { 
+					if (timer.IsAnimationDone()) {
+						state = 2;
+					}
+				}else if(state == 2){
+					if (y == startY) {
+						state = 3; //timer
+						timer.ToggleAnimation();
+					}
+					else {
+						y += dy;
+					}
+				}
+				else if (state == 3) {
+					if (timer.IsAnimationDone()) {
+						state = 0;
+					}
+				}
+			}
+			block.SetTopLeft(x - stage_x, y - stage_y);
+		}
+		void OnShow() override {
+			if (isActivate) {
+				timer.ShowBitmap(2);
+				block.ShowBitmap(2);
+			}
+		}
+		void OnBeginState() override {
+			x = initX;
+			y = startY;
+			state = 0;
+			isActivate = false;
+			isUp = true;
+		}
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap rockmanbullet) override {
+			if (isActivate) {
+				if (CMovingBitmap::IsOverlap(block, rockmanbullet, 2)
+					&& ((rockmanbullet.GetTop() + 16) < startY)) {
+					CAudio::Instance()->Play(5, false);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+			if (isActivate
+				&& rockman.GetTop() + 46 >= block.GetTop()
+				&& (rockman.GetLeft() + 37) >= block.GetLeft()
+				&& rockman.GetTop() <= block.GetTop() + 128
+				&& (rockman.GetLeft() + 9 ) <= block.GetLeft() + 32) {
+				if ((rockman.GetLeft() + 24) <= (block.GetLeft() + 16)) {
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+
+		// getter
+		int getX() {
+			return x;
+		}
+		int getY() {
+			return y;
+		}
+		int getDamage() {
+			// 應該是4沒錯
+			return 3;
+		}
+		int getBlood() override {
+			return 100;
+		}
+		bool getIsActivate() override {
+			return isActivate;
+		}
+		CMovingBitmap getBitmap() override {
+			return block;
+		}
+
+		// return true代表攻擊從洛克人的右手邊來
+		// return false代表攻擊從左手邊來
+		bool isAttackFromRight() {
+			return attackFromRight;
+		}
+		bool isDead() override {
+			return false;
+		}
+
+	private:
+		int initX;
+		int startY, endY;
+		int x, y;
+		int  dy = 4;
+		int state = 0;
+
+		bool attackFromRight;
+		bool isActivate = false;
+		bool isUp = true;
+
+		CMovingBitmap block;
+		CMovingBitmap timer;
+	};
+
 };

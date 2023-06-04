@@ -507,6 +507,7 @@ namespace game_framework {
 			
 			// debug text
 			
+			/*
 			CDC *px = CDDraw::GetBackCDC();
 			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
 			message = "rockmanX =  "+to_string(x);
@@ -517,6 +518,7 @@ namespace game_framework {
 			CTextDraw::Print(px, 44, 200, message3.c_str());
 
 			CDDraw::ReleaseBackCDC();
+			*/
 			
 			
 		}
