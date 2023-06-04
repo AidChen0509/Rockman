@@ -35,11 +35,9 @@ namespace game_framework {
 			enemyContainerBehindScene.push_back(new Fireball(1600 * 2, 344 * 2, 1600 * 2, 408 * 2, 0, 4));
 			enemyContainerBehindScene.push_back(new Fireball(1608 * 2, 400 * 2, 1736 * 2, 400 * 2, 2, 8));
 			enemyContainerBehindScene.push_back(new Fireball(1728 * 2, 408 * 2, 1728 * 2, 488 * 2, 0, 5));
+			enemyContainerBehindScene.push_back(new Fireball(1728 * 2, 520 * 2, 1728 * 2, 720 * 2, 0, 8));
 
 
-
-
-			/*
 			enemyContainerBehindScene.push_back(new FireBlock(624 * 2, 672 * 2, 608 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(592 * 2, 448 * 2, 384 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(560 * 2, 384 * 2, 320 * 2));
@@ -55,7 +53,7 @@ namespace game_framework {
 			enemyContainerBehindScene.push_back(new FireBlock(1584 * 2, 672 * 2, 608 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(2480 * 2, 160 * 2, 96 * 2));
 			enemyContainerBehindScene.push_back(new FireBlock(2512 * 2, 160 * 2, 96 * 2));
-			*/
+			
 
 
 
@@ -118,6 +116,25 @@ namespace game_framework {
 				}, RGB(128, 0, 128));
 			stageShine.SetTopLeft(0, 0);
 			stageShine.SetAnimation(100, true);
+			magma[0].LoadBitmapByString({
+				"resources/stage/firemanStage/magma/0/magma0.bmp",
+				"resources/stage/firemanStage/magma/0/magma1.bmp",
+				"resources/stage/firemanStage/magma/0/magma2.bmp",
+				}, RGB(128, 0, 128));
+			magma[1].LoadBitmapByString({
+				"resources/stage/firemanStage/magma/1/magma0.bmp",
+				"resources/stage/firemanStage/magma/1/magma1.bmp",
+				"resources/stage/firemanStage/magma/1/magma2.bmp",
+				}, RGB(128, 0, 128));
+			magma[2].LoadBitmapByString({
+				"resources/stage/firemanStage/magma/2/magma0.bmp",
+				"resources/stage/firemanStage/magma/2/magma1.bmp",
+				"resources/stage/firemanStage/magma/2/magma2.bmp",
+				}, RGB(128, 0, 128));
+			
+			magma[0].SetAnimation(167, false);
+			magma[1].SetAnimation(167, false);
+			magma[2].SetAnimation(167, false);
 
 
 
@@ -403,6 +420,9 @@ namespace game_framework {
 				savePoint = 2;
 			}
 			fireman_Stage.SetTopLeft(-stage_x, -stage_y);
+			magma[0].SetTopLeft(0 - stage_x, 720 * 2 - stage_y);
+			magma[1].SetTopLeft(1024 * 2 - stage_x, 720 * 2 - stage_y);
+			magma[2].SetTopLeft(1696 * 2 - stage_x, 208 * 2 - stage_y);
 
 			checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
 		};
@@ -414,7 +434,11 @@ namespace game_framework {
 				}
 			}
 			fireman_Stage.ShowBitmap(2);
-			
+			for (int i = 0; i < 3; i++)
+			{
+				magma[i].ShowBitmap(2);
+			}
+
 			if (transitionState == 31) {
 				stageShine.ShowBitmap(2);
 			}
@@ -648,7 +672,7 @@ namespace game_framework {
 		CMovingBitmap rockman_blood;
 		CMovingBitmap stageShine;
 		CMovingBitmap bossGate;
-
+		CMovingBitmap magma[3];
 
 		Character rockman;
 		Fireman fireman;

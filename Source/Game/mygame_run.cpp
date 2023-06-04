@@ -50,7 +50,7 @@ void CGameStateRun::OnBeginState()
 	}
 	else if (CGameStateInit::stage == 4) {
 		// fire
-		fireman_stage.OnBeginState(1);
+		fireman_stage.OnBeginState(-1);
 		// fireman audio TODO
 	}
 	else if (CGameStateInit::stage == 5) {
