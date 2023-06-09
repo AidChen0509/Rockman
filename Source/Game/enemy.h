@@ -1604,8 +1604,7 @@ namespace game_framework {
 		CMovingBitmap block;
 		CMovingBitmap timer;
 	};
-
-		
+	
 	class Gaby : public Enemy
 	{
 	public:

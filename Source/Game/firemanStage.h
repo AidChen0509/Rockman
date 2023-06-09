@@ -250,17 +250,20 @@ namespace game_framework {
 				enemyContainerBehindScene[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 			}
 			// 根據不同的transitionState判斷敵人碰撞
+			
 			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
 					if (enemyContainer[i]->getIsActivate()) { //怪物is acitivated
-						if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
-							// 沒被攻擊中，而且被打到
-							// 可以呼叫怪物的isAttackFromRight()，set給rockman
-							CAudio::Instance()->Play(7, false);
-							rockman.setIsHit();
-							rockman.decreaseBlood(enemyContainer[i]->getDamage());
-							rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
+						if (enableBeenHit) {
+							if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
+								// 沒被攻擊中，而且被打到
+								// 可以呼叫怪物的isAttackFromRight()，set給rockman
+								CAudio::Instance()->Play(7, false);
+								rockman.setIsHit();
+								rockman.decreaseBlood(enemyContainer[i]->getDamage());
+								rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
+							}
 						}
 
 						for (int j = 0; j < 3; j++)
@@ -277,13 +280,15 @@ namespace game_framework {
 				for (size_t i = 0; i < enemyContainerBehindScene.size(); i++)
 				{
 					if (enemyContainerBehindScene[i]->getIsActivate()) { //怪物is acitivated
-						if (!rockman.getIsHit() && enemyContainerBehindScene[i]->successfullyAttack(rockman.getCurrentBitmap())) {
-							// 沒被攻擊中，而且被打到
-							// 可以呼叫怪物的isAttackFromRight()，set給rockman
-							CAudio::Instance()->Play(7, false);
-							rockman.setIsHit();
-							rockman.decreaseBlood(enemyContainerBehindScene[i]->getDamage());
-							rockman.setIsAttackedFromRight(enemyContainerBehindScene[i]->isAttackFromRight());
+						if (enableBeenHit) {
+							if (!rockman.getIsHit() && enemyContainerBehindScene[i]->successfullyAttack(rockman.getCurrentBitmap())) {
+								// 沒被攻擊中，而且被打到
+								// 可以呼叫怪物的isAttackFromRight()，set給rockman
+								CAudio::Instance()->Play(7, false);
+								rockman.setIsHit();
+								rockman.decreaseBlood(enemyContainerBehindScene[i]->getDamage());
+								rockman.setIsAttackedFromRight(enemyContainerBehindScene[i]->isAttackFromRight());
+							}
 						}
 						for (int j = 0; j < 3; j++)
 						{
@@ -297,13 +302,15 @@ namespace game_framework {
 				}
 			}
 			else if (transitionState == 40) {
-				if (!rockman.getIsHit() && fireman.successfullyAttack(rockman.getCurrentBitmap())) {
-					// 沒被攻擊中，而且被打到
-					// 可以呼叫怪物的isAttackFromRight()，set給rockman
-					CAudio::Instance()->Play(7, false);
-					rockman.setIsHit();
-					rockman.decreaseBlood(fireman.getDamage());
-					rockman.setIsAttackedFromRight(fireman.isAttackFromRight());
+				if (enableBeenHit) {
+					if (!rockman.getIsHit() && fireman.successfullyAttack(rockman.getCurrentBitmap())) {
+						// 沒被攻擊中，而且被打到
+						// 可以呼叫怪物的isAttackFromRight()，set給rockman
+						CAudio::Instance()->Play(7, false);
+						rockman.setIsHit();
+						rockman.decreaseBlood(fireman.getDamage());
+						rockman.setIsAttackedFromRight(fireman.isAttackFromRight());
+					}
 				}
 				// 豆彈打到boss
 				for (int j = 0; j < 3; j++)
@@ -315,7 +322,7 @@ namespace game_framework {
 						}
 					}
 				}
-				
+
 			}
 
 
@@ -624,7 +631,9 @@ namespace game_framework {
 				}
 			}*/
 		}
-
+		void setEnableBeenHit(bool state) {
+			enableBeenHit = state;
+		}
 	private:
 
 
@@ -634,6 +643,7 @@ namespace game_framework {
 		int transitionState = 0;
 		int gameState = 0;
 		bool inBossStage = false;
+		int enableBeenHit = true;
 		// 初始點
 		//int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的

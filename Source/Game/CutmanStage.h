@@ -210,6 +210,7 @@ namespace game_framework {
 			cutman.OnMove(stage_x, stage_y, rockmanX, rockmanY, transitionState);
 
 			// 根據不同的transitionState判斷敵人碰撞跟OnMove
+			
 			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
 				{
@@ -219,15 +220,17 @@ namespace game_framework {
 				{
 					// enemyContainer[i]->OnMove(rockmanX, rockmanY, stage_x, stage_y);
 					if (enemyContainer[i]->getIsActivate()) { //怪物is acitivated
-						if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
-							// 沒被攻擊中，而且被打到
-							// 可以呼叫怪物的isAttackFromRight()，set給rockman
-							CAudio::Instance()->Play(7, false);
-							rockman.setIsHit();
-							rockman.decreaseBlood(enemyContainer[i]->getDamage());
-							rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
+						if (enableBeenHit) {
+							if (!rockman.getIsHit() && enemyContainer[i]->successfullyAttack(rockman.getCurrentBitmap())) {
+								// 沒被攻擊中，而且被打到
+								// 可以呼叫怪物的isAttackFromRight()，set給rockman
+								CAudio::Instance()->Play(7, false);
+								rockman.setIsHit();
+								rockman.decreaseBlood(enemyContainer[i]->getDamage());
+								rockman.setIsAttackedFromRight(enemyContainer[i]->isAttackFromRight());
+							}
 						}
-						
+
 						for (int j = 0; j < 3; j++)
 						{
 							if (rockman.getIsShot(j)) {
@@ -240,19 +243,16 @@ namespace game_framework {
 					}
 				}
 			}
-			else if (transitionState == 30) {
-				//到時候這邊會補上廊道怪物的container做loop
-				// 或是一些transitionState
-				
-			}
 			else if (transitionState == 40) {
-				if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
-					// 沒被攻擊中，而且被打到
-					// 可以呼叫怪物的isAttackFromRight()，set給rockman
-					CAudio::Instance()->Play(7, false);
-					rockman.setIsHit();
-					rockman.decreaseBlood(cutman.getDamage());
-					rockman.setIsAttackedFromRight(cutman.isAttackFromRight());
+				if (enableBeenHit) {
+					if (!rockman.getIsHit() && cutman.successfullyAttack(rockman.getCurrentBitmap())) {
+						// 沒被攻擊中，而且被打到
+						// 可以呼叫怪物的isAttackFromRight()，set給rockman
+						CAudio::Instance()->Play(7, false);
+						rockman.setIsHit();
+						rockman.decreaseBlood(cutman.getDamage());
+						rockman.setIsAttackedFromRight(cutman.isAttackFromRight());
+					}
 				}
 				for (int j = 0; j < 3; j++)
 				{
@@ -548,7 +548,9 @@ namespace game_framework {
 				// 要改狀態，讓mygame_run去跳state
 			}*/
 		}
-
+		void setEnableBeenHit(bool state) {
+			enableBeenHit = state;
+		}
 	private:
 		// 先留著，雖然不知道有啥用ㄏ
 		//vector<int> level_left = { 0 , 768 * 2, 768 * 2, 728 * 2, 768 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1280 * 2, 1792 * 2, 1792 * 2, 1792 * 2 };//3072王關
@@ -560,6 +562,7 @@ namespace game_framework {
 		int transitionState = 0;
 		int gameState = 0;
 		bool inBossStage = false;
+		bool enableBeenHit = true;
 		// 初始點
 		//int stage_x = 0;	//以整張圖的角度，所以setTopLeft要用負的
 		//int stage_y = 4096; //以整張圖的角度，所以setTopLeft要用負的

@@ -117,6 +117,7 @@ namespace game_framework {
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
+		bool enableBeenHit = true;
 		CutmanStage cutman_stage;
 		FiremanStage fireman_stage;
 	};

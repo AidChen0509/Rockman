@@ -33,6 +33,7 @@ void CGameStateRun::OnBeginState()
 {
 	//設定跳轉到這個state 需要的出值
 	gameState = 0;
+	enableBeenHit = true;
 	// 關卡內容初始化
 	if (CGameStateInit::stage == 0) {
 		// -1為第一次進遊戲
@@ -61,6 +62,7 @@ void CGameStateRun::OnBeginState()
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
 	if (CGameStateInit::stage == 0) { //進入的是cutman關
+		cutman_stage.setEnableBeenHit(enableBeenHit);
 		if (cutman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
 			gameState = 1;
 			cutman_stage.OnBeginState(-1);
@@ -91,6 +93,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 	}
 	else if (CGameStateInit::stage == 4) {
 		// fire
+		fireman_stage.setEnableBeenHit(enableBeenHit);
 		if (fireman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
 			gameState = 1;
 			fireman_stage.OnBeginState(-1);
@@ -127,10 +130,14 @@ void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// 為了開發測試用
-	if (nChar == VK_RETURN) {
-		// GotoGameState(GAME_STATE_INIT); //回到初始畫面
+	if (nChar == 0x45) {
+		if (enableBeenHit) {
+			enableBeenHit = false;
+		}
+		else {
+			enableBeenHit = true;
+		}
 	}
-
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.OnKeyDown(nChar, nRepCnt, nFlags);
 	}
@@ -202,8 +209,6 @@ void CGameStateRun::OnShow()
 
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.Onshow();
-		// 加進來會變得很卡，不知道是不是檔案太大還是怎樣(我知道為什麼了byAiden)
-		// CAudio::Instance()->Play(AUDIO_Cutman);
 	}
 	else if (CGameStateInit::stage == 1) {
 		// guts
