@@ -28,6 +28,25 @@ namespace game_framework {
 			enemyContainer.push_back(new Bolt(800 * 2, 128 * 2));
 			enemyContainer.push_back(new Bolt(784 * 2, 176 * 2));
 			enemyContainer.push_back(new Bolt(960 * 2, 112 * 2));
+			enemyContainer.push_back(new TackleFire(624 * 2, 584 * 2, 768 * 2, 0, -3.2));
+			enemyContainer.push_back(new TackleFire(624 * 2, 584 * 2, 800 * 2, 0, -3.2));
+			enemyContainer.push_back(new TackleFire(624 * 2, 584 * 2, 832 * 2, 0, -3.2));
+
+			enemyContainer.push_back(new TackleFire(624 * 2, 624 * 2, 496 * 2, -1.92, 2.56));
+			enemyContainer.push_back(new TackleFire(624 * 2, 584 * 2, 496 * 2, -1.92, 2.56));
+			enemyContainer.push_back(new TackleFire(624 * 2, 584 * 2, 496 * 2, -1.92, 2.56));
+
+			enemyContainer.push_back(new TackleFire(624 * 2, 1600 * 2, 768 * 2, 0, -3.2));
+			enemyContainer.push_back(new TackleFire(624 * 2, 1600 * 2, 800 * 2, 0, -3.2));
+			enemyContainer.push_back(new TackleFire(624 * 2, 1600 * 2, 832 * 2, 0, -3.2));
+
+			enemyContainer.push_back(new TackleFire(624 * 2, 1280 * 2, 496 * 2, 1.92, 2.56));
+			enemyContainer.push_back(new TackleFire(624 * 2, 1312 * 2, 496 * 2, 1.92, 2.56));
+			enemyContainer.push_back(new TackleFire(624 * 2, 1344 * 2, 496 * 2, 1.92, 2.56));
+
+			enemyContainer.push_back(new TackleFire(624 * 2, 1456 * 2, 496 * 2, -1.92, 2.56));
+			enemyContainer.push_back(new TackleFire(624 * 2, 1488 * 2, 496 * 2, -1.92, 2.56));
+			enemyContainer.push_back(new TackleFire(624 * 2, 1520 * 2, 496 * 2, -1.92, 2.56));
 
 
 			enemyContainerBehindScene.push_back(new Fireball(1696 * 2, 256 * 2, 1696 * 2, 336 * 2, 0, 5));

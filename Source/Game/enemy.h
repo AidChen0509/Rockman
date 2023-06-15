@@ -2061,4 +2061,164 @@ namespace game_framework {
 		CMovingBitmap fireball;
 	};
 
+	class TackleFire : public Enemy
+	{
+	public:
+		TackleFire() = delete;
+		~TackleFire() override {};
+		TackleFire(int absY, int initX, int initY, double dx, double dy) {
+			this->absY = absY;
+			startX = initX;
+			startY = initY;
+			this->dx = dx;
+			this->dy = dy;
+		}
+		void OnInit() override {
+			timer.LoadBitmapByString({ "resources/white.bmp", "resources/white.bmp" }, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(5000, true);
+			if (dx > 0) {
+				fire.LoadBitmapByString({
+				"resources/enemy/tackleFire/tackleRight0.bmp",
+				"resources/enemy/tackleFire/tackleRight1.bmp",
+					}, RGB(128, 0, 128));
+			}
+			else {
+				fire.LoadBitmapByString({
+				"resources/enemy/tackleFire/tackleLeft0.bmp",
+				"resources/enemy/tackleFire/tackleLeft1.bmp",
+					}, RGB(128, 0, 128));
+			}
+			fire.SetAnimation(150, false);
+
+		}
+		void OnMove(int rockmanX, int rockmanY, int stage_x, int stage_y) override {
+			if ((absY / 512 == rockmanY / 512) &&
+				((absY / 512) * 512 == stage_y) && //同一張512*512
+				(stage_x < startX && startX < stage_x + 512)) {
+				isActivate = true;
+			}
+			else { // 在範圍外，不管有沒有死，都要reset
+				OnBeginState();
+			}
+
+
+			if (isActivate) {
+				if (state == 0) {
+					x += dx;
+					y += dy;
+					if ((dy > 0 && (int(y / 512) > int(absY / 512))) || (dy < 0 && (int(y + 32 / 512) < int(absY / 512)))) {
+						state = 1;
+					}
+				}
+				else if (state == 1) {
+					timer.ToggleAnimation();
+					state = 2;
+				}
+				else if (state = 2) {
+					if (timer.IsAnimationDone()) {
+						OnBeginState();
+					}
+				}
+				fire.SetTopLeft(int(std::round(x)) - stage_x, int(std::round(y)) - stage_y);
+			}
+		}
+		void OnShow() override {
+			timer.ShowBitmap();
+			if (isActivate && blood > 0) {
+				fire.ShowBitmap(2);
+			}
+			/*
+			CDC *px = CDDraw::GetBackCDC();
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
+			message = "state  =  " + to_string(state);
+			CTextDraw::Print(px, 44, 180, message.c_str());
+
+			CDDraw::ReleaseBackCDC();
+			*/
+		}
+		void OnBeginState() override {
+			state = 0;
+			blood = 1;
+			x = startX;
+			y = startY;
+			isActivate = false;
+		}
+		// 將每一個子彈跟這個物件做交流，判斷怪物被打掉沒，如果成功打死怪物，會回傳true，讓statge可以掉落對應的獎勵
+		bool beenAttacked(CMovingBitmap rockmanbullet) override {
+			if (isActivate && blood > 0) {
+				if (CMovingBitmap::IsOverlap(fire, rockmanbullet, 2)) {
+					CAudio::Instance()->Play(5, false);
+					blood -= 1;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// 將每個敵人跟rockman做交流
+		// 回傳是否有打中洛克人
+		bool successfullyAttack(CMovingBitmap rockman) {
+			if (isActivate
+				&& CMovingBitmap::IsOverlap(fire, rockman, 2)) {
+				if ((rockman.GetLeft() + 24) <= (fire.GetLeft() + 16)) {
+					attackFromRight = true;
+				}
+				else {
+					attackFromRight = false;
+				}
+				return true;
+			}
+			return false;
+		}
+
+
+		// getter
+		int getX() {
+			return int(x);
+		}
+		int getY() {
+			return int(y);
+		}
+		int getDamage() {
+			return 3;
+		}
+		int getBlood() override {
+			return blood;
+		}
+		bool getIsActivate() override {
+			return isActivate;
+		}
+		CMovingBitmap getBitmap() override {
+			return fire;
+		}
+
+		// return true代表攻擊從洛克人的右手邊來
+		// return false代表攻擊從左手邊來
+		bool isAttackFromRight() {
+			return attackFromRight;
+		}
+		bool isDead() override {
+			if (blood > 0) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+	private:
+		int absY;
+		int startX, startY;
+		double x, y;
+		double dx, dy;
+		int state = 0;
+		int blood = 1;
+		bool attackFromRight;
+		bool isActivate = false;
+
+		string message;
+		CMovingBitmap timer;
+		CMovingBitmap fire;
+	};
+
 };
