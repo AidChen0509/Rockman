@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <fstream>
 #include "../Library/audio.h"
 namespace game_framework {

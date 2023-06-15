@@ -56,7 +56,9 @@ namespace game_framework {
 		AUDIO_BossBattle,
 		AUDIO_EnergyFill,
 		AUDIO_RollingCutter,
-		AUDIO_EnemyShoot
+		AUDIO_EnemyShoot,
+		AUDIO_BossSelect,
+		AUDIO_Fireman
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -83,9 +85,24 @@ namespace game_framework {
 		int showState = 0;
 		bool enterPressed = false;
 		int gameStateOfStages[6] = {0, 0, 0, 0, 0, 0};
+		float dx = 37;
+		float dy = -120;
+		int isjump = 0;
+		int poseanim = 0;
+		float x, y;
+		int intx, inty;
+		int i=0;
+		float gravity = 80.0f;
+		float timeStep = 0.07f;
+		float textcount = 0.0f;
+		string message="";
+		vector<string> cutmanstr= { "C","U","T","M","A","N" };
+		vector<string> firemanstr = { "F","I","R","E","M","A","N" };
 		CMovingBitmap startBackground;					
 		CMovingBitmap selectBackground;
-
+		CMovingBitmap BossSelectBackground;
+		CMovingBitmap Fireman[2];
+		CMovingBitmap Cutman[2];
 		CMovingBitmap cutSelected[3];
 		CMovingBitmap gutsSelected[3];
 		CMovingBitmap iceSelected[3];

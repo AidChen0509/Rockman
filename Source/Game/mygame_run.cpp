@@ -41,7 +41,9 @@ void CGameStateRun::OnBeginState()
 		CAudio::Instance()->Play(AUDIO_Cutman, true);
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.OnBeginState(-1);
+		CAudio::Instance()->Play(AUDIO_Fireman, true);
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -50,9 +52,7 @@ void CGameStateRun::OnBeginState()
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
-		fireman_stage.OnBeginState(-1);
-		// fireman audio TODO
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -83,15 +83,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
-	}
-	else if (CGameStateInit::stage == 2) {
-		// ice
-	}
-	else if (CGameStateInit::stage == 3) {
-		// bomb
-	}
-	else if (CGameStateInit::stage == 4) {
 		// fire
 		fireman_stage.setEnableBeenHit(enableBeenHit);
 		if (fireman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
@@ -112,6 +103,15 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		else {
 			fireman_stage.OnMove();
 		}
+	}
+	else if (CGameStateInit::stage == 2) {
+		// ice
+	}
+	else if (CGameStateInit::stage == 3) {
+		// bomb
+	}
+	else if (CGameStateInit::stage == 4) {
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -142,7 +142,8 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		cutman_stage.OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -151,8 +152,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
-		fireman_stage.OnKeyDown(nChar, nRepCnt, nFlags);
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -166,7 +166,8 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.OnKeyUp(nChar, nRepCnt, nFlags);
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -175,8 +176,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
-		fireman_stage.OnKeyUp(nChar, nRepCnt, nFlags);
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -211,7 +211,8 @@ void CGameStateRun::OnShow()
 		cutman_stage.Onshow();
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.Onshow();
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -220,10 +221,10 @@ void CGameStateRun::OnShow()
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
-		fireman_stage.Onshow();
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
 	}
 }
+
