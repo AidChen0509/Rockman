@@ -135,6 +135,8 @@ namespace game_framework {
 			magma[0].SetAnimation(167, false);
 			magma[1].SetAnimation(167, false);
 			magma[2].SetAnimation(167, false);
+			railing[0].LoadBitmapByString({ "resources/stage/firemanStage/railing/railing0.bmp" }, RGB(128, 0, 128));
+			railing[1].LoadBitmapByString({ "resources/stage/firemanStage/railing/railing1.bmp" }, RGB(128, 0, 128));
 
 
 
@@ -467,7 +469,8 @@ namespace game_framework {
 			magma[2].SetTopLeft(1696 * 2 - stage_x, 208 * 2 - stage_y);
 			bossGate[1].SetTopLeft(2528 * 2 - stage_x, 96 * 2 - stage_y);
 			bossGate[2].SetTopLeft(3312 * 2 - stage_x, 96 * 2 - stage_y);
-
+			railing[0].SetTopLeft(1248 * 2 - stage_x, 608 * 2 - stage_y);
+			railing[1].SetTopLeft(1440 * 2 - stage_x, 608 * 2 - stage_y);
 			checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
 		};
 		void Onshow() {
@@ -495,7 +498,8 @@ namespace game_framework {
 			}
 			rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
 			fireman.OnShow(transitionState);
-
+			railing[0].ShowBitmap(2);
+			railing[1].ShowBitmap(2);
 			// new edit
 			
 			if (33 <= transitionState && transitionState < 40) {
@@ -725,6 +729,7 @@ namespace game_framework {
 		CMovingBitmap stageShine;
 		CMovingBitmap bossGate[3];
 		CMovingBitmap magma[3];
+		CMovingBitmap railing[2];
 
 		Character rockman;
 		Fireman fireman;
