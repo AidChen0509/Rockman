@@ -148,6 +148,7 @@ namespace game_framework {
 			bossGate[0].SetTopLeft(0, 192); 
 			bossGate[0].SetAnimation(100, true);
 			bossGate[1].LoadBitmapByString({
+				"resources/stage/firemanStage/gate1/tunnelGate0.bmp",
 				"resources/stage/firemanStage/gate1/tunnelGate1.bmp",
 				"resources/stage/firemanStage/gate1/tunnelGate2.bmp",
 				"resources/stage/firemanStage/gate1/tunnelGate3.bmp",
@@ -514,8 +515,6 @@ namespace game_framework {
 			if (transitionState >= 34 || (inBossStage && transitionState == -1)) {
 				bossGate[0].ShowBitmap(2);
 			}
-
-			
 
 
 			// rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
