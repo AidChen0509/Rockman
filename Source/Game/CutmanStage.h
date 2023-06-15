@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <fstream>
 #include "../Library/audio.h"
 namespace game_framework {
@@ -93,30 +93,49 @@ namespace game_framework {
 												"resources/rockman/blood/blood28.bmp",});
 			rockman_blood.SetTopLeft(48, 50);
 			stageShine.LoadBitmapByString({
-				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/cutmanStage/cutmanStageShine.bmp",
 				"resources/stage/purple.bmp",
-				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/cutmanStage/cutmanStageShine.bmp",
 				"resources/stage/purple.bmp",
-				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/cutmanStage/cutmanStageShine.bmp",
 				"resources/stage/purple.bmp",
-				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/cutmanStage/cutmanStageShine.bmp",
 				"resources/stage/purple.bmp",
-				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/cutmanStage/cutmanStageShine.bmp",
 				"resources/stage/purple.bmp",
-				"resources/stage/cutmanStageShine.bmp",
+				"resources/stage/cutmanStage/cutmanStageShine.bmp",
 				"resources/stage/purple.bmp",
 				}, RGB(128, 0, 128));
 			stageShine.SetTopLeft(0, 0);
 			stageShine.SetAnimation(100, true);
 
-			bossGate.LoadBitmapByString({
-				"resources/stage/bossStageGate1.bmp",
-				"resources/stage/bossStageGate2.bmp",
-				"resources/stage/bossStageGate3.bmp",
-				"resources/stage/bossStageGate4.bmp",
+			bossGate[0].LoadBitmapByString({
+				"resources/stage/cutmanStage/gate3/bossStageGate0.bmp",
+				"resources/stage/cutmanStage/gate3/bossStageGate1.bmp",
+				"resources/stage/cutmanStage/gate3/bossStageGate2.bmp",
+				"resources/stage/cutmanStage/gate3/bossStageGate3.bmp",
+				"resources/stage/cutmanStage/gate3/bossStageGate4.bmp",
 				});
-			bossGate.SetTopLeft(0, 192);
-			bossGate.SetAnimation(100, true);
+			bossGate[0].SetTopLeft(0, 192);
+			bossGate[0].SetAnimation(100, true);
+			bossGate[1].LoadBitmapByString({
+				"resources/stage/cutmanStage/gate1/tunnelGate0.bmp",
+				"resources/stage/cutmanStage/gate1/tunnelGate1.bmp",
+				"resources/stage/cutmanStage/gate1/tunnelGate2.bmp",
+				"resources/stage/cutmanStage/gate1/tunnelGate3.bmp",
+				"resources/stage/cutmanStage/gate1/tunnelGate4.bmp",
+				});
+			bossGate[1].SetTopLeft(2272 * 2, 864 * 2);
+			bossGate[1].SetAnimation(100, true);
+			bossGate[2].LoadBitmapByString({
+				"resources/stage/cutmanStage/gate2/bossStageGate4.bmp",
+				"resources/stage/cutmanStage/gate2/bossStageGate3.bmp",
+				"resources/stage/cutmanStage/gate2/bossStageGate2.bmp",
+				"resources/stage/cutmanStage/gate2/bossStageGate1.bmp",
+				"resources/stage/cutmanStage/gate2/bossStageGate0.bmp",
+				});
+			bossGate[2].SetTopLeft(3056 * 2, 864 * 2);
+			bossGate[2].SetAnimation(100, true);
 
 			cutman_blood.LoadBitmapByString({
 				{ "resources/enemy/cutman/blood/blood0.bmp" },
@@ -198,10 +217,10 @@ namespace game_framework {
 			}
 			else if(map[rockmanY / 32][(rockmanX + 2 * (24 - 1 - 4)) / 32] == 4){
 				if (transitionState == 30) {
-					transitionState = 4; //進王關transition
+					transitionState = 31; //進王關transition
 				}
 				else if (transitionState == 0) {
-					transitionState = 3; //進王關廊道transition
+					transitionState = 28; //進王關廊道transition
 				}
 			}
 
@@ -322,11 +341,29 @@ namespace game_framework {
 						transitionState = 0;
 					}
 				}
+				else if (transitionState == 28) {
+					bossGate[1].ToggleAnimation();
+					transitionState = 29;
+				}
+				else if (transitionState == 29) {
+					if (bossGate[1].IsAnimationDone()) {
+						transitionState = 3;
+					}
+				}
 				else if (transitionState == 3) { //進廊道的轉場
 					stage_x += dx; //512;
 					if ((stage_x / 512) != ((stage_x - dx) / 512)) { //換到下一張圖了
 						stage_x = (stage_x / 512) * 512;
 						transitionState = 30;
+					}
+				}
+				else if (transitionState == 31) {
+					bossGate[2].ToggleAnimation();
+					transitionState = 32;
+				}
+				else if (transitionState == 32) {
+					if (bossGate[2].IsAnimationDone()) {
+						transitionState = 4;
 					}
 				}
 				else if (transitionState == 4) {
@@ -336,25 +373,25 @@ namespace game_framework {
 						CAudio::Instance()->Stop(0);
 						CAudio::Instance()->Play(8, true);
 						stageShine.ToggleAnimation();
-						transitionState = 31;
-					}
-				}
-				else if (transitionState == 31) {
-					if (stageShine.IsAnimationDone()) {
-						bossGate.ToggleAnimation();
-						transitionState = 32;
-					}
-				}
-				else if (transitionState == 32) {
-					if (bossGate.IsAnimationDone()) {
-						//bossGate.SetFrameIndexOfBitmap(3);
-						cutman_blood.ToggleAnimation();
-						CAudio::Instance()->Pause();
-						CAudio::Instance()->Play(9, false);
 						transitionState = 33;
 					}
 				}
 				else if (transitionState == 33) {
+					if (stageShine.IsAnimationDone()) {
+						bossGate[0].ToggleAnimation();
+						transitionState = 34;
+					}
+				}
+				else if (transitionState == 34) {
+					if (bossGate[0].IsAnimationDone()) {
+						//bossGate[0].SetFrameIndexOfBitmap(3);
+						cutman_blood.ToggleAnimation();
+						CAudio::Instance()->Pause();
+						CAudio::Instance()->Play(9, false);
+						transitionState = 35;
+					}
+				}
+				else if (transitionState == 35) {
 					if (cutman_blood.IsAnimationDone()) {
 						CAudio::Instance()->Stop(9);
 						CAudio::Instance()->Resume();
@@ -372,20 +409,27 @@ namespace game_framework {
 				savePoint = 2;
 			}
 			cutman_stage.SetTopLeft(-stage_x, -stage_y);
-			
+			bossGate[1].SetTopLeft(2272 * 2 - stage_x, 864 * 2 - stage_y);
+			bossGate[2].SetTopLeft(3056 * 2 - stage_x, 864 * 2 - stage_y);
 			checkReset(); //TODO: 裡面需要一些判斷來決定要不要respawn(呼叫個別的onBeginState)
 		};
 		void Onshow() {
 			cutman_stage.ShowBitmap(2);
-			if (transitionState == 31) {
+			if (transitionState == 31 || transitionState == 32 || transitionState == 4) {
+				bossGate[2].ShowBitmap(2);
+			}
+			else if (transitionState == 33) {
 				stageShine.ShowBitmap(2);
+			}
+			if (transitionState == 28 || transitionState == 29 || transitionState == 3) {
+				bossGate[1].ShowBitmap(2);
 			}
 			rockman.Onshow(stage_x, stage_y, transitionState); // 256*2是最邊邊，48是角色寬度
 			cutman.OnShow(transitionState);
 
 			// new edit
 
-			if (31 <= transitionState && transitionState < 40) {
+			if (33 <= transitionState && transitionState < 40) {
 				inBossStage = true;
 				cutman_blood.ShowBitmap(2);
 			}
@@ -397,8 +441,8 @@ namespace game_framework {
 					cutman_blood.SetFrameIndexOfBitmap(0);
 				cutman_blood.ShowBitmap(2);
 			}
-			if (transitionState >= 32 || (inBossStage && transitionState == -1)) {
-				bossGate.ShowBitmap(2);
+			if (transitionState >= 34 || (inBossStage && transitionState == -1)) {
+				bossGate[0].ShowBitmap(2);
 			}
 			if (transitionState == 0 || transitionState == 30) {
 				for (size_t i = 0; i < enemyContainer.size(); i++)
@@ -599,7 +643,7 @@ namespace game_framework {
 		CMovingBitmap cutman_stage;
 		CMovingBitmap rockman_blood;
 		CMovingBitmap stageShine;
-		CMovingBitmap bossGate;
+		CMovingBitmap bossGate[3];
 
 		Character rockman;
 		Cutman cutman;
