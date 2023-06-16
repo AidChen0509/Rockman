@@ -49,6 +49,7 @@ void CGameStateInit::OnInit()
 	CAudio::Instance()->Load(AUDIO_EnergyFill, "resources/sound/EnergyFill3.wav");
 	CAudio::Instance()->Load(AUDIO_RollingCutter, "resources/sound/RollingCutter.wav");
 	CAudio::Instance()->Load(AUDIO_EnemyShoot, "resources/sound/EnemyShoot.wav");
+	CAudio::Instance()->Load(AUDIO_Endingtheme, "resources/sound/EndingTheme.wav");
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
 		"resources/start&over/initBackground2.bmp",
@@ -203,7 +204,10 @@ void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			}
 		}
 	}
-
+	if (nChar == 0x47) {
+		CGameStateOver::clear = 1;
+		GotoGameState(GAME_STATE_OVER);
+	}
 	if (nChar == VK_LEFT) {
 		if (showState == 2) {
 			CAudio::Instance()->Play(AUDIO_MenuSelect);

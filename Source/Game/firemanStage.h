@@ -443,7 +443,7 @@ namespace game_framework {
 					stage_x += dx; //512;
 					if ((stage_x / 512) != ((stage_x - dx) / 512)) {
 						stage_x = (stage_x / 512) * 512;
-						CAudio::Instance()->Stop(0);
+						CAudio::Instance()->Stop(13);
 						CAudio::Instance()->Play(8, true);
 						stageShine.ToggleAnimation();
 						transitionState = 33;
@@ -639,7 +639,7 @@ namespace game_framework {
 				// 在隧道的頭
 				transitionState = 30;
 				CAudio::Instance()->Stop(8);
-				CAudio::Instance()->Play(0, true);
+				CAudio::Instance()->Play(13, true);
 				stage_x = savePoint_stage[2][0];
 				stage_y = savePoint_stage[2][1];
 				rockman.OnBeginState(savePoint_rockman[2][0], savePoint_rockman[2][1], 2);

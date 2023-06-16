@@ -58,7 +58,8 @@ namespace game_framework {
 		AUDIO_RollingCutter,
 		AUDIO_EnemyShoot,
 		AUDIO_BossSelect,
-		AUDIO_Fireman
+		AUDIO_Fireman,
+		AUDIO_Endingtheme
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -151,15 +152,45 @@ namespace game_framework {
 		void OnInit();
 		void OnLButtonDown(UINT nFlags, CPoint point);
 		void OnKeyDown(UINT, UINT, UINT);
-
+		static int clear;
 	protected:
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 
 	private:
 		int counter;	// 倒數之計數器
+		float passsec;
 		int choose = 0;
+		float timestep;
+		float map_x, map_y;
+		int intmap_x, intmap_y;
+		string message;
+		string message2;
+		string time;
+		vector<string> messagelist = { "ORIGINAL BY","  REMAKE BY","GROUP","ROCKMAN MOVEMENT","STAGE MAP","ENEMY","ROCKMAN ATTACK","ANIMATION","  THANK YOU GUYS","THE" };
+		vector<string> message2list = { "   CAPCOM","LIN & AIDEN"," 18"," LIN & AIDEN","    LIN"," LIN","  AIDEN","  AIDEN","GOOD LUCK ON FINALS!","END" };
+		float floorline_x1, floorline_x2, floorline_x3, floorline_x4;
+		int intfloor_x1, intfloor_x2, intfloor_x3, intfloor_x4;
+		float x, y;
+		int intx, inty;
+		float listx1_1, listy1_1;
+		int intlistx1_1, intlisty1_1;
+		float listx1_2, listy1_2;
+		int intlistx1_2, intlisty1_2;
+		int rockmanout;
+		int onground;
+		int textcount=0;
+		int textpos = 0;
+		int goal = 0;
 		CMovingBitmap background;
+		CMovingBitmap Endingmovie;
+		CMovingBitmap floorline[4];
+		CMovingBitmap sunset;
+		CMovingBitmap rockman_respawn;
+		CMovingBitmap rockman_normal_run;
+		CMovingBitmap rockman_end_run;
+		CMovingBitmap rockman_end_jump;
+		CMovingBitmap rockman_shadow_run;
 	};
 
 }
