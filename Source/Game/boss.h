@@ -28,7 +28,7 @@ namespace game_framework {
 				}, RGB(128, 0, 128));
 
 			// 閃5次
-			shine.LoadBitmapByString({ 
+			shine.LoadBitmapByString({
 				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
 				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
 				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
@@ -97,16 +97,16 @@ namespace game_framework {
 			runningN[1].LoadBitmapByString({
 				"resources/enemy/cutman/walkRightN1.bmp",
 				"resources/enemy/cutman/walkRightN2.bmp",
-				"resources/enemy/cutman/walkRightN3.bmp", 
+				"resources/enemy/cutman/walkRightN3.bmp",
 				}, RGB(128, 0, 128));
 			runningN[1].SetAnimation(200, false);
 
-			
-			jumpingY[0].LoadBitmapByString({"resources/enemy/cutman/jumpLeftY.bmp"}, RGB(128, 0, 128));
+
+			jumpingY[0].LoadBitmapByString({ "resources/enemy/cutman/jumpLeftY.bmp" }, RGB(128, 0, 128));
 			jumpingY[1].LoadBitmapByString({ "resources/enemy/cutman/jumpRightY.bmp" }, RGB(128, 0, 128));
 			jumpingN[0].LoadBitmapByString({ "resources/enemy/cutman/jumpLeftN.bmp" }, RGB(128, 0, 128));
 			jumpingN[1].LoadBitmapByString({ "resources/enemy/cutman/jumpRightN.bmp" }, RGB(128, 0, 128));
-			
+
 
 			rollingCutter[0].LoadBitmapByString({
 				"resources/enemy/cutman/rollingCutterUp.bmp",
@@ -141,7 +141,7 @@ namespace game_framework {
 		void OnMove(int stageX, int stageY, int rockmanX, int rockmanY, int transitionState) {
 			// 保留轉場state等待轉場
 
-			/* 
+			/*
 			距離很遠-> 走到中距離 ->擺架式
 								  ->距離介於中跟進之間，甩出剪刀後重複判斷，連續三次後仍為此區間，則直接跳向洛克人
 			太遠會先靠近，到中距離的時候丟擺架式出剪刀，丟完發現洛克人跑出中距離，會用跳的過去追他
@@ -153,7 +153,7 @@ namespace game_framework {
 				facingLeft = true;
 			}
 			int distance = abs(rockmanX - x);
-			
+
 			// 等待stage的轉場動畫
 
 			if (transitionState == 40) { //開始遊戲的state
@@ -235,8 +235,8 @@ namespace game_framework {
 						timer.ToggleAnimation();
 					}
 				}
-				else if (state == 1){
-					if (timer.IsAnimationDone()){ //蓄力完成，丟出剪刀
+				else if (state == 1) {
+					if (timer.IsAnimationDone()) { //蓄力完成，丟出剪刀
 						if (facingLeft) {
 							// won't get in this if statement
 							throwing[0].ToggleAnimation();
@@ -246,7 +246,7 @@ namespace game_framework {
 							throwing[1].ToggleAnimation();
 							throwingLeft = false;
 						}
-						
+
 						isThrowing = true;
 						state = 3;
 						// isWalking = false;
@@ -287,7 +287,7 @@ namespace game_framework {
 							dx = 4;
 							jumpCount = 0;
 							isJumping = false;
-							state = 5; 
+							state = 5;
 						}
 					}
 					else {
@@ -364,11 +364,11 @@ namespace game_framework {
 						state = 4;
 					}
 					*/
-					
+
 				}
 				else if (state == 4) {
 					if (throwing[0].IsAnimationDone() && throwing[1].IsAnimationDone()) {
-					// if(timer.IsAnimationDone()){
+						// if(timer.IsAnimationDone()){
 						isThrowing = false;
 						state = 5;
 					}
@@ -596,7 +596,7 @@ namespace game_framework {
 						else {
 							jumpLeft = false;
 						}
-						
+
 						dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
 						dy = 12;
 						state = 13;
@@ -655,16 +655,16 @@ namespace game_framework {
 				else if (state == 14) {
 					if (weaponThrew) { // 不可丟
 						//if (!isJumping) {
-							if (rockmanX < x) {
-								jumpLeft = true;
-							}
-							else {
-								jumpLeft = false;
-							}
-							dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
-							dy = 12;
-							isJumping = true;
-							state = 17;
+						if (rockmanX < x) {
+							jumpLeft = true;
+						}
+						else {
+							jumpLeft = false;
+						}
+						dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
+						dy = 12;
+						isJumping = true;
+						state = 17;
 						//}
 					}
 					else {
@@ -902,7 +902,7 @@ namespace game_framework {
 						weaponX = x;
 						weaponY = y;
 					}
-					else{
+					else {
 						if (x >= weaponX) {
 							weaponX += 6;
 						}
@@ -964,7 +964,7 @@ namespace game_framework {
 				}
 			}
 			*/
-			
+
 			shine.SetTopLeft(x - stageX, y - stageY);
 			restingY[0].SetTopLeft(x - stageX, y - stageY);
 			restingY[1].SetTopLeft(x - stageX, y - stageY);
@@ -988,10 +988,10 @@ namespace game_framework {
 			throwing[1].SetTopLeft(x - stageX, y - stageY);
 
 		};
-		
+
 		void OnShow(int transitionState) {
 			timer.ShowBitmap();
-			if (blood > 0 && transitionState >= 33) {
+			if (blood > 0 && transitionState >= 35) {
 				if (!shine.IsAnimationDone()) { //還在後退被打當中
 					shine.ShowBitmap(2);
 					if (shine.GetFrameIndexOfBitmap() % 2 == 1) { //閃爍空檔show後退的bitmap
@@ -1012,7 +1012,8 @@ namespace game_framework {
 							}
 						}
 					}
-				}else { //沒被打
+				}
+				else { //沒被打
 					if (isThrowing) { //throw
 						if (throwingLeft) {
 							throwing[0].ShowBitmap(2);
@@ -1101,7 +1102,7 @@ namespace game_framework {
 						rollingCutter[0].ShowBitmap(2);
 				}
 			}
-			
+
 			if (transitionState == -1) { // 洛克人死掉
 				if (isJumping) {
 					if (jumpLeft) {
@@ -1151,17 +1152,17 @@ namespace game_framework {
 		}
 		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
 			if (shine.IsAnimationDone() && deadState == 0) { //被擊退動畫結束
-				
+
 				if (bullet.GetTop() + bullet.GetHeight() >= beingAttackN[0].GetTop() + 24
 					&& bullet.GetLeft() + bullet.GetWidth() >= beingAttackN[0].GetLeft()
 					&& bullet.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
 					&& bullet.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
-				
-				// if(CMovingBitmap::IsOverlap(beingAttackN[0], bullet, 2)){
-					if (bullet.GetLeft() <= (beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()/2)) {
+
+					// if(CMovingBitmap::IsOverlap(beingAttackN[0], bullet, 2)){
+					if (bullet.GetLeft() <= (beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth() / 2)) {
 						beenAttackedByLeft = true;
 					}
-					else{
+					else {
 						beenAttackedByLeft = false;
 					}
 					isHit = true;
@@ -1192,7 +1193,7 @@ namespace game_framework {
 				return true;
 			}
 			else if (deadState == 0
-				&& rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop()+24
+				&& rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop() + 24
 				&& rockman.GetLeft() + rockman.GetWidth() >= beingAttackN[0].GetLeft()
 				&& rockman.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
 				&& rockman.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
@@ -1237,8 +1238,8 @@ namespace game_framework {
 		}
 
 	private:
-		int x = 3252*2;
-		int y = 928*2;
+		int x = 3252 * 2;
+		int y = 928 * 2;
 		int dx = 4;
 		int dy = 12;
 		int blood = 28;
@@ -1429,8 +1430,8 @@ namespace game_framework {
 				}
 				//3344~3544 = 6688~7088
 				else if (state == 0) { // 移動模式
-					if(158 <= distance && distance <= 163){
-					//if (distance == 160) { //太精準了，不行
+					if (158 <= distance && distance <= 163) {
+						//if (distance == 160) { //太精準了，不行
 						canRun = false;
 						subState = 0;
 						state = 1; // 回到攻擊模式
@@ -1511,10 +1512,12 @@ namespace game_framework {
 						if (shootLeft) {
 							fireBall[0].SetTopLeft(x - 8 - stageX, y - stageY); //直接給他相對位置了
 							fireBall_queue.push(fireBall[0]);
+							CAudio::Instance()->Play(16, false);
 						}
 						else {
 							fireBall[1].SetTopLeft(x + 24 - stageX, y - stageY); //直接給他相對位置了
 							fireBall_queue.push(fireBall[1]);
+							CAudio::Instance()->Play(16, false);
 						}
 						timer.SetAnimation(200, true);
 						timer.ToggleAnimation();
@@ -1529,7 +1532,7 @@ namespace game_framework {
 					else if (subState == 2) {
 						subState = 0;
 					}*/
-					else if(subState == 2){
+					else if (subState == 2) {
 						timer.SetAnimation(400, true);
 						timer.ToggleAnimation();
 						subState = 3;
@@ -1539,8 +1542,8 @@ namespace game_framework {
 							subState = 0;
 						}
 					}
-					
-					
+
+
 					if (!(158 <= distance && distance <= 163) && subState == 2) {// && subState == ?
 						state = 0; // 回到移動模式
 						canRun = true;
@@ -1583,20 +1586,20 @@ namespace game_framework {
 					}
 				}
 				fireBall_queue = temp_queue;
-				shine.SetTopLeft(x - stageX, y - stageY);
-				shooting[0].SetTopLeft(x - stageX, y - stageY);
-				shooting[1].SetTopLeft(x - stageX, y - stageY);
-				idle[0].SetTopLeft(x - stageX, y - stageY);
-				idle[1].SetTopLeft(x - stageX, y - stageY);
-				jumping[0].SetTopLeft(x - stageX, y - stageY - 12);
-				jumping[1].SetTopLeft(x - stageX, y - stageY - 12);
-				running[0].SetTopLeft(x - stageX, y - stageY + 8);
-				running[1].SetTopLeft(x - stageX, y - stageY + 8);
 			}
+			shine.SetTopLeft(x - stageX, y - stageY);
+			shooting[0].SetTopLeft(x - stageX, y - stageY);
+			shooting[1].SetTopLeft(x - stageX, y - stageY);
+			idle[0].SetTopLeft(x - stageX, y - stageY);
+			idle[1].SetTopLeft(x - stageX, y - stageY);
+			jumping[0].SetTopLeft(x - stageX, y - stageY - 12);
+			jumping[1].SetTopLeft(x - stageX, y - stageY - 12);
+			running[0].SetTopLeft(x - stageX, y - stageY + 8);
+			running[1].SetTopLeft(x - stageX, y - stageY + 8);
 
 		}
 		void OnShow(int transitionState) {
-			if (blood > 0 && transitionState >= 33) {
+			if (blood > 0 && transitionState >= 35) {
 
 				timer.ShowBitmap();
 				queue<CMovingBitmap> temp_queue = fireBall_queue;
@@ -1618,6 +1621,14 @@ namespace game_framework {
 					}
 					else {
 						shooting[1].ShowBitmap(2);
+					}
+				}
+				else {
+					if (runLeft) {
+						idle[0].ShowBitmap(2);
+					}
+					else {
+						idle[1].ShowBitmap(2);
 					}
 				}
 				if (isHit) {

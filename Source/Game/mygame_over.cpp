@@ -99,8 +99,6 @@ void CGameStateOver::OnInit()
 	map_y = -21.0f;
 	onground = 0;
 	rockmanout = 0;
-	message = messagelist[0];
-	message2 = message2list[0];
 }
 
 
@@ -323,6 +321,9 @@ void CGameStateOver::OnShow()
 
 void CGameStateOver::OnBeginState()
 {
+	CAudio::Instance()->Stop(AUDIO_BossBattle);
+	CAudio::Instance()->Stop(AUDIO_Fireman);
+	CAudio::Instance()->Stop(AUDIO_Cutman);
 	if (clear == 1) {
 		CAudio::Instance()->Play(AUDIO_Endingtheme);
 	}

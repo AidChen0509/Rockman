@@ -50,6 +50,8 @@ void CGameStateInit::OnInit()
 	CAudio::Instance()->Load(AUDIO_RollingCutter, "resources/sound/RollingCutter.wav");
 	CAudio::Instance()->Load(AUDIO_EnemyShoot, "resources/sound/EnemyShoot.wav");
 	CAudio::Instance()->Load(AUDIO_Endingtheme, "resources/sound/EndingTheme.wav");
+	CAudio::Instance()->Load(AUDIO_MegamanDefeat, "resources/sound/MegamanDefeat.wav");
+	CAudio::Instance()->Load(AUDIO_Firestorm, "resources/sound/FireStorm1.wav");
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
 		"resources/start&over/initBackground2.bmp",
@@ -94,7 +96,8 @@ void CGameStateInit::OnInit()
 	selectBackground.LoadBitmapByString({ "resources/start&over/selectStageBG.bmp" , "resources/start&over/selectStageBGlight.bmp" });
 	selectBackground.SetAnimation(400, false);
 	selectBackground.SetTopLeft(0, 0);
-	
+	Insbg.LoadBitmapByString({ "resources/start&over/Instruction.bmp" });
+	Insbg.SetTopLeft(0, 0);
 	cutSelected[0].LoadBitmapByString({ "resources/start&over/cutman00.bmp", "resources/start&over/cutman01.bmp"  });
 	cutSelected[0].SetAnimation(400, false);
 	cutSelected[0].SetTopLeft(72, 179);
@@ -203,6 +206,10 @@ void CGameStateInit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				i = 0;
 			}
 		}
+
+		if (showState == 99) {
+			showState = 2;
+		}
 	}
 	if (nChar == 0x47) {
 		CGameStateOver::clear = 1;
@@ -232,7 +239,7 @@ void CGameStateInit::OnLButtonDown(UINT nFlags, CPoint point)
 void CGameStateInit::OnMove() {
 	if (showState == 1) {
 		if (startBackground.IsAnimationDone()) {
-			showState = 2;
+			showState = 99;
 			// 進入選單同時撥音樂
 			CAudio::Instance()->Play(AUDIO_MenuSelectTheme,true);
 		}
@@ -362,6 +369,9 @@ void CGameStateInit::OnShow()
 			Fireman[0].SetTopLeft(intx, inty);
 			Fireman[1].SetTopLeft(intx, inty);
 		}
+	}
+	else if (showState == 99) {
+		Insbg.ShowBitmap(2);
 	}
 		// TODO 王跳出來 score跳出來的畫面
 		// 背景一藍一白是固定的

@@ -59,7 +59,9 @@ namespace game_framework {
 		AUDIO_EnemyShoot,
 		AUDIO_BossSelect,
 		AUDIO_Fireman,
-		AUDIO_Endingtheme
+		AUDIO_Endingtheme,
+		AUDIO_MegamanDefeat,
+		AUDIO_Firestorm
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -110,6 +112,7 @@ namespace game_framework {
 		CMovingBitmap bombSelected[3];
 		CMovingBitmap fireSelected[3];
 		CMovingBitmap elecSelected[3];
+		CMovingBitmap Insbg;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -168,7 +171,7 @@ namespace game_framework {
 		string message2;
 		string time;
 		vector<string> messagelist = { "ORIGINAL BY","  REMAKE BY","GROUP","ROCKMAN MOVEMENT","STAGE MAP","ENEMY","ROCKMAN ATTACK","ANIMATION","  THANK YOU GUYS","THE" };
-		vector<string> message2list = { "   CAPCOM","LIN & AIDEN"," 18"," LIN & AIDEN","    LIN"," LIN","  AIDEN","  AIDEN","GOOD LUCK ON FINALS!","END" };
+		vector<string> message2list = { "   CAPCOM","BRYAN & AIDEN"," 18"," BRYAN & AIDEN","  BRYAN","BRYAN","    AIDEN","  AIDEN","GOOD LUCK ON FINALS!","END" };
 		float floorline_x1, floorline_x2, floorline_x3, floorline_x4;
 		int intfloor_x1, intfloor_x2, intfloor_x3, intfloor_x4;
 		float x, y;

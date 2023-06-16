@@ -455,6 +455,13 @@ namespace game_framework {
 			rockman_blood.SetFrameIndexOfBitmap(rockman.getBlood());
 			rockman_blood.ShowBitmap(2);
 
+			if (showlife == 1) {
+				CDC *px = CDDraw::GetBackCDC();
+				CTextDraw::ChangeFontLog(px, 13, "MMRock9", RGB(255, 255, 255));
+				message = "LIFE x" + to_string(rockman.getLives());
+				CTextDraw::Print(px, 180, 4, message.c_str());
+				CDDraw::ReleaseBackCDC();
+			}
 		}
 		void readFile() {
 			// [144][208]
@@ -489,6 +496,15 @@ namespace game_framework {
 			}
 			if (nChar == 0x52) {
 				rockman.resetBlood();
+			}
+			if (nChar == 0x48) {
+				if (showlife==0)
+				{
+					showlife = 1;
+				}
+				else {
+					showlife = 0;
+				}
 			}
 		}
 		void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
@@ -617,7 +633,7 @@ namespace game_framework {
 
 		 int stage_x = 2048 * 2;
 		 int stage_y = 768 * 2;
-
+		 int showlife = 0;
 		
 		// 三個儲存點，之後再處理，X-Y要再對照一下
 		int savePoint = 0;
