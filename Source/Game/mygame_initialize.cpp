@@ -52,6 +52,7 @@ void CGameStateInit::OnInit()
 	CAudio::Instance()->Load(AUDIO_Endingtheme, "resources/sound/EndingTheme.wav");
 	CAudio::Instance()->Load(AUDIO_MegamanDefeat, "resources/sound/MegamanDefeat.wav");
 	CAudio::Instance()->Load(AUDIO_Firestorm, "resources/sound/FireStorm1.wav");
+	CAudio::Instance()->Load(AUDIO_BossGate, "resources/sound/BossGate.wav");
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
 		"resources/start&over/initBackground2.bmp",

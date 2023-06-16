@@ -1084,6 +1084,10 @@ namespace game_framework {
 							bubble_XY[i][0] = x + 4*2;
 							bubble_XY[i][1] = y + 4*2;
 						}
+						CAudio::Instance()->Stop(0);
+						CAudio::Instance()->Stop(8);
+						CAudio::Instance()->Stop(13);
+						CAudio::Instance()->Play(15, false);
 						deadState = 1;
 					}
 					else if (deadState == 1) {
