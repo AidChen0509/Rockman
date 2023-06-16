@@ -61,7 +61,8 @@ namespace game_framework {
 		AUDIO_Fireman,
 		AUDIO_Endingtheme,
 		AUDIO_MegamanDefeat,
-		AUDIO_Firestorm
+		AUDIO_Firestorm,
+		AUDIO_BossGate
 	};
 
 	/////////////////////////////////////////////////////////////////////////////

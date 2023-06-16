@@ -52,6 +52,7 @@ void CGameStateInit::OnInit()
 	CAudio::Instance()->Load(AUDIO_Endingtheme, "resources/sound/EndingTheme.wav");
 	CAudio::Instance()->Load(AUDIO_MegamanDefeat, "resources/sound/MegamanDefeat.wav");
 	CAudio::Instance()->Load(AUDIO_Firestorm, "resources/sound/FireStorm1.wav");
+	CAudio::Instance()->Load(AUDIO_BossGate, "resources/sound/BossGate.wav");
 	startBackground.LoadBitmapByString({
 		"resources/start&over/initBackground1.bmp",
 		"resources/start&over/initBackground2.bmp",
@@ -253,6 +254,11 @@ void CGameStateInit::OnShow()
 		startBackground.ShowBitmap(2);
 	}
 	else if (showState == 2) { 
+		if (gameStateOfStages[0] == 1 && gameStateOfStages[1] == 1) {
+			CGameStateOver::clear = 1;
+			CAudio::Instance()->Stop(AUDIO_MenuSelectTheme);
+			GotoGameState(GAME_STATE_OVER);
+		}
 		selectBackground.ShowBitmap(2);
 		for (int i = 0; i < 2; i++)
 		{

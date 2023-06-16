@@ -75,7 +75,6 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 			cutman_stage.OnBeginState(-1);
 			CAudio::Instance()->Stop(AUDIO_Cutman);
 			CAudio::Instance()->Stop(AUDIO_BossBattle);
-			// 播放gameover的音效，once
 			GotoGameState(GAME_STATE_OVER);
 		}
 		else {

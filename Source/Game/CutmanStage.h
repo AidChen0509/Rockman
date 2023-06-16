@@ -190,9 +190,11 @@ namespace game_framework {
 					// 回到正常的transition，順便重製
 					if (savePoint == 2) {
 						transitionState = 30;
+						CAudio::Instance()->Play(0, true);
 					}
 					else {
 						transitionState = 0;
+						CAudio::Instance()->Play(0, true);
 					}
 					if (rockman.getLives()-1 > 0) { // 因為到onbegin才會扣命，所以這邊判斷會延遲，要扣1
 						this->OnBeginState(savePoint);
@@ -218,9 +220,11 @@ namespace game_framework {
 			else if(map[rockmanY / 32][(rockmanX + 2 * (24 - 1 - 4)) / 32] == 4){
 				if (transitionState == 30) {
 					transitionState = 31; //進王關transition
+					CAudio::Instance()->Play(17, false);
 				}
 				else if (transitionState == 0) {
 					transitionState = 28; //進王關廊道transition
+					CAudio::Instance()->Play(17, false);
 				}
 			}
 
@@ -379,6 +383,7 @@ namespace game_framework {
 				else if (transitionState == 33) {
 					if (stageShine.IsAnimationDone()) {
 						bossGate[0].ToggleAnimation();
+						CAudio::Instance()->Play(17, false);
 						transitionState = 34;
 					}
 				}
