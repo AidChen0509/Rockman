@@ -254,6 +254,11 @@ void CGameStateInit::OnShow()
 		startBackground.ShowBitmap(2);
 	}
 	else if (showState == 2) { 
+		if (gameStateOfStages[0] == 1 && gameStateOfStages[1] == 1) {
+			CGameStateOver::clear = 1;
+			CAudio::Instance()->Stop(AUDIO_MenuSelectTheme);
+			GotoGameState(GAME_STATE_OVER);
+		}
 		selectBackground.ShowBitmap(2);
 		for (int i = 0; i < 2; i++)
 		{

@@ -457,6 +457,7 @@ namespace game_framework {
 				else if (transitionState == 33) {
 					if (stageShine.IsAnimationDone()) {
 						bossGate[0].ToggleAnimation();
+						CAudio::Instance()->Play(17, false);
 						transitionState = 34;
 					}
 				}

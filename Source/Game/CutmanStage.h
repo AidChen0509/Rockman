@@ -363,7 +363,6 @@ namespace game_framework {
 				}
 				else if (transitionState == 31) {
 					bossGate[2].ToggleAnimation();
-					CAudio::Instance()->Play(17, false);
 					transitionState = 32;
 				}
 				else if (transitionState == 32) {
@@ -384,6 +383,7 @@ namespace game_framework {
 				else if (transitionState == 33) {
 					if (stageShine.IsAnimationDone()) {
 						bossGate[0].ToggleAnimation();
+						CAudio::Instance()->Play(17, false);
 						transitionState = 34;
 					}
 				}
