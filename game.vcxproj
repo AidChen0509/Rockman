@@ -234,6 +234,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="resources\gamecurs.cur" />
     <None Include="RES\GAME.RC2" />
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +268,7 @@
     <ClInclude Include="Source\Game\config.h" />
     <ClInclude Include="Source\Game\CutmanStage.h" />
     <ClInclude Include="Source\Game\enemy.h" />
+    <ClInclude Include="Source\Game\firemanStage.h" />
     <ClInclude Include="Source\Game\mygame.h" />
     <ClInclude Include="Source\Library\audio.h" />
     <ClInclude Include="Source\Library\gamecore.h" />
@@ -274,6 +276,11 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Source\Core\game.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\game.ico" />
+    <Image Include="resources\gameDoc.ico" />
+    <Image Include="resources\Toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -57,9 +57,11 @@ namespace game_framework {
 		AUDIO_EnergyFill,
 		AUDIO_RollingCutter,
 		AUDIO_EnemyShoot,
-		AUDIO_DING,				// 0
-		AUDIO_LAKE,				// 1
-		AUDIO_NTUT				// 2
+		AUDIO_BossSelect,
+		AUDIO_Fireman,
+		AUDIO_Endingtheme,
+		AUDIO_MegamanDefeat,
+		AUDIO_Firestorm
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -86,15 +88,31 @@ namespace game_framework {
 		int showState = 0;
 		bool enterPressed = false;
 		int gameStateOfStages[6] = {0, 0, 0, 0, 0, 0};
+		float dx = 37;
+		float dy = -120;
+		int isjump = 0;
+		int poseanim = 0;
+		float x, y;
+		int intx, inty;
+		int i=0;
+		float gravity = 80.0f;
+		float timeStep = 0.07f;
+		float textcount = 0.0f;
+		string message="";
+		vector<string> cutmanstr= { "C","U","T","M","A","N" };
+		vector<string> firemanstr = { "F","I","R","E","M","A","N" };
 		CMovingBitmap startBackground;					
 		CMovingBitmap selectBackground;
-
+		CMovingBitmap BossSelectBackground;
+		CMovingBitmap Fireman[2];
+		CMovingBitmap Cutman[2];
 		CMovingBitmap cutSelected[3];
 		CMovingBitmap gutsSelected[3];
 		CMovingBitmap iceSelected[3];
 		CMovingBitmap bombSelected[3];
 		CMovingBitmap fireSelected[3];
 		CMovingBitmap elecSelected[3];
+		CMovingBitmap Insbg;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -120,7 +138,9 @@ namespace game_framework {
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
 	private:
+		bool enableBeenHit = true;
 		CutmanStage cutman_stage;
+		FiremanStage fireman_stage;
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -134,12 +154,46 @@ namespace game_framework {
 		void OnBeginState();							// 設定每次重玩所需的變數
 		void OnInit();
 		void OnLButtonDown(UINT nFlags, CPoint point);
-
+		void OnKeyDown(UINT, UINT, UINT);
+		static int clear;
 	protected:
 		void OnMove();									// 移動遊戲元素
 		void OnShow();									// 顯示這個狀態的遊戲畫面
+
 	private:
 		int counter;	// 倒數之計數器
+		float passsec;
+		int choose = 0;
+		float timestep;
+		float map_x, map_y;
+		int intmap_x, intmap_y;
+		string message;
+		string message2;
+		string time;
+		vector<string> messagelist = { "ORIGINAL BY","  REMAKE BY","GROUP","ROCKMAN MOVEMENT","STAGE MAP","ENEMY","ROCKMAN ATTACK","ANIMATION","  THANK YOU GUYS","THE" };
+		vector<string> message2list = { "   CAPCOM","BRYAN & AIDEN"," 18"," BRYAN & AIDEN","  BRYAN","BRYAN","    AIDEN","  AIDEN","GOOD LUCK ON FINALS!","END" };
+		float floorline_x1, floorline_x2, floorline_x3, floorline_x4;
+		int intfloor_x1, intfloor_x2, intfloor_x3, intfloor_x4;
+		float x, y;
+		int intx, inty;
+		float listx1_1, listy1_1;
+		int intlistx1_1, intlisty1_1;
+		float listx1_2, listy1_2;
+		int intlistx1_2, intlisty1_2;
+		int rockmanout;
+		int onground;
+		int textcount=0;
+		int textpos = 0;
+		int goal = 0;
+		CMovingBitmap background;
+		CMovingBitmap Endingmovie;
+		CMovingBitmap floorline[4];
+		CMovingBitmap sunset;
+		CMovingBitmap rockman_respawn;
+		CMovingBitmap rockman_normal_run;
+		CMovingBitmap rockman_end_run;
+		CMovingBitmap rockman_end_jump;
+		CMovingBitmap rockman_shadow_run;
 	};
 
 }

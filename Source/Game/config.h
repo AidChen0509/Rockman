@@ -2,11 +2,11 @@
 // 定義遊戲可設定的環境與條件
 /////////////////////////////////////////////////////////////////////////////
 
-#define GAME_TITLE           "Rockman 1"
+#define GAME_TITLE           "Rockman"
 //! 設定遊戲畫面的解析度（寬度）
 #define SIZE_X				 528 //512框架bug，慢慢測
 //! 設定遊戲畫面的解析度（高度）
-#define SIZE_Y				 532 //512框架bug
+#define SIZE_Y				 500 //512框架bug
 //! 是否以全螢幕方式開啟遊戲
 #define OPEN_AS_FULLSCREEN	 false		
 //! 是否顯示loading(OnInit)的進度

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../Library/audio.h"
+#include <queue>
 namespace game_framework {
 	class Cutman
 	{
@@ -27,7 +28,7 @@ namespace game_framework {
 				}, RGB(128, 0, 128));
 
 			// 閃5次
-			shine.LoadBitmapByString({ 
+			shine.LoadBitmapByString({
 				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
 				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
 				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
@@ -96,16 +97,16 @@ namespace game_framework {
 			runningN[1].LoadBitmapByString({
 				"resources/enemy/cutman/walkRightN1.bmp",
 				"resources/enemy/cutman/walkRightN2.bmp",
-				"resources/enemy/cutman/walkRightN3.bmp", 
+				"resources/enemy/cutman/walkRightN3.bmp",
 				}, RGB(128, 0, 128));
 			runningN[1].SetAnimation(200, false);
 
-			
-			jumpingY[0].LoadBitmapByString({"resources/enemy/cutman/jumpLeftY.bmp"}, RGB(128, 0, 128));
+
+			jumpingY[0].LoadBitmapByString({ "resources/enemy/cutman/jumpLeftY.bmp" }, RGB(128, 0, 128));
 			jumpingY[1].LoadBitmapByString({ "resources/enemy/cutman/jumpRightY.bmp" }, RGB(128, 0, 128));
 			jumpingN[0].LoadBitmapByString({ "resources/enemy/cutman/jumpLeftN.bmp" }, RGB(128, 0, 128));
 			jumpingN[1].LoadBitmapByString({ "resources/enemy/cutman/jumpRightN.bmp" }, RGB(128, 0, 128));
-			
+
 
 			rollingCutter[0].LoadBitmapByString({
 				"resources/enemy/cutman/rollingCutterUp.bmp",
@@ -120,12 +121,27 @@ namespace game_framework {
 				}, RGB(128, 0, 128));
 			rollingCutter[1].SetAnimation(100, false);
 
+			for (int i = 0; i < 12; i++)
+			{
+				deadBubble[i].LoadBitmapByString({
+					"resources/enemy/dead0.bmp",
+					"resources/enemy/dead1.bmp",
+					"resources/enemy/dead2.bmp",
+					"resources/enemy/dead3.bmp",
+					}, RGB(128, 0, 128));
+				if (i < 4) {
+					deadBubble[i].SetAnimation(50, false);
+				}
+				else {
+					deadBubble[i].SetAnimation(55, false);
+				}
+			}
 
 		};
 		void OnMove(int stageX, int stageY, int rockmanX, int rockmanY, int transitionState) {
 			// 保留轉場state等待轉場
 
-			/* 
+			/*
 			距離很遠-> 走到中距離 ->擺架式
 								  ->距離介於中跟進之間，甩出剪刀後重複判斷，連續三次後仍為此區間，則直接跳向洛克人
 			太遠會先靠近，到中距離的時候丟擺架式出剪刀，丟完發現洛克人跑出中距離，會用跳的過去追他
@@ -137,7 +153,7 @@ namespace game_framework {
 				facingLeft = true;
 			}
 			int distance = abs(rockmanX - x);
-			
+
 			// 等待stage的轉場動畫
 
 			if (transitionState == 40) { //開始遊戲的state
@@ -146,7 +162,30 @@ namespace game_framework {
 				// mid = 128 (3*32
 				// long = 
 				// middle of the bitmap = 3204 * 2
-				if (isHit) {
+				if (deadState != 0) {
+					//觸發死亡動畫
+					if (deadState == 1) {
+						bool tempBool = false;
+						for (int i = 0; i < 12; i++)
+						{
+							if (stageX - 16 * 2 <= bubble_XY[i][0] && bubble_XY[i][0] <= stageX + 512
+								&& stageY - 16 * 2 <= bubble_XY[i][1] && bubble_XY[i][1] <= stageY + 512) {
+								bubble_XY[i][0] += bubble_dXdY[i][0];
+								bubble_XY[i][1] += bubble_dXdY[i][1];
+								tempBool = true;
+							}
+						}
+						if (!tempBool) {
+							deadState = 2;
+						}
+					}
+
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].SetTopLeft(int(bubble_XY[i][0]) - stageX, int(bubble_XY[i][1]) - stageY);
+					}
+				}
+				else if (isHit) {
 					shine.ToggleAnimation();
 					isHit = false;
 				}
@@ -196,8 +235,8 @@ namespace game_framework {
 						timer.ToggleAnimation();
 					}
 				}
-				else if (state == 1){
-					if (timer.IsAnimationDone()){ //蓄力完成，丟出剪刀
+				else if (state == 1) {
+					if (timer.IsAnimationDone()) { //蓄力完成，丟出剪刀
 						if (facingLeft) {
 							// won't get in this if statement
 							throwing[0].ToggleAnimation();
@@ -207,7 +246,7 @@ namespace game_framework {
 							throwing[1].ToggleAnimation();
 							throwingLeft = false;
 						}
-						
+
 						isThrowing = true;
 						state = 3;
 						// isWalking = false;
@@ -248,7 +287,7 @@ namespace game_framework {
 							dx = 4;
 							jumpCount = 0;
 							isJumping = false;
-							state = 5; 
+							state = 5;
 						}
 					}
 					else {
@@ -325,11 +364,11 @@ namespace game_framework {
 						state = 4;
 					}
 					*/
-					
+
 				}
 				else if (state == 4) {
 					if (throwing[0].IsAnimationDone() && throwing[1].IsAnimationDone()) {
-					// if(timer.IsAnimationDone()){
+						// if(timer.IsAnimationDone()){
 						isThrowing = false;
 						state = 5;
 					}
@@ -557,7 +596,7 @@ namespace game_framework {
 						else {
 							jumpLeft = false;
 						}
-						
+
 						dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
 						dy = 12;
 						state = 13;
@@ -616,16 +655,16 @@ namespace game_framework {
 				else if (state == 14) {
 					if (weaponThrew) { // 不可丟
 						//if (!isJumping) {
-							if (rockmanX < x) {
-								jumpLeft = true;
-							}
-							else {
-								jumpLeft = false;
-							}
-							dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
-							dy = 12;
-							isJumping = true;
-							state = 17;
+						if (rockmanX < x) {
+							jumpLeft = true;
+						}
+						else {
+							jumpLeft = false;
+						}
+						dx = distance / 24; //best case: 不受障礙物抵擋，就能剛好到達目的地
+						dy = 12;
+						isJumping = true;
+						state = 17;
 						//}
 					}
 					else {
@@ -838,7 +877,7 @@ namespace game_framework {
 						y -= dy;
 					}
 				}
-}
+			}
 			if (weaponThrew) { //丟出去了要處理飛行位移
 				if (isWeaponGo) {
 					int tempY = (weaponY + weapon_dy);
@@ -863,7 +902,7 @@ namespace game_framework {
 						weaponX = x;
 						weaponY = y;
 					}
-					else{
+					else {
 						if (x >= weaponX) {
 							weaponX += 6;
 						}
@@ -925,7 +964,7 @@ namespace game_framework {
 				}
 			}
 			*/
-			
+
 			shine.SetTopLeft(x - stageX, y - stageY);
 			restingY[0].SetTopLeft(x - stageX, y - stageY);
 			restingY[1].SetTopLeft(x - stageX, y - stageY);
@@ -949,10 +988,10 @@ namespace game_framework {
 			throwing[1].SetTopLeft(x - stageX, y - stageY);
 
 		};
-		
+
 		void OnShow(int transitionState) {
 			timer.ShowBitmap();
-			if (blood > 0 && transitionState >= 33) {
+			if (blood > 0 && transitionState >= 35) {
 				if (!shine.IsAnimationDone()) { //還在後退被打當中
 					shine.ShowBitmap(2);
 					if (shine.GetFrameIndexOfBitmap() % 2 == 1) { //閃爍空檔show後退的bitmap
@@ -973,7 +1012,8 @@ namespace game_framework {
 							}
 						}
 					}
-				}else { //沒被打
+				}
+				else { //沒被打
 					if (isThrowing) { //throw
 						if (throwingLeft) {
 							throwing[0].ShowBitmap(2);
@@ -1041,6 +1081,12 @@ namespace game_framework {
 			else {
 				// boss is dead; 
 				// explode animation
+				if (blood <= 0) {
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].ShowBitmap(2);
+					}
+				}
 			}
 			if (weaponThrew) { //丟出
 				if (throwingLeft) {
@@ -1056,7 +1102,25 @@ namespace game_framework {
 						rollingCutter[0].ShowBitmap(2);
 				}
 			}
-			
+
+			if (transitionState == -1) { // 洛克人死掉
+				if (isJumping) {
+					if (jumpLeft) {
+						jumpingY[0].ShowBitmap(2);
+					}
+					else {
+						jumpingY[1].ShowBitmap(2);
+					}
+				}
+				else {
+					if (facingLeft) {
+						restingY[0].ShowBitmap(2);
+					}
+					else {
+						restingY[1].ShowBitmap(2);
+					}
+				}
+			}
 		};
 		void OnBeginState() {
 			x = 3252 * 2;
@@ -1078,6 +1142,7 @@ namespace game_framework {
 			isHit = false;
 			beenAttackedByLeft = false;
 			attackFromRight = false;
+			deadState = 0;
 		}
 		void setmap(vector<vector<int>> map) {
 			this->map = map;
@@ -1086,22 +1151,30 @@ namespace game_framework {
 			return damage;
 		}
 		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
-			if (shine.IsAnimationDone()) { //被擊退動畫結束
-				
+			if (shine.IsAnimationDone() && deadState == 0) { //被擊退動畫結束
+
 				if (bullet.GetTop() + bullet.GetHeight() >= beingAttackN[0].GetTop() + 24
 					&& bullet.GetLeft() + bullet.GetWidth() >= beingAttackN[0].GetLeft()
 					&& bullet.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
 					&& bullet.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
-				
-				// if(CMovingBitmap::IsOverlap(beingAttackN[0], bullet, 2)){
-					if (bullet.GetLeft() <= (beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()/2)) {
+
+					// if(CMovingBitmap::IsOverlap(beingAttackN[0], bullet, 2)){
+					if (bullet.GetLeft() <= (beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth() / 2)) {
 						beenAttackedByLeft = true;
 					}
-					else{
+					else {
 						beenAttackedByLeft = false;
 					}
 					isHit = true;
 					blood -= 3;
+					if (blood <= 0) {
+						deadState = 1;
+						for (int i = 0; i < 12; i++)
+						{
+							bubble_XY[i][0] = x + 4 * 2;
+							bubble_XY[i][1] = y + 12 * 2;
+						}
+					}
 					return true;
 				}
 				return false;
@@ -1119,7 +1192,8 @@ namespace game_framework {
 				}
 				return true;
 			}
-			else if (rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop()+24
+			else if (deadState == 0
+				&& rockman.GetTop() + rockman.GetHeight() >= beingAttackN[0].GetTop() + 24
 				&& rockman.GetLeft() + rockman.GetWidth() >= beingAttackN[0].GetLeft()
 				&& rockman.GetTop() <= beingAttackN[0].GetTop() + beingAttackN[0].GetHeight()
 				&& rockman.GetLeft() <= beingAttackN[0].GetLeft() + beingAttackN[0].GetWidth()) {
@@ -1147,6 +1221,12 @@ namespace game_framework {
 		bool isAttackFromRight() {  //怪物是從右邊打洛克人的嗎?必須先successfullyAttack == true
 			return attackFromRight;
 		}
+		bool deadAnimationDone() {
+			if (deadState == 2) {
+				return true;
+			}
+			return false;
+		}
 		int getX() { //左上x(absolute
 			return x;
 		}
@@ -1158,8 +1238,8 @@ namespace game_framework {
 		}
 
 	private:
-		int x = 3252*2;
-		int y = 928*2;
+		int x = 3252 * 2;
+		int y = 928 * 2;
 		int dx = 4;
 		int dy = 12;
 		int blood = 28;
@@ -1202,10 +1282,561 @@ namespace game_framework {
 		CMovingBitmap rollingCutter[2];
 		CMovingBitmap throwing[2];
 		CMovingBitmap timer;
+		CMovingBitmap deadBubble[12];
 
+		int deadState = 0;
+		double bubble_XY[12][2]; // rockmanX + 4*2, rockmanY + 4*2
+		double bubble_dXdY[12][2] = {
+			{1.6, 0}, // 4顆從最右邊開始
+			{0, 1.6},
+			{-1.6, 0},
+			{0, -1.6},
+			{3.2, 0}, // 8顆從最右邊開始
+			{3.2, 3.2},
+			{0, 3.2},
+			{-3.2, 3.2},
+			{-3.2, 0},
+			{-3.2, -3.2},
+			{0, -3.2},
+			{3.2, -3.2}
+		};
 
 		vector<vector<int>> map;
 
 	};
+	class Fireman
+	{
+	public:
+		Fireman() {};
+		~Fireman() {};
+		void OnInit() {
+			timer.LoadBitmapByString({
+				"resources/white.bmp",
+				"resources/white.bmp",
+				}, RGB(255, 255, 255));
+			timer.SetTopLeft(0, 0);
+			timer.SetAnimation(200, true);
+			// 閃5次
+			shine.LoadBitmapByString({
+				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
+				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
+				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
+				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
+				"resources/enemy/cutman/shine.bmp", "resources/enemy/cutman/purple.bmp",
+				}, RGB(128, 0, 128));
+			shine.SetAnimation(50, true);
 
+			shooting[0].LoadBitmapByString({
+				"resources/enemy/fireman/shootLeft0.bmp",
+				"resources/enemy/fireman/shootLeft1.bmp",
+				}, RGB(128, 0, 128));
+			shooting[0].SetAnimation(300, false);
+			shooting[1].LoadBitmapByString({
+				"resources/enemy/fireman/shootRight0.bmp",
+				"resources/enemy/fireman/shootRight1.bmp",
+				}, RGB(128, 0, 128));
+			shooting[1].SetAnimation(300, false);
+
+			idle[0].LoadBitmapByString({
+				"resources/enemy/fireman/idleLeft0.bmp",
+				"resources/enemy/fireman/idleLeft1.bmp"
+				}, RGB(128, 0, 128));
+			idle[0].SetAnimation(300, false);
+			idle[1].LoadBitmapByString({
+				"resources/enemy/fireman/idleRight0.bmp",
+				"resources/enemy/fireman/idleRight1.bmp"
+				}, RGB(128, 0, 128));
+			idle[1].SetAnimation(300, false);
+
+			jumping[0].LoadBitmapByString({
+				"resources/enemy/fireman/jumpLeft.bmp"
+				}, RGB(128, 0, 128));
+			jumping[1].LoadBitmapByString({
+				"resources/enemy/fireman/jumpRight.bmp"
+				}, RGB(128, 0, 128));
+
+			running[0].LoadBitmapByString({
+				"resources/enemy/fireman/runLeft0.bmp",
+				"resources/enemy/fireman/runLeft1.bmp",
+				"resources/enemy/fireman/runLeft2.bmp",
+				}, RGB(128, 0, 128));
+			running[0].SetAnimation(200, false);
+			running[1].LoadBitmapByString({
+				"resources/enemy/fireman/runRight0.bmp",
+				"resources/enemy/fireman/runRight1.bmp",
+				"resources/enemy/fireman/runRight2.bmp",
+				}, RGB(128, 0, 128));
+			running[1].SetAnimation(200, false);
+
+			// fireBall的副本
+			fireBall[0].LoadBitmapByString({
+				"resources/enemy/fireman/fireBallLeft0.bmp",
+				"resources/enemy/fireman/fireBallLeft1.bmp",
+				"resources/enemy/fireman/fireBallLeft2.bmp",
+				}, RGB(128, 0, 128));
+			fireBall[1].LoadBitmapByString({
+				"resources/enemy/fireman/fireBallRight0.bmp",
+				"resources/enemy/fireman/fireBallRight1.bmp",
+				"resources/enemy/fireman/fireBallRight2.bmp",
+				}, RGB(128, 0, 128));
+
+
+			for (int i = 0; i < 12; i++)
+			{
+				deadBubble[i].LoadBitmapByString({
+					"resources/enemy/dead0.bmp",
+					"resources/enemy/dead1.bmp",
+					"resources/enemy/dead2.bmp",
+					"resources/enemy/dead3.bmp",
+					}, RGB(128, 0, 128));
+				deadBubble[i].SetAnimation(40, false);
+
+			}
+		}
+		void OnMove(int stageX, int stageY, int rockmanX, int rockmanY, int transitionState) {
+			int distance = abs(rockmanX - x);
+			if (transitionState == 40) { //開始遊戲的state
+				/*
+				如果有一瞬間到點，判斷if(子彈飛出螢幕了嗎)，如果也成立，就可以開始攻擊state，否則原地播放攻擊動畫(同時要判斷是否還是到點)
+				攻擊state會讓火焰球出現一下子後，才往洛克人發射，發射出去之前，火焰人不能移動，發射完一樣要判斷到點了沒
+				*/
+				if (isHit) {
+					if (shine.IsAnimationDone()) {
+						isHit = false;
+					}
+				}
+				if (deadState != 0) {
+					//觸發死亡動畫
+					if (deadState == 1) {
+						bool tempBool = false;
+						for (int i = 0; i < 12; i++)
+						{
+							if (stageX - 16 * 2 <= bubble_XY[i][0] && bubble_XY[i][0] <= stageX + 512
+								&& stageY - 16 * 2 <= bubble_XY[i][1] && bubble_XY[i][1] <= stageY + 512) {
+								bubble_XY[i][0] += bubble_dXdY[i][0];
+								bubble_XY[i][1] += bubble_dXdY[i][1];
+								tempBool = true;
+							}
+						}
+						if (!tempBool) {
+							deadState = 2;
+						}
+					}
+
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].SetTopLeft(int(bubble_XY[i][0]) - stageX, int(bubble_XY[i][1]) - stageY);
+					}
+				}
+				//3344~3544 = 6688~7088
+				else if (state == 0) { // 移動模式
+					if (158 <= distance && distance <= 163) {
+						//if (distance == 160) { //太精準了，不行
+						canRun = false;
+						subState = 0;
+						state = 1; // 回到攻擊模式
+					}
+					else {
+						if (distance > 163) { // 太遠了要靠近
+							if (rockmanX <= x) { //洛克人在左邊
+								runLeft = true;
+							}
+							else {
+								runLeft = false;
+							}
+						}
+						else { // 太近了要後退
+							// 需要處理撞牆的問題
+							if (rockmanX <= x) { //洛克人在左邊
+								if (rightCornerReached) {
+									runLeft = true;
+								}
+								else {
+									runLeft = false;
+								}
+							}
+							else {
+								if (leftCornerReached) {
+									runLeft = false;
+								}
+								else {
+									runLeft = true;
+								}
+							}
+						}
+						canRun = true;
+					}
+
+
+					// 根據runLeft or right bool移動x
+					if (canRun) {
+						if (runLeft) {
+							if (map[y / 32][(x - dx) / 32] != 1) {
+								x -= dx;
+							}
+							else {
+								leftCornerReached = true;
+							}
+						}
+						else {
+							if (map[y / 32][(x + dx + 48) / 32] != 1) {
+								x += dx;
+							}
+							else {
+								rightCornerReached = true;
+							}
+						}
+					}
+
+					// 將corenerReached初始化
+					if (rightCornerReached) {
+						if (x <= 7088 - 160) {
+							rightCornerReached = false;
+						}
+					}
+					if (leftCornerReached) {
+						if (x >= 6688 + 160) {
+							leftCornerReached = false;
+						}
+					}
+				}
+				else if (state == 1) { //攻擊模式
+					// 剛進來的時候subState 初始為0
+					if (rockmanX < x) {
+						shootLeft = true;
+					}
+					else {
+						shootLeft = false;
+					}
+					if (subState == 0) {
+						if (shootLeft) {
+							fireBall[0].SetTopLeft(x - 8 - stageX, y - stageY); //直接給他相對位置了
+							fireBall_queue.push(fireBall[0]);
+							CAudio::Instance()->Play(16, false);
+						}
+						else {
+							fireBall[1].SetTopLeft(x + 24 - stageX, y - stageY); //直接給他相對位置了
+							fireBall_queue.push(fireBall[1]);
+							CAudio::Instance()->Play(16, false);
+						}
+						timer.SetAnimation(200, true);
+						timer.ToggleAnimation();
+						subState = 1;
+					}
+					else if (subState == 1) { //代表是有波動化的
+						if (timer.IsAnimationDone()) {
+							subState = 2;
+						}
+					}
+					/*會更緊湊一點如果不像下面依樣射delay
+					else if (subState == 2) {
+						subState = 0;
+					}*/
+					else if (subState == 2) {
+						timer.SetAnimation(400, true);
+						timer.ToggleAnimation();
+						subState = 3;
+					}
+					else if (subState == 3) {
+						if (timer.IsAnimationDone()) {
+							subState = 0;
+						}
+					}
+
+
+					if (!(158 <= distance && distance <= 163) && subState == 2) {// && subState == ?
+						state = 0; // 回到移動模式
+						canRun = true;
+					}
+				}
+
+				queue<CMovingBitmap> temp_queue;
+				while (!fireBall_queue.empty()) {
+					if (shootLeft) {
+						int top = fireBall_queue.front().GetTop();
+						int left = fireBall_queue.front().GetLeft() - 8;
+						if (fireBall_queue.size() != 1) {
+							fireBall_queue.front().SetFrameIndexOfBitmap(1);
+							fireBall_queue.front().SetTopLeft(left, top);
+						}
+						else if (timer.IsAnimationDone()) {
+							fireBall_queue.front().SetFrameIndexOfBitmap(1);
+							fireBall_queue.front().SetTopLeft(left, top);
+						}
+						if (left > -32) {
+							temp_queue.push(fireBall_queue.front());
+						}
+						fireBall_queue.pop();
+					}
+					else {
+						int top = fireBall_queue.front().GetTop();
+						int left = fireBall_queue.front().GetLeft() + 8;
+						if (fireBall_queue.size() != 1) {
+							fireBall_queue.front().SetFrameIndexOfBitmap(1);
+							fireBall_queue.front().SetTopLeft(left, top);
+						}
+						else if (timer.IsAnimationDone()) {
+							fireBall_queue.front().SetFrameIndexOfBitmap(1);
+							fireBall_queue.front().SetTopLeft(left, top);
+						}
+						if (left < 512) {
+							temp_queue.push(fireBall_queue.front());
+						}
+						fireBall_queue.pop();
+					}
+				}
+				fireBall_queue = temp_queue;
+			}
+			shine.SetTopLeft(x - stageX, y - stageY);
+			shooting[0].SetTopLeft(x - stageX, y - stageY);
+			shooting[1].SetTopLeft(x - stageX, y - stageY);
+			idle[0].SetTopLeft(x - stageX, y - stageY);
+			idle[1].SetTopLeft(x - stageX, y - stageY);
+			jumping[0].SetTopLeft(x - stageX, y - stageY - 12);
+			jumping[1].SetTopLeft(x - stageX, y - stageY - 12);
+			running[0].SetTopLeft(x - stageX, y - stageY + 8);
+			running[1].SetTopLeft(x - stageX, y - stageY + 8);
+
+		}
+		void OnShow(int transitionState) {
+			if (blood > 0 && transitionState >= 35) {
+
+				timer.ShowBitmap();
+				queue<CMovingBitmap> temp_queue = fireBall_queue;
+				while (!temp_queue.empty()) {
+					temp_queue.front().ShowBitmap(2);
+					temp_queue.pop();
+				}
+				if (canRun) {
+					if (runLeft) {
+						running[0].ShowBitmap(2);
+					}
+					else {
+						running[1].ShowBitmap(2);
+					}
+				}
+				else if (state == 1) {
+					if (shootLeft) {
+						shooting[0].ShowBitmap(2);
+					}
+					else {
+						shooting[1].ShowBitmap(2);
+					}
+				}
+				else {
+					if (runLeft) {
+						idle[0].ShowBitmap(2);
+					}
+					else {
+						idle[1].ShowBitmap(2);
+					}
+				}
+				if (isHit) {
+					shine.ShowBitmap(2);
+				}
+			}
+			else {
+				if (blood < 0) {
+					for (int i = 0; i < 12; i++)
+					{
+						deadBubble[i].ShowBitmap(2);
+					}
+				}
+			}
+			if (transitionState == -1) { // 洛克人死掉
+				if (canRun) {
+					if (runLeft) {
+						running[0].ShowBitmap(2);
+					}
+					else {
+						running[1].ShowBitmap(2);
+					}
+				}
+				else if (state == 1) {
+					if (shootLeft) {
+						shooting[0].ShowBitmap(2);
+					}
+					else {
+						shooting[1].ShowBitmap(2);
+					}
+				}
+			}
+
+			/*
+			CDC *px = CDDraw::GetBackCDC();
+			CTextDraw::ChangeFontLog(px, 15, "微軟正黑體", RGB(255, 255, 0));
+			message = "firemanX =  " + to_string(x);
+			CTextDraw::Print(px, 44, 150, message.c_str());
+
+			CDDraw::ReleaseBackCDC();
+			*/
+		};
+		void OnBeginState() {
+			x = 3508 * 2;
+			y = 160 * 2;
+			dx = 4;
+			blood = 28;
+			damage = 0;
+			fireBall_queue = queue<CMovingBitmap>();
+			state = 0;
+			subState = 0; // preState
+			isShot = false;
+			shootLeft = false;
+			canRun = false;
+			rightCornerReached = false, leftCornerReached = false;
+			facingLeft = false;
+			isThrowing = false;
+			throwingLeft = true;
+			isWalking = false;
+			isHit = false;
+			beenAttackedByLeft = false;
+			attackFromRight = false;
+			playsound = false;
+			deadState = 0;
+		}
+		void setmap(vector<vector<int>> map) {
+			this->map = map;
+		}
+		int getDamage() { //怪物攻擊洛克人的傷害，要先successfullyAttack == true
+			return damage;
+		}
+		bool beenAttacked(CMovingBitmap bullet) { //以怪物的角度，怪物被打中?
+			if (shine.IsAnimationDone() && deadState == 0) { //被擊退動畫結束
+				if (CMovingBitmap::IsOverlap(bullet, idle[0], 2)) {
+					isHit = true;
+					shine.ToggleAnimation();
+					blood -= 3;
+					if (blood <= 0) {
+						deadState = 1;
+						for (int i = 0; i < 12; i++)
+						{
+							bubble_XY[i][0] = x + 4 * 2;
+							bubble_XY[i][1] = y + 12 * 2;
+						}
+					}
+					return true;
+				}
+				return false;
+			}
+			return false;
+
+		}
+		bool successfullyAttack(CMovingBitmap rockman) { //以怪物的角度，打中洛克人?
+			queue<CMovingBitmap> temp_queue = fireBall_queue;
+			if (deadState == 0) {
+
+				while (!temp_queue.empty()) {
+					if (CMovingBitmap::IsOverlap(rockman, temp_queue.front(), 2)) {
+						damage = 3;
+						if (rockman.GetLeft() <= temp_queue.front().GetLeft()) { //
+							attackFromRight = true;
+						}
+						else {
+							attackFromRight = false;
+						}
+						return true;
+					}
+					temp_queue.pop();
+				}
+				if (CMovingBitmap::IsOverlap(rockman, idle[0], 2)) {
+					// 重疊->判斷碰撞
+					damage = 5;
+					if (rockman.GetLeft() <= idle[0].GetLeft()) {
+						attackFromRight = true;
+					}
+					else {
+						attackFromRight = false;
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+		bool isDead() {//怪物死了沒，依血量判斷
+			if (blood <= 0) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		bool isAttackFromRight() {  //怪物是從右邊打洛克人的嗎?必須先successfullyAttack == true
+			return attackFromRight;
+		}
+		bool deadAnimationDone() {
+			if (deadState == 2) {
+				return true;
+			}
+			return false;
+		}
+		int getX() { //左上x(absolute
+			return x;
+		}
+		int getY() { //左上y(absolute
+			return y;
+		}
+		int getBlood() { //怪物目前的血量
+			return blood;
+		}
+
+	private:
+		int x = 3508 * 2;
+		int y = 160 * 2;
+		int dx = 4;
+		int blood = 28;
+		int damage = 0;
+
+		int state = 0;
+		int subState = 0; // preState
+		// 會有三個fireBall可以同時呈現在畫面上
+		bool isShot = false;
+		bool shootLeft = false;
+		bool canRun = false;
+		bool runLeft;
+		bool rightCornerReached = false, leftCornerReached = false;
+		int shootSpeedX = 8;
+
+
+		bool facingLeft = false;
+		bool isThrowing = false;
+		bool throwingLeft = true;
+		// bool isJumping = false;
+		bool isWalking = false;
+		bool isHit = false;
+		bool beenAttackedByLeft = false;
+		bool attackFromRight = false;
+		bool playsound = false;
+		CMovingBitmap shine;
+		CMovingBitmap idle[2];
+		CMovingBitmap running[2];
+		CMovingBitmap jumping[2];
+		CMovingBitmap beingAttack[2];
+		CMovingBitmap fireBall[2];
+		CMovingBitmap shooting[2];
+		CMovingBitmap timer;
+		CMovingBitmap deadBubble[12];
+
+		string message;
+		int deadState = 0;
+		double bubble_XY[12][2]; // rockmanX + 4*2, rockmanY + 4*2
+		double bubble_dXdY[12][2] = {
+			{1.6, 0}, // 4顆從最右邊開始
+			{0, 1.6},
+			{-1.6, 0},
+			{0, -1.6},
+			{3.2, 0}, // 8顆從最右邊開始
+			{3.2, 3.2},
+			{0, 3.2},
+			{-3.2, 3.2},
+			{-3.2, 0},
+			{-3.2, -3.2},
+			{0, -3.2},
+			{3.2, -3.2}
+		};
+
+		queue<CMovingBitmap> fireBall_queue;
+
+		vector<vector<int>> map;
+	};
 };

@@ -9,6 +9,7 @@
 #include "../Game/boss.h"
 #include "../Game/Enemy.h"
 #include "../Game/CutmanStage.h"
+#include "../Game/firemanStage.h"
 #include "mygame.h"
 
 using namespace game_framework;
@@ -32,14 +33,17 @@ void CGameStateRun::OnBeginState()
 {
 	//設定跳轉到這個state 需要的出值
 	gameState = 0;
+	enableBeenHit = true;
 	// 關卡內容初始化
 	if (CGameStateInit::stage == 0) {
 		// -1為第一次進遊戲
-		cutman_stage.OnBeginState(-1);
+		cutman_stage.OnBeginState(-1); // -1
 		CAudio::Instance()->Play(AUDIO_Cutman, true);
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.OnBeginState(-1);
+		CAudio::Instance()->Play(AUDIO_Fireman, true);
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -48,7 +52,7 @@ void CGameStateRun::OnBeginState()
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -58,6 +62,7 @@ void CGameStateRun::OnBeginState()
 void CGameStateRun::OnMove()							// 移動遊戲元素
 {
 	if (CGameStateInit::stage == 0) { //進入的是cutman關
+		cutman_stage.setEnableBeenHit(enableBeenHit);
 		if (cutman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
 			gameState = 1;
 			cutman_stage.OnBeginState(-1);
@@ -68,6 +73,9 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		else if (cutman_stage.getGamestate() == 2) { // rockman沒命了->over
 			gameState = 2;
 			cutman_stage.OnBeginState(-1);
+			CAudio::Instance()->Stop(AUDIO_Cutman);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
+			// 播放gameover的音效，once
 			GotoGameState(GAME_STATE_OVER);
 		}
 		else {
@@ -75,7 +83,26 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		}
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.setEnableBeenHit(enableBeenHit);
+		if (fireman_stage.getGamestate() == 1) { // boss 死掉了->OK跳轉回init
+			gameState = 1;
+			fireman_stage.OnBeginState(-1);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
+			CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
+			GotoGameState(GAME_STATE_INIT);
+		}
+		else if (fireman_stage.getGamestate() == 2) { // rockman沒命了->over
+			gameState = 2;
+			fireman_stage.OnBeginState(-1);
+			CAudio::Instance()->Stop(AUDIO_Cutman);
+			CAudio::Instance()->Stop(AUDIO_BossBattle);
+			// 播放gameover的音效，once
+			GotoGameState(GAME_STATE_OVER);
+		}
+		else {
+			fireman_stage.OnMove();
+		}
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -84,7 +111,7 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -93,25 +120,30 @@ void CGameStateRun::OnMove()							// 移動遊戲元素
 
 void CGameStateRun::OnInit()  								// 遊戲的初值及圖形設定
 {
+	ShowInitProgress(33, "Initialize...");
 	cutman_stage.OnInit();
-
+	fireman_stage.OnInit();
 	//CAudio::Instance()->Play(AUDIO_MenuSelectTheme, true);
 	// other stages' Oninit
-
 }
 
 void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// 為了開發測試用
-	if (nChar == VK_RETURN) {
-		// GotoGameState(GAME_STATE_INIT); //回到初始畫面
+	if (nChar == 0x45) {
+		if (enableBeenHit) {
+			enableBeenHit = false;
+		}
+		else {
+			enableBeenHit = true;
+		}
 	}
-
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -120,7 +152,7 @@ void CGameStateRun::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -131,11 +163,11 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.OnKeyUp(nChar, nRepCnt, nFlags);
-		// if()
-		// GotoGameState(GAME_STATE_INIT);
+
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.OnKeyUp(nChar, nRepCnt, nFlags);
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -144,7 +176,7 @@ void CGameStateRun::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
@@ -177,11 +209,10 @@ void CGameStateRun::OnShow()
 
 	if (CGameStateInit::stage == 0) {
 		cutman_stage.Onshow();
-		// 加進來會變得很卡，不知道是不是檔案太大還是怎樣(我知道為什麼了byAiden)
-		// CAudio::Instance()->Play(AUDIO_Cutman);
 	}
 	else if (CGameStateInit::stage == 1) {
-		// guts
+		// fire
+		fireman_stage.Onshow();
 	}
 	else if (CGameStateInit::stage == 2) {
 		// ice
@@ -190,9 +221,10 @@ void CGameStateRun::OnShow()
 		// bomb
 	}
 	else if (CGameStateInit::stage == 4) {
-		// fire
+		
 	}
 	else if (CGameStateInit::stage == 5) {
 		// elec
 	}
 }
+
